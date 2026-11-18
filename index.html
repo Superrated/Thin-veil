@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.60 -->
+<!-- Thin Veil · beta 0.61 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -127,6 +127,15 @@
   #start.tests #goDes{display:block;margin:6px auto 0;background:none;border:1px solid rgba(255,255,255,.18);color:#9aa0ac;font:11px system-ui,sans-serif;padding:5px 10px;border-radius:6px}
   #start #goA2,#start #goA3,#start #goA4{display:none}
   #start.tests #goA2,#start.tests #goA3,#start.tests #goA4{display:block;margin:6px auto 0;background:none;border:1px solid rgba(255,255,255,.18);color:#9aa0ac;font:11px system-ui,sans-serif;padding:5px 10px;border-radius:6px}
+
+  /* the title sits dead centre, and can't quite decide where it is: the undecided trees' shimmer */
+  #start.min .ts-head{top:50% !important;margin-top:0 !important;transform:translateY(-50%)}
+  #start.min h1{animation:tsSplit 13s linear infinite,tsQm 7.3s steps(1) infinite}
+  #start.min h1::before{content:'Thin Veil';position:absolute;left:0;right:0;top:0;color:#a9bcff;opacity:0;filter:blur(.7px);pointer-events:none;animation:tsQa 4.7s steps(1) infinite}
+  #start.min h1::after{animation:tsQb 6.1s steps(1) infinite;filter:blur(.9px)}
+  @keyframes tsQa{0%{opacity:.18;transform:translate(-3px,1px)}11%{opacity:0}19%{opacity:.24;transform:translate(2px,-2px)}27%{opacity:.1;transform:translate(-1px,3px)}40%{opacity:0}57%{opacity:.2;transform:translate(4px,0)}69%{opacity:.09;transform:translate(-2px,-1px)}83%{opacity:0}}
+  @keyframes tsQb{0%{opacity:0}9%{opacity:.16;transform:translate(3px,2px)}22%{opacity:.07;transform:translate(-4px,0)}35%{opacity:0}48%{opacity:.2;transform:translate(1px,-3px)}63%{opacity:0}74%{opacity:.13;transform:translate(-2px,2px)}90%{opacity:0}}
+  @keyframes tsQm{0%,100%{opacity:1}31%{opacity:.84}33%{opacity:1}64%{opacity:.9}65%{opacity:1}88%{opacity:.8}90%{opacity:1}}
 </style>
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
@@ -135,7 +144,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.60</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.61</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
