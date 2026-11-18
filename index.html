@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.66 -->
+<!-- Thin Veil · beta 0.67 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -146,7 +146,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.66</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.67</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -4672,13 +4672,13 @@ function A2_handOver(){ if(!A2||A2.f.over) return; A2.f.over=1; actEnd('a2'); wo
 function A2_push(x,z,r){ const dx=player.x-x, dz=player.z-z, d=Math.hypot(dx,dz); if(d<r&&d>1e-4){ player.x=x+dx/d*r; player.z=z+dz/d*r; } }
 function A2_update(dt){ const A=A2; if(!A) return; A.pt+=dt;
   // while the act is still fading in: build each of its other realities once, compile their shaders, and put them away again, so nothing compiles at a crossing
-  if(!A.f.pw&&A.pt>0.3&&dt>0&&!A.P&&A.flip<=0&&A.ph===0){ A.f.pw=1; try{ for(const k of [0,1,2]){ A2_passBuild(A,k); warmNew(); A2_passEnd(A); } }catch(e){ console.warn(e); try{ if(A.P) A2_passEnd(A); }catch(_){ A.P=null; } } } if(A.flip<=0&&A.ph<4){ if(A.chair&&A.chairG&&A.chairG.visible&&!A.realOn) A2_push(A.chair[0],A.chair[1],0.75); const om=A.omenP[A.ph]; if(om&&A.ph<3&&A.omen[A.ph].visible) A2_push(om[0],om[1],0.45); if(A.hunter&&A.hunterG&&A.hunterG.visible) A2_push(A.hunter[0],A.hunter[1],0.5); } ringArm=0;   /* the free-roam stone ring must stay asleep */ const done=A2_done(); coatFig.visible=false;
+  if(A.f.pw!==3&&A.pt>0.3&&dt>0&&!A.P&&A.flip<=0&&A.ph===0){ A.pwT=(A.pwT||0)-dt; if(A.pwT<=0){ const k=A.f.pw||0; A.pwT=0.45; try{ A2_passBuild(A,k); warmNew(); A2_passEnd(A); }catch(e){ console.warn(e); try{ if(A.P) A2_passEnd(A); }catch(_){ A.P=null; } } A.f.pw=k+1; } } if(A.flip<=0&&A.ph<4){ if(A.chair&&A.chairG&&A.chairG.visible&&!A.realOn) A2_push(A.chair[0],A.chair[1],0.75); const om=A.omenP[A.ph]; if(om&&A.ph<3&&A.omen[A.ph].visible) A2_push(om[0],om[1],0.45); if(A.hunter&&A.hunterG&&A.hunterG.visible) A2_push(A.hunter[0],A.hunter[1],0.5); } ringArm=0;   /* the free-roam stone ring must stay asleep */ const done=A2_done(); coatFig.visible=false;
   if(A.ph===4){ A2_roomUpdate(A,dt); return; }
   if(A.ph<4){ STY.fallY=A.gy-A.sit*0.5; }
   if(A.ph<4&&A.ltPh!==A.ph&&A.pt>5&&A.flip<=0&&!A.quiet){ A.ltPh=A.ph; lampTone(); if(A.ph===0&&A2_done()) A2_once('cb1',"Flat. Nothing burnt, nothing to trip over. After that wood I could kiss it. I won't."); }
   const flipping=A2_flipUpdate(A,dt), ph=A.ph, pt=A.pt, dist=Math.hypot(A.lx-player.x,A.lz-player.z);
   if(A.figT&&A.ph===3&&A.pt>6&&!flipping&&A2_done()){ A.figT=0; A2_once('fg1',"...The red one. I think that was mine. I don't mean to draw them. I just look, and there they are."); }
-  if(!flipping&&ph<4){ if(A.pt<1e8&&finalU.uWhite.value>0) finalU.uWhite.value=Math.max(0,finalU.uWhite.value-dt*0.2); }
+  if(!flipping&&ph<4){ if(A.pt<1e8&&finalU.uWhite.value>0&&(A.f.pw===3||A.pt>10)){ A.whK=(A.whK||0)+dt/5.5; const e=Math.min(1,A.whK); finalU.uWhite.value=Math.min(finalU.uWhite.value,1-e*e*(3-2*e)); } }
   // light
   let T=A2_ATMO.dusk; if(A.P&&A.P.kind===2) T=A2_ATMO.between; else if(A.P&&A.P.kind===0) T=A2_ATMO.void; else if(ph===1) T=A.real>0.5?A2_ATMO.under:(A.holOn?A2_ATMO.hollow:A2_ATMO.under); else if(ph===2) T=A2_ATMO.many; else if(ph===3) T=A2_ATMO.last;
   A2_atmoStep(T,Math.min(1,dt*(flipping?1.6:0.7))); A2_fx(A,dt,flipping);
@@ -6735,6 +6735,7 @@ window.__a4={info:()=>{ const A=A4; if(!A) return null; return {pt:+A.pt.toFixed
   walk:(sec)=>{ const n=Math.round(sec/0.05); for(let i=0;i<n&&A4;i++){ const A=A4; if(A.phase==='door'&&!A.f.q){ const dx=A.house.position.x-1.3-player.x, dz=A.house.position.z+4.6-player.z, d=Math.hypot(dx,dz)||1; if(d>0.2){ player.x+=dx/d*0.2; player.z+=dz/d*0.2; } } STY.t+=0.05; time+=0.05; stLinesUpdate(0.05); A4_update(0.05); } }};
 /*ACT4-END*/
 // temp: jump straight to Act II from the start screen
+window.__a1room=()=>{ blackEl.style.opacity=0; STY.stage='a1'; STY.t=0; stBuildAct1(); STY.flags.cab=1; roomEnter(); STY.stage='a1room'; STY.t=0; }; window.__a1toA2=()=>{ roomLeave(); act1Stop(); worldGo('salt'); finalU.uWhite.value=1; finalU.uWhiteC.value.set(0.96,0.95,0.93); actStart('a2'); };
 function stToA2(){ blackEl.style.transition='none'; blackEl.style.opacity=0; blackEl.textContent=''; act1Stop(); worldGo('salt'); actStart('a2'); }
 // ---- the Desolate: the other keeper's night ----
 var DES=null;
@@ -6886,7 +6887,7 @@ function roomBuild(){ const g=new THREE.Group(), bm=(c,o)=>new THREE.MeshBasicMa
   add(new THREE.BoxGeometry(0.5,0.07,0.07),bm(0x231810),6.6,1.9,3.2).rotation.y=-1.1; add(new THREE.CylinderGeometry(0.02,0.02,0.14,5),bm(0x8a8f98),6.45,1.82,3.1);
   // a table laid for two, gone cold
   const tx=4.6, tz=-2.6, wood=bm(0x3a2a1c); add(new THREE.CylinderGeometry(0.75,0.75,0.06,18),wood,tx,0.78,tz); add(new THREE.CylinderGeometry(0.07,0.1,0.78,8),wood,tx,0.39,tz);
-  const set2=[], set1=[]; for(const ox of [-0.35,0.35]){ const pl=add(new THREE.CylinderGeometry(0.17,0.17,0.02,14),bm(0xd8d4c8),tx+ox,0.82,tz), cu=add(new THREE.CylinderGeometry(0.05,0.04,0.09,8),bm(0xd8d4c8),tx+ox,0.86,tz+0.3); if(ox>0) set2.push(pl,cu); else set1.push(pl,cu);
+  const set2=[], set1=[]; for(const ox of [-0.35,0.35]){ const pl=add(new THREE.CylinderGeometry(0.17,0.17,0.02,14),bm(0xe9e4d8),tx+ox,0.82,tz), cu=add(new THREE.CylinderGeometry(0.05,0.04,0.09,8),bm(0x2f4a6e),tx+ox,0.86,tz+0.3); { const rim=add(new THREE.TorusGeometry(0.16,0.012,4,24),bm(0x2f4a6e),tx+ox,0.832,tz); rim.rotation.x=Math.PI/2; const kn=add(new THREE.BoxGeometry(0.015,0.01,0.2),bm(0x3a3a40),tx+ox+0.21,0.825,tz); if(ox>0) set2.push(rim,kn); else set1.push(rim,kn); } if(ox>0) set2.push(pl,cu); else set1.push(pl,cu);
     add(new THREE.BoxGeometry(0.42,0.05,0.42),wood,tx+ox*2.9,0.46,tz); add(new THREE.BoxGeometry(0.42,0.5,0.05),wood,tx+ox*2.9+Math.sign(ox)*0.2,0.72,tz).rotation.y=Math.PI/2; for(const lx of [-0.17,0.17]) for(const lz of [-0.17,0.17]) add(new THREE.BoxGeometry(0.04,0.46,0.04),wood,tx+ox*2.9+lx,0.23,tz+lz); }
   add(new THREE.CylinderGeometry(0.02,0.02,0.16,6),bm(0xe8e2d0),tx,0.9,tz);
   // the window with the lamp in it; it is also the way on
@@ -6914,7 +6915,7 @@ function roomBuild(){ const g=new THREE.Group(), bm=(c,o)=>new THREE.MeshBasicMa
     { const of=add(new THREE.PlaneGeometry(0.5,0.3),bm(0xff7a2a),-4.551,0.45,-3.9); of.rotation.y=0.86; const og=new THREE.Sprite(new THREE.SpriteMaterial({map:softTex(255,140,60),transparent:true,opacity:0.55,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})); og.position.set(-4.2,0.5,-3.35); og.scale.setScalar(1.6); g.add(og);
       for(const [dx,dz] of [[-0.35,0.1],[0.3,-0.1]]) add(new THREE.TorusGeometry(0.15,0.025,5,14),bm(0x3a3a40),-4.9+dx,0.97,-4.2+dz).rotation.x=Math.PI/2; } }
   g.position.set(LAKE.x,ROOM_Y,LAKE.z); scene.add(g); ROOM={g,spin,win,fox:rf,set2,set1,table:[LAKE.x+tx,LAKE.z+tz]}; ROOM.clock=clkSet; clkSet(18,40); }
-function roomEnter(){ if(STY.room) return; if(!ROOM) roomBuild(); ROOM.clock(18,40); ROOM.g.visible=true; ROOM.win.material.opacity=0; STY.room=true; STY.stage='a1room'; STY.t=0; STY.fallY=ROOM_Y; STY.slow=1; STY.fog=0; STY.winT=0; STY.outT=0; STY.supI=0; STY.supHold=0; hush(false);
+function roomEnter(){ if(STY.room) return; STY.lines=STY.lines.filter(l=>l[0]!=='fox'); if(!ROOM) roomBuild(); ROOM.clock(18,40); ROOM.g.visible=true; ROOM.win.material.opacity=0; STY.room=true; STY.stage='a1room'; STY.t=0; STY.fallY=ROOM_Y; STY.slow=1; STY.fog=0; STY.winT=0; STY.outT=0; STY.supI=0; STY.supHold=0; hush(false);
   player.x=LAKE.x; player.z=LAKE.z+6.2; player.gy=ROOM_Y; player.yaw=0.7; player.pitch=0; vel.x=vel.z=0; coatFig.visible=false; lhTop.on=false; if(sound.C) sound.play('glass',0,0.5,0.25,true,{sfx:true}); }
 let MEMO=null;
 // the opening: no picture. His voice, as words on the dark, before you wake
