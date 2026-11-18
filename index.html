@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.24 -->
+<!-- Thin Veil · beta 0.25 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -132,7 +132,7 @@
 </head>
 <body>
 <div id="start" class="min tests">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.24</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.25</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -5629,6 +5629,39 @@ function HB_sd(x,z){ let d=HB_sdBox(x,z,-75,75,8,60); d=Math.min(d,HB_sdBox(x,z,
   return d; }
 function A4_harbourSolid(x,z){ if(z<-230||z>80||x<-120||x>120) return {d:1e3,nx:0,nz:1}; const d=HB_sd(x,z), e=0.05, gx=HB_sd(x+e,z)-HB_sd(x-e,z), gz=HB_sd(x,z+e)-HB_sd(x,z-e), gl=Math.hypot(gx,gz)||1; return {d,nx:gx/gl,nz:gz/gl}; }
 
+// ---- the old man, cut from the same block as the sea: a tall stooped woodcut figure, black and white, one spot of amber, a lantern ----
+function A4_oldMan(M){ const g=new THREE.Group(), inn=new THREE.Group(); g.add(inn); inn.rotation.x=0.14; const ink=M(0.06), paper=M(0.92), mid=M(0.3), face=M(0.78), amber=new THREE.MeshBasicMaterial({color:0xd9822b,fog:false,side:THREE.DoubleSide});
+  const add=(geo,m,x,y,z,p)=>{ const o=new THREE.Mesh(geo,m); o.position.set(x,y,z); (p||inn).add(o); return o; };
+  // the coat: one long faceted cone, carved with white gouge strokes, the hem cut in a zigzag
+  add(new THREE.CylinderGeometry(0.16,0.44,1.5,6),ink,0,1.0,0).rotation.y=0.3;
+  for(let i=0;i<7;i++){ const a=-0.9+i*0.3, r=0.33, h=0.5+0.35*((i*5)%3)/2; const s=add(new THREE.BoxGeometry(0.022,h,0.01),paper,Math.sin(a)*r,0.55+h/2,Math.cos(a)*r+0.02); s.rotation.y=a; s.rotation.x=-0.2; s.rotation.z=(i%2?0.05:-0.05); }
+  for(let i=0;i<14;i++){ const a=i/14*Math.PI*2; const t=add(new THREE.ConeGeometry(0.05,0.14,3),paper,Math.sin(a)*0.43,0.3,Math.cos(a)*0.43); t.rotation.y=a; }
+  for(const sx of [-1,1]){ add(new THREE.CylinderGeometry(0.035,0.03,0.28,5),ink,sx*0.1,0.12,0); add(new THREE.BoxGeometry(0.1,0.06,0.22),ink,sx*0.1,0.03,0.04); }
+  const sh=add(new THREE.SphereGeometry(0.22,6,4),ink,0,1.72,0); sh.scale.set(1.2,0.5,0.85);
+  // the scarf: the only colour on him
+  const sc=add(new THREE.TorusGeometry(0.1,0.05,4,8),amber,0,1.84,0.01); sc.rotation.x=Math.PI/2; const tail=new THREE.Group(); tail.position.set(0.09,1.82,0.12); inn.add(tail); const tl=add(new THREE.BoxGeometry(0.09,0.5,0.025),amber,0,-0.25,0,tail);
+  const tip=add(new THREE.ConeGeometry(0.06,0.1,3),amber,0,-0.53,0,tail); tip.rotation.z=Math.PI; tail.onBeforeRender=()=>{}; tl.onBeforeRender=()=>{ const t=performance.now()/1000; tail.rotation.z=0.12+0.1*Math.sin(t*1.7); tail.rotation.x=-0.25+0.06*Math.sin(t*1.1); };
+  // the head: a carved block, the cap, the brows and the long white beard to his chest
+  const HD=new THREE.Group(); HD.position.set(0,1.98,0.02); inn.add(HD); const hd=add(new THREE.IcosahedronGeometry(0.13,0),face,0,0,0,HD); hd.scale.set(0.95,1.12,1);
+  const cp=add(new THREE.CylinderGeometry(0.12,0.15,0.09,6),ink,0,0.12,-0.01,HD); cp.rotation.x=-0.12; const br=add(new THREE.BoxGeometry(0.24,0.02,0.12),ink,0,0.085,0.1,HD); br.rotation.x=0.15;
+  for(const sx of [-1,1]){ const eb=add(new THREE.ConeGeometry(0.025,0.09,3),paper,sx*0.055,0.04,0.11,HD); eb.rotation.z=sx*1.9; add(new THREE.BoxGeometry(0.03,0.012,0.01),ink,sx*0.048,0.005,0.12,HD); const tp=add(new THREE.ConeGeometry(0.04,0.12,4),paper,sx*0.115,0.0,-0.01,HD); tp.rotation.z=sx*0.4; }
+  add(new THREE.ConeGeometry(0.022,0.07,4),face,0,-0.02,0.135,HD).rotation.x=1.3;
+  const bd=add(new THREE.ConeGeometry(0.13,0.55,5),paper,0,-0.3,0.08,HD); bd.rotation.x=Math.PI+0.15; bd.scale.set(1,1,0.6); add(new THREE.BoxGeometry(0.15,0.03,0.04),paper,0,-0.05,0.12,HD);
+  for(let i=0;i<3;i++) add(new THREE.BoxGeometry(0.008,0.3-i*0.06,0.006),ink,(i-1)*0.035,-0.3,0.13+0.01*(1-Math.abs(i-1)),HD).rotation.x=0.15;
+  // left hand: the stick and the lantern
+  const sl=add(new THREE.CylinderGeometry(0.065,0.05,0.62,5),ink,-0.24,1.42,0.05); sl.rotation.z=-0.12; sl.rotation.x=-0.25; add(new THREE.SphereGeometry(0.05,5,4),face,-0.27,1.12,0.14);
+  const st=add(new THREE.CylinderGeometry(0.02,0.025,1.15,5),mid,-0.3,0.57,0.2,g); st.rotation.x=0.06;
+  const LT=new THREE.Group(); LT.position.set(-0.27,0.92,0.17); inn.add(LT); add(new THREE.BoxGeometry(0.004,0.16,0.004),ink,0,0.13,0,LT); add(new THREE.BoxGeometry(0.13,0.02,0.13),ink,0,0.05,0,LT); add(new THREE.BoxGeometry(0.15,0.02,0.15),ink,0,-0.11,0,LT); add(new THREE.ConeGeometry(0.09,0.06,4),ink,0,0.08,0,LT).rotation.y=Math.PI/4;
+  for(const [x,z] of [[-0.06,-0.06],[0.06,-0.06],[0.06,0.06],[-0.06,0.06]]) add(new THREE.BoxGeometry(0.012,0.15,0.012),ink,x,-0.03,z,LT); const core=add(new THREE.BoxGeometry(0.09,0.12,0.09),M(1.0),0,-0.03,0,LT);
+  const glow=new THREE.Sprite(new THREE.SpriteMaterial({map:softTex(255,214,140),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,fog:false,opacity:0.8})); glow.scale.setScalar(1.3); LT.add(glow); glow.onBeforeRender=()=>{ const t=performance.now()/1000; glow.material.opacity=0.65+0.12*Math.sin(t*9.0)+0.08*Math.sin(t*23.0); };
+  LT.onBeforeRender=()=>{}; core.onBeforeRender=()=>{ const t=performance.now()/1000; LT.rotation.z=0.05*Math.sin(t*1.3); };
+  const pool=new THREE.Mesh(new THREE.CircleGeometry(1.6,24),new THREE.MeshBasicMaterial({map:softTex(255,226,170),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:0.45,fog:false})); pool.rotation.x=-Math.PI/2; pool.position.set(-0.2,0.03,0.3); g.add(pool);
+  // right hand: at rest, or up on the door when you come close
+  const rs=add(new THREE.CylinderGeometry(0.065,0.05,0.62,5),ink,0.25,1.42,0.03); rs.rotation.z=0.12; const rh=add(new THREE.SphereGeometry(0.05,5,4),face,0.28,1.12,0.05);
+  const arm=new THREE.Group(); arm.add(add(new THREE.CylinderGeometry(0.06,0.05,0.7,5),ink,0,0.35,0,arm)); arm.add(add(new THREE.SphereGeometry(0.06,6,4),face,0,0.74,0,arm)); arm.position.set(0.24,1.7,0.03); inn.add(arm);
+  let av=false; Object.defineProperty(arm,'visible',{get(){ return av; },set(x){ av=!!x; rs.visible=rh.visible=!av; }}); arm.visible=false;
+  g.visible=false; g.userData={arm,t:0,seen:0,head:HD,inn}; return g; }
+
 function A4_build(){ if(A4) A4_stop(); gfox.scale.setScalar(1.45*0.8); const A={f:{},pt:0,D:A4_D0,h:0,hv:0,heel:0,lean:0,boom:0.8,side:1,yank:0,yankT:9,steadyT:0,speed:0,bx:0,bz:0,by:0,amp:0.55,fire:0,ink:0,surge:{st:'far',t:0,d:520,H:40,n:0,wait:26},eyes:[0,0,0],hand:0,wz:{n:22,t:0,k:0},thN:0,crk:2,phase:'sail',small:0,doorT:0};
   A4=A; A.amp=1.1; A.atmo0=JSON.parse(JSON.stringify(WATMO.salt)); A.lakeR=LAKE.r; LAKE.hide=true; A.hid=[]; const sg=wG.salt; if(sg){ sg.children.forEach(c=>{ A.hid.push([c,c.visible]); c.visible=false; }); }
   const G=A.g=new THREE.Group(); scene.add(G); const M=(l,o)=>{ const m=new THREE.MeshBasicMaterial(Object.assign({color:new THREE.Color(l,l,l),fog:false,side:THREE.DoubleSide},o||{})); (A.mats||(A.mats=[])).push([m,l]); return m; }, U4=A.U={uT:{value:0},uAmp:{value:0.55},uCamP:{value:new THREE.Vector3()},uFire:{value:0},uGu:{value:new THREE.Vector4(0,0,9,0)},uWd:{value:new THREE.Vector2(0,1)},uP0:{value:new THREE.Color()},uP1:{value:new THREE.Color()},uP2:{value:new THREE.Color()},uP3:{value:new THREE.Color()},uP4:{value:new THREE.Color()},uFogC:{value:new THREE.Color(0.6,0.45,0.45)},uLines:{value:1},uIgnR:{value:1e4},uBurnOn:{value:0},uClr:{value:15},uBreathY:{value:0},uSalt:{value:0},uAur:{value:0},uBl:{value:new THREE.Vector4(0,0,7,0)},uBlB:{value:new THREE.Vector3(0,0,0)},uBlF:{value:new THREE.Vector4(0,0,0,0)},uMyc:{value:0},uMycR:{value:0},uMycP:{value:-1},uMycO:{value:new THREE.Vector2()}};
@@ -5709,7 +5742,7 @@ void main(){ vec2 p=vW.xz; float d=length(p-uCamP.xz); if(uAur<0.01&&smoothstep(
       const win=new THREE.Mesh(new THREE.PlaneGeometry(1.3,1.4),new THREE.MeshBasicMaterial({color:new THREE.Color(1,0.72,0.32),fog:false,side:THREE.DoubleSide})); win.position.set(1.9,2.6,3.02); const wb=new THREE.Mesh(new THREE.PlaneGeometry(1.5,0.1),M(0.03)); wb.position.set(1.9,2.6,3.03); const wb2=new THREE.Mesh(new THREE.PlaneGeometry(0.1,1.5),M(0.03)); wb2.position.set(1.9,2.6,3.03);
       const dr=new THREE.Mesh(new THREE.PlaneGeometry(1.2,2.3),M(0.97)); dr.position.set(-1.3,1.15,3.02); const leaf=new THREE.Mesh(new THREE.BoxGeometry(1.2,2.3,0.07),M(0.12)); leaf.position.set(-2.45,1.15,3.5); leaf.rotation.y=-1.25; const ch=new THREE.Mesh(new THREE.BoxGeometry(0.8,2.2,0.8),M(0.3)); ch.position.set(2,7,0);
       const rock=new THREE.Mesh(new THREE.CylinderGeometry(13,17,3,10),M(0.2)); rock.position.y=-1.4; const stp=new THREE.Mesh(new THREE.BoxGeometry(1.8,0.22,0.7),M(0.4)); stp.position.set(-1.3,0.05,3.4); { const tb=new THREE.Mesh(new THREE.CylinderGeometry(0.42,0.42,0.05,12),M(0.3)); tb.position.set(-1.25,0.82,2.2); const tl=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.07,0.8,6),M(0.2)); tl.position.set(-1.25,0.4,2.2); const pl2=new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.12,0.02,10),M(0.75)); pl2.position.set(-1.3,0.86,2.25); const bk2=new THREE.Mesh(new THREE.PlaneGeometry(1.15,2.25),new THREE.MeshBasicMaterial({color:new THREE.Color(1,0.72,0.32),fog:false,side:THREE.DoubleSide})); bk2.position.set(-1.3,1.15,1.2); near.add(bk2,tb,tl,pl2); dr.visible=false; { const pl3=new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.12,0.02,10),M(0.75)); pl3.position.set(-1.05,0.86,2.05); const c1=new THREE.Mesh(new THREE.CylinderGeometry(0.035,0.03,0.07,7),M(0.8)); c1.position.set(-1.42,0.89,2.08); const c2=c1.clone(); c2.position.set(-0.95,0.89,2.3); const lm=new THREE.Mesh(new THREE.SphereGeometry(0.06,8,6),M(0.98)); lm.position.set(-1.2,0.98,2.0); A.steam=[]; for(const sx of [-1.3,-1.05]){ const st=new THREE.Mesh(new THREE.PlaneGeometry(0.035,0.3),M(0.9)); st.position.set(sx,1.1,2.2); near.add(st); A.steam.push(st); } near.add(pl3,c1,c2,lm); } } const lnt=new THREE.Mesh(new THREE.BoxGeometry(0.2,0.3,0.2),M(0.95)); lnt.position.set(-0.4,2.0,3.12); const lnb=new THREE.Mesh(new THREE.BoxGeometry(0.05,0.5,0.05),M(0.04)); lnb.position.set(-0.4,2.3,3.06); const ev=new THREE.Mesh(new THREE.BoxGeometry(8.2,0.14,0.5),M(0.06)); ev.position.set(0,4.42,3.3); near.add(body,roof,win,wb,wb2,dr,leaf,ch,rock,stp,lnt,lnb,ev); for(let q=0;q<6;q++){ const pv=new THREE.Mesh(new THREE.CylinderGeometry(0.4,0.45,0.08,7),M(0.42)); pv.position.set(-1.3+Math.sin(q*1.3)*0.5+q*0.3,0.14,4.4+q*1.55); near.add(pv); } H.add(near); G.add(H);
-    A.him=A3_figMake(true); A.g.add(A.him); A.him.visible=false;
+    A.him=A4_oldMan(M); A.g.add(A.him); A.him.visible=false;
     const fxm=new THREE.ShaderMaterial({vertexShader:'attribute vec3 aCol; varying vec3 vC; void main(){ vC=aCol; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }',fragmentShader:'varying vec3 vC; void main(){ gl_FragColor=vec4(vC*0.95,1.0); }'}); A.fox=foxModel(); A.fox.traverse(o=>{ if(o.isMesh){ if(o.material===worldMatA) o.material=fxm; else if(o.material===outlineMatA) o.visible=false; o.frustumCulled=false; } }); A.fox.scale.copy(gfox.scale); A.g.add(A.fox); }
   { const n=130, pos=new Float32Array(n*3); const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.BufferAttribute(pos,3)); A.spray=new THREE.Points(g,new THREE.PointsMaterial({color:0xf3ecd8,size:0.08,sizeAttenuation:true,fog:false,map:A4_flakeTex(),alphaTest:0.5,depthWrite:false})); A.spray.frustumCulled=false; G.add(A.spray); A.spP=[]; for(let i=0;i<n;i++) A.spP.push({x:0,y:-9,z:0,vx:0,vy:0,vz:0,l:0});
     const wg=new THREE.BufferGeometry(); wg.setAttribute('position',new THREE.Float32BufferAttribute([0,0,0, -0.5,0,1.2, -3.2,0,16,  0,0,0, -3.2,0,16, -4.6,0,16,  0,0,0, 3.2,0,16, 0.5,0,1.2,  0,0,0, 4.6,0,16, 3.2,0,16],3)); A.wake=new THREE.Mesh(wg,M(0.72,{transparent:true,opacity:0.8,depthWrite:false})); A.wake.frustumCulled=false; G.add(A.wake);
