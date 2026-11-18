@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.63 -->
+<!-- Thin Veil · beta 0.64 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -146,7 +146,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.63</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.64</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -7105,7 +7105,7 @@ function mornEnter(){ STY.stage='morn'; STY.t=0; STY.lines=[]; STY.busy=99; cons
     e.innerHTML='<div style="text-shadow:0 0 .6px rgba(60,60,60,.7)">'+wob("Kettle's on.")+'<br>'+wob("The day's yours, and they")+'<br>'+wob("don't make more.")+'<br>'+wob("Go and be unreasonable")+'<br>'+wob("with it.")+'<div style="margin-top:10px;font-size:19px;transform:rotate(-1.5deg)">'+wob("P.S. Window's open. Mind the step.")+'</div></div>';
     document.body.appendChild(e); M.noteEl=e; }
   // the sound: water on the sand, birds, gulls, and a small tune for a new day
-  if(sound.C){ const C=sound.C, out=C.createGain(); out.gain.value=0; out.connect(sound.out); out.gain.setTargetAtTime(1,C.currentTime,4); M.out=out;
+  if(sound.C){ const C=sound.C, out=C.createGain(); out.gain.value=0; out.connect(C.destination); out.gain.setTargetAtTime(1,C.currentTime,4); M.out=out;
     const n=C.createBufferSource(), buf=C.createBuffer(1,C.sampleRate*4,C.sampleRate), dd=buf.getChannelData(0); for(let i=0;i<dd.length;i++) dd[i]=Math.random()*2-1; n.buffer=buf; n.loop=true; const lp=C.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=600; const wg=C.createGain(); wg.gain.value=0.05; M.wave=null; M.nb=buf;
     const dl=C.createDelay(1.5), fb=C.createGain(), dw=C.createGain(); dl.delayTime.value=0.62*1.5; fb.gain.value=0.32; dw.gain.value=0.35; dl.connect(fb); fb.connect(dl); dl.connect(dw); dw.connect(out); M.mus=C.createGain(); M.mus.gain.value=0; M.mus.connect(out); M.mus.connect(dl); M.mus.gain.setTargetAtTime(1,C.currentTime+2,3); M.beat=C.currentTime+2.5; M.mstep=0; }
   player.x=0; player.z=0; player.yaw=-0.25; player.pitch=-0.05; vel.x=vel.z=0;
@@ -7197,7 +7197,8 @@ function mornUpdate(dt){ const M=MORN; if(!M) return; M.t+=dt; const t=M.t, C=so
     if(c.run>0){ c.run-=dt; const side=[Math.cos(g.rotation.y),-Math.sin(g.rotation.y)], nx=g.position.x+side[0]*c.dir*2.2*dt, nz=g.position.z+side[1]*c.dir*2.2*dt, h=mornH(nx,nz); if(h>0.02&&h<1.1){ g.position.x=nx; g.position.z=nz; g.position.y=h; } c.legs.forEach((l,i)=>{ l.rotation.y=0.5*Math.sin(t*30+i*1.7); }); }
     else c.legs.forEach(l=>{ l.rotation.y*=0.9; }); });
   M.gulls.forEach(g=>{ g.a+=g.s*dt; g.m.position.set(10+Math.cos(g.a)*g.r,g.h+Math.sin(t*0.4+g.r)*0.6,-30+Math.sin(g.a)*g.r); g.m.rotation.y=-g.a+(g.s>0?0:Math.PI); g.m.scale.y=1.3*(0.85+0.3*Math.sin(t*3+g.r)); });
-  if(C) mornMusic(); }
+  if(C){ mornMusic(); // the rest of the game is silent out here: only the morning's own tune
+    if(sound.out&&sound.out.gain.value>0.001&&!M.muteT){ M.muteT=1; sound.out.gain.cancelScheduledValues(C.currentTime); sound.out.gain.setTargetAtTime(0,C.currentTime,0.4); } else if(sound.out&&sound.out.gain.value>0.01) M.muteT=0; } }
 
 function roomLeave(){ gfox.visible=true; if(ROOM) ROOM.g.visible=false; STY.room=false; STY.fallY=undefined; }
 function roomUpdate(dt){ if(STY.stage==='morn') return; if(!STY.room||!ROOM||STY.stage==='mem') return; const t=STY.t, done=STY.lines.length===0&&STY.busy<=0; if(STY.stage==='a1room'&&t>9&&done&&!STY.flags.rx1){ STY.flags.rx1=1; say('xt',"...Hello? Was that the door?",0.6); } ROOM.spin.rotation.y+=dt*0.5; coatFig.visible=false;
