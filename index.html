@@ -5919,7 +5919,7 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
   }
   // ----- the undecided light: first his light goes out. Then three. You have to choose one: look at it, and keep looking -----
   { if(!A.f.lhOut&&(A.pD||-1)>=0.36&&!A.f.hand&&!A.moor){ A.f.lhOut=1; A.lhOut=1; A4_snd('hiss',0.5,0.35); A4_snd('tom',0.35,0.5); haptic(50); STY.lines=[]; STY.busy=0; say('fox',"...It went out. The light went out. Lights don't go out. That's the one thing they're for.",0.6); }
-    if(!A.f.q1&&(A.pD||-1)>=0.42&&A.f.lhOut&&!A.f.hand&&!A.moor&&STY.busy<1){ A.f.q1=1; A.qOn={t:0,lk:[0,0,0],pick:-1,pt:0,ch:0,cur:-1,n:0}; A.qHide=1; A4_snd('hiss',0.6,0.25); STY.lines=[]; STY.busy=0; say('fox',"Three. Now there are three. ...There was one. I counted one.",0.5); }
+    if(false&&!A.f.q1&&(A.pD||-1)>=0.42&&A.f.lhOut&&!A.f.hand&&!A.moor&&STY.busy<1){ A.f.q1=1; A.qOn={t:0,lk:[0,0,0],pick:-1,pt:0,ch:0,cur:-1,n:0}; A.qHide=1; A4_snd('hiss',0.6,0.25); STY.lines=[]; STY.busy=0; say('fox',"Three. Now there are three. ...There was one. I counted one.",0.5); }
     const Q=A.qOn; if(Q){ Q.t+=dt; const vd=Math.max(34,Math.min(900,A.D*0.36+34)), sep=vd*0.55, C=sound.C; camera.getWorldDirection(_b);
       if(!A.qg){ A.qg=[0,1,2].map(()=>{ const s=new THREE.Sprite(new THREE.SpriteMaterial({map:softTex(255,214,140),color:0xffffff,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})); A.g.add(s); return s; }); }
       // which one are you looking at?
@@ -6373,11 +6373,30 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
       (U.tail||[]).forEach((t2,i)=>{ t2.rotation.y=Math.sin(time*(1.6+2*fear)+i*0.7)*0.28*(1-0.6*fear); t2.rotation.x=(i===0?FP.tl:-0.12)*(0.7+0.5*fear); }); } }
   // his light is out before the three appear: no tower, no beam, no glow
   if(A.lhOut&&A.phase==='sail'){ if(A.house) A.house.visible=false; if(A.hGlow) A.hGlow.visible=false; if(A.hBeam) A.hBeam.visible=false; if(A.hFar) A.hFar.visible=false; }
-  // the stars come back as figures: rings and nested polygons, the same hand that drew Act II's sky. One by one they draw in
-  if(A.skyG&&A.starL){ if(!A.cfig){ A.cfig=[]; const D=[[0.5,0.62,0,1],[-0.55,0.75,1,0.8],[2.4,0.5,2,0.9],[-2.2,0.55,0,0.7],[3.3,0.95,1,0.6]];
-      D.forEach(([az,el,kind,sc],i)=>{ const m=new THREE.Mesh(A2_shapeGeo(kind),new THREE.MeshBasicMaterial({color:0xeee2c4,transparent:true,opacity:0,depthWrite:false,fog:false,side:THREE.DoubleSide,blending:THREE.AdditiveBlending})); const r=396; m.position.set(Math.sin(az)*Math.cos(el)*r,Math.sin(el)*r,-Math.cos(az)*Math.cos(el)*r); m.lookAt(0,0,0); m.scale.setScalar(sc*0.9); m.frustumCulled=false; m.userData={sc,sp:(i%2?-1:1)*(0.02+0.012*i)}; m.rotateZ(i*0.7); A.skyG.add(m); A.cfig.push(m); }); }
-    const gone=1-(A.mkT===undefined?1:A.mkT), k=Math.max(0,Math.min(1,gone*1.4-0.3)); A.starL.visible=false;
-    A.cfig.forEach((m,i)=>{ const f=Math.max(0,Math.min(1,k*5-i*0.8)), e=f*f*(3-2*f); m.visible=f>0.005; m.material.opacity=e*(0.55+0.12*Math.sin(time*0.9+i*1.7)); m.scale.setScalar(m.userData.sc*0.9*(0.82+0.18*e)); m.rotateZ(m.userData.sp*dt); }); }
+  // the stars come back drawn: four figures from the journey, each in its ring, drawn line by line with a star and a note at every corner
+  if(A.skyG&&A.starL){ A.starL.visible=false;
+    if(!A.dfig){ const ring=[]; for(let q=0;q<=36;q++){ const a=q/36*6.283; ring.push([Math.cos(a),Math.sin(a)]); }
+      const F=[ {n:'fox',az:-0.78,el:0.17,P:[[[-0.6,-0.3],[0.25,-0.3],[0.45,0.05],[0.7,-0.05],[0.45,-0.12]],[[0.45,0.05],[0.4,0.38],[0.3,0.06]],[[-0.6,-0.3],[-0.88,0.12],[-0.55,0.0]],[[-0.45,-0.3],[-0.45,-0.62]],[[0.15,-0.3],[0.15,-0.62]]]},
+        {n:'boat',az:-0.27,el:0.27,P:[[[-0.7,-0.2],[0.7,-0.2],[0.5,-0.48],[-0.5,-0.48],[-0.7,-0.2]],[[0,-0.2],[0,0.72]],[[0,0.66],[0.52,-0.1],[0,-0.1]]]},
+        {n:'window',az:0.25,el:0.22,P:[[[-0.5,-0.5],[0.5,-0.5],[0.5,0.5],[-0.5,0.5],[-0.5,-0.5]],[[0,-0.5],[0,0.5]],[[-0.5,0],[0.5,0]],[[0.22,-0.32],[0.3,-0.22],[0.38,-0.32],[0.3,-0.42],[0.22,-0.32]]]},
+        {n:'leek',az:0.76,el:0.15,P:[[[-0.08,-0.8],[-0.08,0.2]],[[0.08,-0.8],[0.08,0.2]],[[-0.08,-0.8],[0,-0.92],[0.08,-0.8]],[[-0.08,0.2],[-0.45,0.86]],[[0,0.2],[0.05,0.92]],[[0.08,0.2],[0.42,0.76]]]} ];
+      const mat=()=>new THREE.MeshBasicMaterial({color:0xf2e6c6,transparent:true,opacity:0,depthWrite:false,fog:false,side:THREE.DoubleSide,blending:THREE.AdditiveBlending});
+      const stT=softTex(255,240,210); A.dfig=F.map((f,fi)=>{ const g=new THREE.Group(), segs=[], stars=[], polys=[ring,...f.P];
+        polys.forEach((pl,pi)=>{ for(let q=0;q<pl.length-1;q++){ const a=pl[q], b=pl[q+1], L=Math.hypot(b[0]-a[0],b[1]-a[1]); const geo=new THREE.PlaneGeometry(1,pi===0?0.022:0.03); geo.translate(0.5,0,0); const m=new THREE.Mesh(geo,mat()); m.position.set(a[0],a[1],0); m.rotation.z=Math.atan2(b[1]-a[1],b[0]-a[0]); m.scale.x=0.0001; g.add(m); segs.push({m,L,ring:pi===0}); if(pi>0){ const st=new THREE.Sprite(new THREE.SpriteMaterial({map:stT,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})); st.position.set(b[0],b[1],0.01); st.scale.setScalar(0.0001); g.add(st); stars.push({st,seg:segs.length-1}); } } });
+        const r=396; g.position.set(Math.sin(f.az)*Math.cos(f.el)*r,Math.sin(f.el)*r,-Math.cos(f.az)*Math.cos(f.el)*r); g.lookAt(0,g.position.y*0.6,0); g.scale.setScalar(46); A.skyG.add(g);
+        // its reflection in the calm water
+        const mg=g.clone(true); mg.traverse(o=>{ if(o.material){ o.material=o.material.clone(); o.material.userData.refl=1; } }); mg.position.y=-g.position.y*0.9; mg.scale.set(46,-46,46); A.skyG.add(mg);
+        const tot=segs.reduce((a,q)=>a+q.L,0); return {g,mg,segs,stars,tot,n:f.n,fi,t:0,done:0}; }); A.dfT=0; }
+    const gone=1-(A.mkT===undefined?1:A.mkT), k=Math.max(0,Math.min(1,gone*1.4-0.3));
+    if(k>0.02) A.dfT+=dt; const NT=[392,440,523.25,587.33,659.25,783.99];
+    A.dfig.forEach((D,fi)=>{ const t0=fi*6.5, t=A.dfT-t0; if(t<0){ D.g.visible=D.mg.visible=false; return; } D.g.visible=D.mg.visible=true;
+      let left=(D.n==='leek'?1.05:1.3)*t, ring=Math.min(1,t/1.4); let si=0;
+      D.segs.forEach((S,i)=>{ let f; if(S.ring){ f=Math.max(0,Math.min(1,ring*36-i)); } else { const tl=Math.max(0,left-1.4*1.3); const before=D.segs.slice(0,i).filter(q=>!q.ring).reduce((a,q)=>a+q.L,0); f=Math.max(0,Math.min(1,(tl-before)/S.L)); }
+        S.m.scale.x=Math.max(0.0001,S.L*f); S.m.material.opacity=f>0?(S.ring?0.45:0.85)*(0.85+0.15*Math.sin(time*1.3+i)):0; });
+      D.stars.forEach((q,j)=>{ const S=D.segs[q.seg], on=S.m.scale.x>=S.L*0.999; if(on&&!q.on){ q.on=1; q.tp=0; if(sound.C) A4_tone(NT[(j+fi*2)%NT.length]*(fi===3?0.5:1),sound.C.currentTime+0.01,1.6,0.03,'sine'); } if(q.on){ q.tp+=dt; q.st.material.opacity=Math.min(1,q.tp*5)*(0.75+0.25*Math.sin(time*2.3+j)); q.st.scale.setScalar(0.12*(1+1.4*Math.exp(-q.tp*5))); } });
+      // the reflection follows, softer, shivering
+      D.mg.children.forEach((c,ci)=>{ const src=D.g.children[ci]; if(!src) return; c.scale.copy(src.scale); if(c.material&&src.material){ c.material.opacity=src.material.opacity*0.32; } }); D.mg.position.x=D.g.position.x+Math.sin(time*0.8+fi)*0.6;
+      if(D.n==='leek'&&!A.f.leek&&D.stars.every(q=>q.on)){ A.f.leek=1; STY.lines=[]; STY.busy=0; say('fox',"That one's a leek. ...Somebody up there has a sense of humour.",0.5); } }); }
   // the quiet clock: how long since the fox last finished talking. Events wait for it, so the lines land
   A.qt=(STY.lines.length||STY.busy>0)?0:(A.qt||0)+dt;
   // the white wash: the act opens on white while every shader compiles, then the harbour fades in out of it
@@ -6402,6 +6421,27 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
         if(hit){ A.speed*=0.35; A.jolt=1; A.flinch=1; A.press=1; A4_snd('hiss',0.6,0.9); A4_snd('tom',0.4,0.9); haptic([80,40,120]); STY.lines=[]; STY.busy=0; say('fox',"That one. You picked THAT one. ...We're on fire. More on fire.",0.2); }
         else { A.gB=Math.max(A.gB||0,0.7); A4_snd('gust',1.3,0.5); haptic(30); STY.lines=[]; STY.busy=0; say('fox',"...Through. You picked. I'd still be picking.",0.3); } }
       if(al>45||G.t>45){ G.w.forEach(o=>A.g.remove(o.g)); A.gapC=null; } } }
+  // FOLLOW THE GLOW: his light is out. The threads under the sea fork; one branch carries a pulse toward home. Three forks, then his light comes back
+  { const ok=A.phase==='sail'&&!A.moor&&!A.f.hand;
+    if(ok&&A.f.lhOut&&!A.f.glw&&(A.pD||-1)>=0.42&&STY.busy<1){ A.f.glw=1; A.glw={n:0,f:null,miss:0,D:A.D}; STY.lines=[]; STY.busy=0; say('fox',"It's gone. ...No. Look down. The threads. They're lit. ...One of them knows the way.",0.4); }
+    const Gw=A.glw; if(Gw){ A.D=Math.max(A.D,Gw.D);
+      if(!A.glU){ A.glU={uT:{value:0}}; A.glMat=(good)=>new THREE.ShaderMaterial({uniforms:{uT:A.glU.uT,uG:{value:good?1:0},uA:{value:0},uC:{value:new THREE.Color(0.55,1.0,0.82)}},transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,fog:false,
+          vertexShader:'varying vec2 vU; void main(){ vU=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
+          fragmentShader:'uniform float uT; uniform float uG; uniform float uA; uniform vec3 uC; varying vec2 vU; void main(){ float e=1.0-abs(vU.y-0.5)*2.0; float core=smoothstep(0.0,0.6,e); float p=uG*smoothstep(0.82,1.0,fract(vU.x*3.0-uT*0.9)); float a=(0.28+0.5*p)*core*smoothstep(0.0,0.06,vU.x)*smoothstep(1.0,0.75,vU.x); gl_FragColor=vec4(uC*(0.7+1.3*p),a*uA); }'}); }
+      A.glU.uT.value=time;
+      const mkB=(x,z,a,L,good)=>{ const g=new THREE.PlaneGeometry(L,2.2,24,1); g.rotateX(-Math.PI/2); g.translate(L/2,0,0); const m=new THREE.Mesh(g,A.glMat(good)); m.position.set(x,0.3,z); m.rotation.y=a+Math.PI/2; m.frustumCulled=false; A.g.add(m); return m; };
+      if(!Gw.f&&STY.busy<1.5){ const dx=A.hx-A.bx, hd=Math.atan2(-dx,1000), fw=[-Math.sin(hd),-Math.cos(hd)], ox=A.bx+fw[0]*70, oz=A.bz+fw[1]*70, good=Math.random()<0.5?-1:1, sp=0.68;
+        const tr=mkB(A.bx,A.bz,hd,70,true); const br=[-1,1].map(sd=>{ const a=hd-sd*sp; return {sd,a,m:mkB(ox,oz,a,110,sd===good)}; });
+        Gw.f={ox,oz,hd,good,tr,br,t:0,res:0,rt:0}; if(Gw.n===0&&Gw.miss===0) say('fox',"There. It splits. ...Follow the one that's moving.",0.6); }
+      const F=Gw.f; if(F){ F.t+=dt; const fa=Math.min(1,F.t/1.2); F.tr.material.uniforms.uA.value=fa*(F.res?Math.max(0,1-F.rt):1);
+        const rx=A.bx-F.ox, rz=A.bz-F.oz, fw=[-Math.sin(F.hd),-Math.cos(F.hd)], rt=[Math.cos(F.hd),-Math.sin(F.hd)], al=rx*fw[0]+rz*fw[1], lt=rx*rt[0]+rz*rt[1];
+        F.br.forEach(b=>{ b.m.material.uniforms.uA.value=fa*(F.res?(b.sd===F.good&&F.res===1?Math.max(0.4,1-F.rt*0.3):Math.max(0,1-F.rt*1.2)):1); });
+        if(!F.res&&al>14){ const side=lt>0?1:-1; F.res=side===F.good?1:-1;
+          if(F.res===1){ Gw.n++; if(sound.C) A4_tone([440,523.25,659.25][Math.min(2,Gw.n-1)],sound.C.currentTime,2.2,0.045,'sine'); haptic(25); A.gB=Math.max(A.gB||0,0.5);
+            if(Gw.n<3){ STY.lines=[]; STY.busy=0; say('fox',Gw.n===1?"...Yes. That one. Again.":"Again. It's thinning. Keep on it.",0.2); } }
+          else { Gw.miss++; A4_snd('hiss',0.5,0.3); haptic(60); STY.lines=[]; STY.busy=0; say('fox',["Not that one. That one's just going out. ...Back on the moving one.","That's dark. You went into the dark one. It's fine. It's FINE. There'll be another."][(Gw.miss-1)%2],0.2); } }
+        if(F.res){ F.rt+=dt; if(F.rt>2.2){ [F.tr,...F.br.map(b=>b.m)].forEach(m=>{ A.g.remove(m); m.geometry.dispose(); }); Gw.f=null;
+            if(Gw.n>=3){ A.glw=null; A.lhOut=0; if(A.hGlow) A.hGlow.visible=true; if(A.house) A.house.visible=true; A4_snd('tom',1,0.5); haptic([40,40,80]); STY.lines=[]; STY.busy=0; say('fox',"...There. His light. It came back on. ...It was always going to come back on. I just didn't know that.",0.6); } } } } } }
 
   A.heel+=((A.lean*0.15-A.side*0.1*(A.speed/9)*(1+0.7*A.grv)-Math.max(-1.2,Math.min(1.2,A.hv))*0.2)-A.heel)*Math.min(1,dt*2); A.by=A4_wave(A.bx,A.bz,A.st,A.amp)+(A.breathY||0);
   const B=A.boat, pitchB=(A4_wave(A.bx-Math.sin(A.h)*2,A.bz-Math.cos(A.h)*2,A.st,A.amp)-A4_wave(A.bx+Math.sin(A.h)*2,A.bz+Math.cos(A.h)*2,A.st,A.amp))/4; B.position.set(A.bx,A.by-0.25,A.bz); B.rotation.set(0,0,0); B.rotation.order='YXZ'; B.rotation.y=A.h; A.pitchS=(A.pitchS||0)+(pitchB*0.65-(A.pitchS||0))*Math.min(1,dt*2.5); B.rotation.x=A.pitchS; B.rotation.z=-A.heel;
