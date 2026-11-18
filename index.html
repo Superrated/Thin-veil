@@ -6353,6 +6353,11 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
     A.cfig.forEach((m,i)=>{ const f=Math.max(0,Math.min(1,k*5-i*0.8)), e=f*f*(3-2*f); m.visible=f>0.005; m.material.opacity=e*(0.55+0.12*Math.sin(time*0.9+i*1.7)); m.scale.setScalar(m.userData.sc*0.9*(0.82+0.18*e)); m.rotateZ(m.userData.sp*dt); }); }
   // the quiet clock: how long since the fox last finished talking. Events wait for it, so the lines land
   A.qt=(STY.lines.length||STY.busy>0)?0:(A.qt||0)+dt;
+  // the white wash: the act opens on white while every shader compiles, then the harbour fades in out of it
+  { if(!A.ww&&A.pt<1){ const e=document.createElement('div'); e.style.cssText='position:fixed;inset:0;background:#f4f1ea;opacity:1;transition:none;pointer-events:none;z-index:4'; document.body.appendChild(e); A.ww={el:e,ok:0}; }
+    const Z=A.ww; if(Z&&!Z.gone){ try{ rc.cool=Math.max(rc.cool,2.5); }catch(e){}
+      if(!Z.req&&A.pt>3.2){ Z.req=1; try{ const pr=renderer.compileAsync?renderer.compileAsync(scene,camera):Promise.resolve(renderer.compile(scene,camera)); pr.then(()=>{ Z.ok=1; }).catch(()=>{ Z.ok=1; }); }catch(e){ Z.ok=1; } }
+      if((Z.ok&&A.pt>3.6)||A.pt>9){ Z.gone=1; Z.el.style.transition='opacity 2.2s ease'; requestAnimationFrame(()=>{ Z.el.style.opacity=0; }); setTimeout(()=>{ try{ Z.el.remove(); }catch(e){} },2600); } } }
 
   A.heel+=((A.lean*0.15-A.side*0.1*(A.speed/9)*(1+0.7*A.grv)-Math.max(-1.2,Math.min(1.2,A.hv))*0.2)-A.heel)*Math.min(1,dt*2); A.by=A4_wave(A.bx,A.bz,A.st,A.amp)+(A.breathY||0);
   const B=A.boat, pitchB=(A4_wave(A.bx-Math.sin(A.h)*2,A.bz-Math.cos(A.h)*2,A.st,A.amp)-A4_wave(A.bx+Math.sin(A.h)*2,A.bz+Math.cos(A.h)*2,A.st,A.amp))/4; B.position.set(A.bx,A.by-0.25,A.bz); B.rotation.set(0,0,0); B.rotation.order='YXZ'; B.rotation.y=A.h; A.pitchS=(A.pitchS||0)+(pitchB*0.65-(A.pitchS||0))*Math.min(1,dt*2.5); B.rotation.x=A.pitchS; B.rotation.z=-A.heel;
