@@ -6,9 +6,9 @@ A small psychedelic horror game about a fox, an old man, a kitchen, and a sea th
 
 ## Play
 
-- **Download:** grab `index.html` from the [latest release](https://github.com/Superrated/Thin-veil/releases/latest) (or [direct download](https://raw.githubusercontent.com/Superrated/Thin-veil/main/index.html) — right-click → Save link as).
-- Open the file in a browser (Chrome, Safari, Firefox). No install needed. Best with headphones.
-- Works on phones and desktop. On a phone, play in landscape.
+- **Download:** [thin-veil-beta-0.1.zip](https://github.com/Superrated/Thin-veil/raw/main/download/thin-veil-beta-0.1.zip). Unzip it and open `index.html` in a browser (Chrome, Safari, Firefox). Nothing to install.
+- Or save just the game file: [index.html](https://github.com/Superrated/Thin-veil/raw/main/index.html) (right-click → Save link as).
+- Best with headphones. Works on phones and desktop; on a phone, play in landscape.
 
 It needs an internet connection the first time it loads (it fetches three.js from a CDN).
 
