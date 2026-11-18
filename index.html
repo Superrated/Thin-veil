@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.40 -->
+<!-- Thin Veil · beta 0.41 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -132,7 +132,7 @@
 </head>
 <body>
 <div id="start" class="min tests">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.40</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.41</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -6365,7 +6365,7 @@ function A4_update(dt){ const A=A4; if(!A) return; if(typeof mists!=='undefined'
             float a=uA*smoothstep(0.0,0.03,e); gl_FragColor=vec4(c,a); }`}));
       A.fsky.frustumCulled=false; A.fsky.renderOrder=-2; A.g.add(A.fsky);
       const N=MOBILE?180:320, eg=new THREE.BufferGeometry(); eg.setAttribute('position',new THREE.BufferAttribute(new Float32Array(N*3),3)); A.esnow=new THREE.Points(eg,new THREE.PointsMaterial({color:0xff7426,size:0.32,sizeAttenuation:true,map:A4_flakeTex(),alphaTest:0.5,fog:false})); A.esnow.frustumCulled=false; A.g.add(A.esnow); A.esP=[...Array(N)].map(()=>[(Math.random()-0.5)*90,Math.random()*45,(Math.random()-0.5)*90,Math.random()*6]); }
-    A.fskyU.uT.value=time; A.fskyU.uA.value=k; A.fskyU.uP.value=A.pB||0; A.fskyU.uHot.value.set(-Math.sin(A.hL||0),-Math.cos(A.hL||0)); A.fskyU.uB.value=A.brth===undefined?0.5:A.brth; A.fsky.visible=k>0.01&&A.phase==='sail'; A.fsky.position.set(camera.position.x,-4,camera.position.z);
+    A.fskyU.uT.value=time; A.fskyU.uA.value=k; A.fskyU.uP.value=A.pB||0; if(!A.hotD) A.hotD=[-Math.sin(A.hL||A.h||0),-Math.cos(A.hL||A.h||0)]; A.fskyU.uHot.value.set(A.hotD[0],A.hotD[1]); A.fskyU.uB.value=A.brth===undefined?0.5:A.brth; A.fsky.visible=k>0.01&&A.phase==='sail'; A.fsky.position.set(camera.position.x,-4,camera.position.z);
     A.esnow.visible=k>0.05&&A.phase==='sail'; if(A.esnow.visible){ const P=A.esnow.geometry.attributes.position, c=camera.position, wx=Math.sin(A.wf||0)*2.5, wz=Math.cos(A.wf||0)*2.5, n=Math.floor(A.esP.length*k); A.esP.forEach((q,i)=>{ if(i>=n){ P.setXYZ(i,0,-99,0); return; } q[1]-=(1.6+0.6*Math.sin(q[3]))*dt; q[0]+=(wx+Math.sin(time*0.9+q[3])*0.8)*dt; q[2]+=(wz+Math.cos(time*0.7+q[3])*0.8)*dt; if(q[1]<-2){ q[1]=44; } if(q[0]>45) q[0]-=90; if(q[0]<-45) q[0]+=90; if(q[2]>45) q[2]-=90; if(q[2]<-45) q[2]+=90; P.setXYZ(i,c.x+q[0],q[1],c.z+q[2]); }); P.needsUpdate=true; } }
   // ===== comet smoke: hard-edged toon puffs that bloom and darken behind every fireball =====
   if(A.cm){ if(!A.csm){ const N=MOBILE?420:760, g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(N*3),3)); g.setAttribute('aS',new THREE.BufferAttribute(new Float32Array(N),1)); g.setAttribute('aC',new THREE.BufferAttribute(new Float32Array(N*3),3));
@@ -6419,7 +6419,7 @@ function A4_update(dt){ const A=A4; if(!A) return; if(typeof mists!=='undefined'
   if(A.fleet&&A.flRe) A.fleet.forEach(b=>{ if(b.visible&&b.userData.wk) A4_wreckTick(b.userData.wk); });
   // THE CHOICE: three burning wrecks across the way, two gaps between them; the middle one is drifting, one gap is closing. Pick
   { const B=A.brn||{st:'off'}, live=B.st==='on'&&A.fire>0.5;
-    if(live&&!A.f.gapC&&(A.pB||0)>=0.55&&!A.nmc&&A.phase==='sail'){ A.f.gapC=1; const fw=[-Math.sin(A.h),-Math.cos(A.h)], rt=[Math.cos(A.h),-Math.sin(A.h)], G={t:0,cl:Math.random()<0.5?-1:1,fw,rt,cx:A.bx+fw[0]*150,cz:A.bz+fw[1]*150,w:[]};
+    if(live&&!A.f.gapC&&(A.pB||0)>=0.55&&!A.nmc&&A.phase==='sail'){ A.f.gapC=1; const fw=[-Math.sin(A.h),-Math.cos(A.h)], rt=[Math.cos(A.h),-Math.sin(A.h)], G={t:0,cl:Math.random()<0.5?-1:1,fw,rt,cx:A.bx+fw[0]*120,cz:A.bz+fw[1]*120,w:[]}; A4_setpiece(A,A.bx+fw[0]*120,3,A.bz+fw[1]*120,3.2);
       [-1,0,1].forEach(k=>{ const w=A4_wreck(2.9); w.rotation.y=A.h+Math.PI/2; A.g.add(w); G.w.push({g:w,k,lat:k*20}); }); A.gapC=G; STY.lines=[]; STY.busy=0; say('fox',"Two gaps. ...One's closing. Pick one. PICK ONE.",0.2); A4_snd('tom',0.5,0.6); haptic([40,60,40]); }
     const G=A.gapC; if(G){ G.t+=dt; G.w[1].lat=Math.min(10.5,G.t*0.8)*G.cl;
       G.w.forEach(o=>{ const x=G.cx+G.rt[0]*o.lat, z=G.cz+G.rt[1]*o.lat, d=Math.hypot(x-A.bx,z-A.bz); o.g.position.set(x,A4_wave(x,z,A.st,A.amp)+(A.breathY||0)+0.4,z); o.g.rotation.z=0.05*Math.sin(time*0.6+o.k); A4_wreckTick(o.g); });
@@ -6622,7 +6622,7 @@ function A4_update(dt){ const A=A4; if(!A) return; if(typeof mists!=='undefined'
     // gusts: a dark, ruffled patch crossing the water. Put the boat in it
     { const g=A.gu, U=U4.uGu.value; A.guT-=dt; if(!g.on&&A.guT<0&&live&&p<0.6){ const lat=(4+Math.random()*7)*(Math.random()<0.5?-1:1); g.on=1; g.got=0; g.t=0; g.r=9; g.x=A.bx+fw[0]*125+rt[0]*lat; g.z=A.bz+fw[1]*125+rt[1]*lat; g.vx=-fw[0]*2.5; g.vz=-fw[1]*2.5; A4_once('gu0',"That dark patch on the water. That's a gust. It's faster in there. Everything bad is faster. ...Go on, then."); }
       if(g.on){ g.t+=dt; g.x+=g.vx*dt; g.z+=g.vz*dt; const rx=g.x-A.bx, rz=g.z-A.bz, al=rx*fw[0]+rz*fw[1], inn=Math.hypot(rx,rz)<g.r; U.set(g.x,g.z,g.r,Math.min(1,g.t*0.6));
-        if(inn){ A.gB+=(1-A.gB)*Math.min(1,dt*2.2); if(!g.got){ g.got=1; A.streak++; const N=[0,2,4,7,9,12,14,16], C=sound.C; A4_snd('gust',1.25,0.5); if(C){ const f0=293.66*Math.pow(2,N[Math.min(7,A.streak-1)]/12); A4_tone(f0,C.currentTime+0.05,2.2,0.07,'sine'); A4_tone(f0*1.5,C.currentTime+0.35,1.9,0.04,'sine'); } haptic(30); A.heel-=A.side*0.06; if(A.streak===1&&done) A4_once('gu1',"...Oh. That was the wind doing something FOR us. ...Do that again."); if(A.streak===3&&done) A4_once('gu3',"Three in a row. You're reading the water. Nobody taught me that."); } }
+        if(inn){ A.gB+=(1-A.gB)*Math.min(1,dt*2.2); if(!g.got){ g.got=1; A.streak++; const N=[0,2,4,7,9,12,14,16], C=sound.C; A4_snd('gust',1.25,0.5);  haptic(30); A.heel-=A.side*0.06; if(A.streak===1&&done) A4_once('gu1',"...Oh. That was the wind doing something FOR us. ...Do that again."); if(A.streak===3&&done) A4_once('gu3',"Three in a row. You're reading the water. Nobody taught me that."); } }
         if(al<-22){ if(!g.got) A.streak=0; g.on=0; U.w=0; A.guT=11+Math.random()*8; } }
       if(!g.on||Math.hypot(g.x-A.bx,g.z-A.bz)>=g.r) A.gB=Math.max(0,A.gB-dt*0.3); if(A.gB>0.4){ A.gH=(A.gH||0)-dt; if(A.gH<0){ A.gH=0.7; A4_snd('gust',1.6,0.14*A.gB); } } }
     // the light goes out. For a while there is nothing to sail for, and nobody says so
