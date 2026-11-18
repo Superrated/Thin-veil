@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.41 -->
+<!-- Thin Veil · beta 0.42 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -132,7 +132,7 @@
 </head>
 <body>
 <div id="start" class="min tests">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.41</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.42</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -5987,7 +5987,7 @@ function A4_update(dt){ const A=A4; if(!A) return; if(typeof mists!=='undefined'
     // flames right beside the hull
     X.near.forEach((f,i)=>{ const u=f.userData; f.visible=F>0.5&&B.st==='on'&&i<3; if(!f.visible) return; const a=i/3*6.283+0.4*Math.sin(time*0.3+i), r=13+5*((i*7)%5)/4+0.8*Math.sin(time*1.7+u.p), x=A.bx+Math.sin(a)*r, z=A.bz+Math.cos(a)*r; f.position.set(x,A4_wave(x,z,A.st,A.amp)+(A.breathY||0)-0.1,z); const k=u.s*0.75*fla*(0.7+0.5*Math.random()); f.scale.set(k*0.6,k*(0.9+0.4*Math.random()),1); });
     // the horizon and the sky burn
-    X.ring.forEach((f,i)=>{ const u=f.userData; f.visible=on&&(B.R===undefined||B.R<560); if(!f.visible) return; const nR=X.ring.length, a=A.h+Math.PI+(i%2?1:-1)*(0.45+Math.floor(i/2)/Math.max(1,nR/2)*1.35)+0.04*Math.sin(time*0.2+i), cp=camera.position; f.position.set(cp.x+Math.sin(a)*540,-12,cp.z+Math.cos(a)*540); const k=u.s*(0.8+0.35*Math.sin(time*(5+i%3)+u.p)+0.15*Math.random()); f.scale.set(k*0.9,k,1); });
+    X.ring.forEach((f,i)=>{ const u=f.userData; f.visible=on&&(B.R===undefined||B.R<560); if(!f.visible) return; const nR=X.ring.length, a=(A.ringH===undefined?(A.ringH=A.h):A.ringH)+Math.PI+(i%2?1:-1)*(0.45+Math.floor(i/2)/Math.max(1,nR/2)*1.35)+0.04*Math.sin(time*0.2+i), cp=camera.position; f.position.set(cp.x+Math.sin(a)*540,-12,cp.z+Math.cos(a)*540); const k=u.s*(0.8+0.35*Math.sin(time*(5+i%3)+u.p)+0.15*Math.random()); f.scale.set(k*0.9,k,1); });
     // the light, surrounded: you can't tell if it's burning too
     { const H=A.house.position, hv=F>0.5&&on&&pB>0.42; X.house.forEach((f,i)=>{ const u=f.userData; const hn=Math.hypot(H.x-A.bx,H.z-A.bz)<520; f.visible=hv&&hn; if(!f.visible) return; const a=i/5*6.283+time*0.4, fx=H.x+Math.sin(a)*14, fz=H.z+Math.cos(a)*14; f.position.set(fx,A4_wave(fx,fz,A.st,A.amp),fz); const k=u.s*(0.8+0.4*Math.random()); f.scale.set(k*0.7,k,1); }); A.hGlow.material.opacity=hv?0.25+0.2*Math.random():1; if(hv) A4_once('fls',"The light. The fire's got round the light. ...I can't tell. I can't tell if it's burning.",1.2); }
     // burning gulls that fall and never land
