@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.22 -->
+<!-- Thin Veil · beta 0.23 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -132,7 +132,7 @@
 </head>
 <body>
 <div id="start" class="min tests">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.22</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.23</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -5797,7 +5797,7 @@ function A4_door(A,dt){ A.doorT+=dt; if(A.doorT>2.4&&!A.f.road){ A.f.road=1; say
   finalU.uMP.value.x+=(0.05-finalU.uMP.value.x)*Math.min(1,dt); A.amp+=(0.25-A.amp)*Math.min(1,dt*0.5);
   if(t>2.5) A4_once('d1',"It isn't a tower. It never was. It's a house. With the lamp in the window.",0.8); if(A.f.d1&&A4_done()) A4_once('d2',"...He's holding the door. He's been holding it since supper."); if(A.f.d2&&A4_done()) A4_once('cnt',(()=>{ const w=numW(Math.floor((STY.cnt||2400)/100)*100); return w[0].toUpperCase()+w.slice(1)+" and... "+w+" and. ...I'll stop. There's nothing left to count to."; })());
   if(d<5.2&&A4_done()) A4_once('d3',"That's close enough. That's close enough, we can see from here."); if(d<4.1&&!A.f.q){ A.f.q=1; A.qT=0; STY.lines=[]; STY.busy=0; if(A.bus&&sound.C) A.bus.gain.setTargetAtTime(0,sound.C.currentTime,0.05); hush(true); haptic(40); }
-  if(A.f.q){ A.qT+=dt; const inK=smooth(9,18,A.qT); player.x+=(dx-player.x)*Math.min(1,dt*0.25); player.z+=(dz+1.9-1.6*inK-player.z)*Math.min(1,dt*0.25); player.yaw+=(Math.atan2(-(dx-player.x),-(H.z+1.2-player.z))*inK*0+(-0.0)-player.yaw)*Math.min(1,dt*0.6*inK); player.pitch+=(-0.18*inK-player.pitch)*Math.min(1,dt*0.6); A.tkT=(A.tkT||0)-dt; if(A.qT>4&&A.tkT<0){ A.tkT=1; A4_snd('tick',1.3,0.12); } if(A.qT>3.5&&!A.f.qd5){ A.f.qd5=1; say('xt',"Plenty of time? ...No. Enough, though. Sit.",0.4); } 
+  if(A.f.q){ A.qT+=dt; const inK=smooth(9,18,A.qT); player.x+=(dx-player.x)*Math.min(1,dt*0.25); player.z+=(dz+1.9-1.6*inK-player.z)*Math.min(1,dt*0.25); player.yaw+=(Math.atan2(-(dx-player.x),-(H.z+1.2-player.z))*inK*0+(-0.0)-player.yaw)*Math.min(1,dt*0.6*inK); player.pitch+=(-0.18*inK-player.pitch)*Math.min(1,dt*0.6); A.tkT=(A.tkT||0)-dt; if(A.qT>4&&A.tkT<0){ A.tkT=1; A4_snd('tick',1.3,0.12); } if(A.qT>3.5&&!A.f.qd6){ A.f.qd6=1; say('xt',"...That thin thing you kept seeing through all night? That was only you, being afraid. It goes thin when you look at it.",0.4); } if(A.qT>10&&!A.f.qd5){ A.f.qd5=1; say('xt',"Plenty of time? ...No. Enough, though. Sit.",0.4); } 
     if(A.f.qd5&&!STY.lines.length&&A4_done()) A.endWt=(A.endWt||0)+dt; if((A.endWt>3.5||A.qT>70)&&!A.f.blk){ A.f.blk=1; blackEl.style.transition='none'; blackEl.style.background='#000'; blackEl.style.opacity=1; noteEl.style.opacity=0; STY.lines=[]; STY.busy=99;
       const e=document.createElement('div'); e.style.cssText='position:fixed;inset:0;z-index:60;background:#000;pointer-events:none;opacity:0;transition:opacity 4s ease'; e.innerHTML='<div style="position:absolute;left:50%;top:64%;width:150px;height:60px;margin-left:-75px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(255,120,40,.55) 0%,rgba(190,50,10,.22) 40%,rgba(0,0,0,0) 72%)"></div><div style="position:absolute;left:66%;top:33%;width:5px;height:5px;border-radius:50%;background:#ffd9a0;box-shadow:0 0 10px 3px rgba(255,200,130,.35);opacity:.5"></div><div id="a4end" style="position:absolute;left:0;right:0;top:44%;text-align:center;font:italic 20px Georgia,serif;color:#f0a860;opacity:0;transition:opacity 2.5s ease"></div>'; document.body.appendChild(e); A.endEl=e; }
     if(A.f.blk){ const el=A.endEl, tx=el.querySelector('#a4end'), q=A.qT-13.2; if(q>1&&!A.f.ch7&&sound.C){ A.f.ch7=1; const C=sound.C, t0=C.currentTime+0.2; for(let k=0;k<7;k++){ for(const [f,v] of [[523.25,0.07],[1046.5,0.025],[784,0.018]]){ const o=C.createOscillator(), g=C.createGain(); o.type='sine'; o.frequency.value=f; const tt=t0+k*0.95; g.gain.setValueAtTime(0,tt); g.gain.linearRampToValueAtTime(v,tt+0.012); g.gain.exponentialRampToValueAtTime(0.0001,tt+1.7); o.connect(g); g.connect(C.destination); o.start(tt); o.stop(tt+1.8); } } } if(q>3.5) el.style.opacity=1; if(!A.endW){ const mn=Math.max(1,Math.round(performance.now()/60000)), h=Math.floor(mn/60), m=mn%60, cap=x=>x[0].toUpperCase()+x.slice(1); A.endW=(h===0?cap(numW(mn))+' minute'+(mn===1?'':'s'):(h===1?'An hour':cap(numW(h))+' hours')+(m?' and '+numW(m)+' minute'+(m===1?'':'s'):''))+', running from nothing.'+(h>=2?' Impressive. In a way.':''); tx.style.color='#efe6d2'; }
@@ -6468,8 +6468,6 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
       // the plankton under the mirror: stronger as the sky builds, brightest when the stars come down
       if(U4.uBlB) U4.uBlB.value.z=0.35+0.35*smooth(5,30,T)+1.6*smooth(42,52,T); if(U4.uBl) U4.uBl.value.w=0;
       const F=U4.uBlF&&U4.uBlF.value; if(F&&F.w>0){ F.z+=dt*32; F.w=Math.max(0,F.w-dt*0.8); }
-      // the veil is thinnest when you stop being afraid: the ink of the world lifts while you watch
-      if(finalU.uVeil) finalU.uVeil.value=smooth(6,26,T)*(1-smooth(56,59,T)*0)*A.aur; if(T>27.5&&!Wb.sV&&quiet){ Wb.sV=1; say('fox',"...Everything's softer. Like someone took the glass out. ...Was it always this close?",0.4); }
       // motes rise from the sea; the aurora swells and whitens; then everything goes white, and when it clears you're at his house
       A.aurSw=smooth(42,57,T);
       if(T>49&&!Wb.mo){ const N=MOBILE?180:320, g=new THREE.BufferGeometry(), P=new Float32Array(N*3); g.setAttribute('position',new THREE.BufferAttribute(P,3)); Wb.mo={m:new THREE.Points(g,new THREE.PointsMaterial({size:0.5,map:softTex(255,255,255),color:0xd8fff2,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})),q:[...Array(N)].map(()=>{ const a=Math.random()*6.2832, r=4+Math.pow(Math.random(),0.6)*90; return {x:Math.cos(a)*r,z:Math.sin(a)*r,y:-Math.random()*8,v:1.5+Math.random()*4}; })}; Wb.mo.m.frustumCulled=false; A.g.add(Wb.mo.m); }
@@ -6491,7 +6489,6 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
         B.m.gain.setTargetAtTime(0.55*lvl*(A.aur||0),t,on?2.2:3.5); B.lp.frequency.setTargetAtTime(380+(sp?5200:3200*Math.min(1,n/10))*lvl,t,3);
         B.v.forEach((V,i)=>{ V.g.gain.setTargetAtTime(i<act?(i<3?0.06:0.035*(1-0.03*i)):0,t,2.5); V.o.frequency.setTargetAtTime(V.o.frequency.value*(1+0.0008*Math.sin(t*0.3+i)),t,1); });
         if(!on){ B.off+=0.5; if(B.off>14){ B.v.forEach(V=>{ try{ V.o.stop(); V.o2.stop(); }catch(e){} }); try{ B.m.disconnect(); }catch(e){} A.bls=null; } } else B.off=0; } } }
-  if(finalU.uVeil&&!(A.calT!==undefined&&A.calT>3&&A.phase==='sail')) finalU.uVeil.value=Math.max(0,finalU.uVeil.value-dt*0.5);
 
   A.heel+=((A.lean*0.15-A.side*0.1*(A.speed/9)*(1+0.7*A.grv)-Math.max(-1.2,Math.min(1.2,A.hv))*0.2)-A.heel)*Math.min(1,dt*2); A.by=A4_wave(A.bx,A.bz,A.st,A.amp)+(A.breathY||0);
   const B=A.boat, pitchB=(A4_wave(A.bx-Math.sin(A.h)*2,A.bz-Math.cos(A.h)*2,A.st,A.amp)-A4_wave(A.bx+Math.sin(A.h)*2,A.bz+Math.cos(A.h)*2,A.st,A.amp))/4; B.position.set(A.bx,A.by-0.25,A.bz); B.rotation.set(0,0,0); B.rotation.order='YXZ'; B.rotation.y=A.h; A.pitchS=(A.pitchS||0)+(pitchB*0.65-(A.pitchS||0))*Math.min(1,dt*2.5); B.rotation.x=A.pitchS; B.rotation.z=-A.heel;
