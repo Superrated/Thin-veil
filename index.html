@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.19 -->
+<!-- Thin Veil · beta 0.20 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -132,7 +132,7 @@
 </head>
 <body>
 <div id="start" class="min tests">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.19</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.20</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -6523,10 +6523,19 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
       const rot=smooth(31,40,T)*(T-31)*0.035; Wb.em.rotation.y=Wb.sm.rotation.y=rot; Wb.em.material.uniforms.uRb.value=smooth(32,37,T); Wb.em.material.uniforms.uT.value=time;
       if(T>34&&!Wb.s2){ Wb.s2=1; if(sound.C){ const t0=sound.C.currentTime; [220,277.18,329.63,440,554.37,659.25,880].forEach((f,i)=>A4_tone(f,t0+i*0.2,9-i*0.4,0.02,'sine')); } }
       if(T>41&&!Wb.s3&&quiet){ Wb.s3=1; say('fox',"They're coming down. Even the sky doesn't keep anything. ...That's why you look while it's there.",0.4); } 
-      if(T>42){ Wb.mT=(Wb.mT||0)-dt; if(Wb.mT<0){ Wb.mT=0.16; const k=Wb.order.find(q=>Wb.lit[q]>=0&&!Wb.fall[q]); if(k!==undefined){ Wb.fall[k]=1; const from=Wb.V[k].clone().multiplyScalar(Wb.R0).applyAxisAngle(new THREE.Vector3(0,1,0),rot).add(A.skyG.getWorldPosition(new THREE.Vector3())), a=Math.random()*6.2832, r=12+Math.random()*60, to=new THREE.Vector3(A.bx+Math.cos(a)*r,0,A.bz+Math.sin(a)*r);
+      if(T>42){ Wb.mT=(Wb.mT||0)-dt; if(Wb.mT<0){ Wb.mT=0.09; const k=Wb.order.find(q=>Wb.lit[q]>=0&&!Wb.fall[q]); if(k!==undefined){ Wb.fall[k]=1; const from=Wb.V[k].clone().multiplyScalar(Wb.R0).applyAxisAngle(new THREE.Vector3(0,1,0),rot).add(A.skyG.getWorldPosition(new THREE.Vector3())), a=Math.random()*6.2832, r=12+Math.random()*60, to=new THREE.Vector3(A.bx+Math.cos(a)*r,0,A.bz+Math.sin(a)*r);
             if(!Wb.mtx) Wb.mtx=softTex(235,255,250); const m=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({map:Wb.mtx,color:0xddfff4,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})); m.frustumCulled=false; A.g.add(m); Wb.met.push({m,from,to,t:0,L:1.6+Math.random()*0.7,k}); } } }
-      Wb.met.forEach(M=>{ M.t+=dt; const u=Math.min(1,M.t/M.L), e=u*u, pos=M.from.clone().lerp(M.to,e), ahead=M.from.clone().lerp(M.to,Math.min(1,e+0.04)); M.m.position.copy(pos); { const skW=A.skyG.getWorldPosition(new THREE.Vector3()); if(!Wb.mp) Wb.mp=[]; Wb.mp[M.k]=pos.clone().sub(skW).applyAxisAngle(new THREE.Vector3(0,1,0),-Wb.em.rotation.y); } M.m.lookAt(camera.position); const dir=ahead.sub(pos).project(camera), ang=Math.atan2(dir.y,dir.x); M.m.rotation.z=ang; M.m.scale.set(18*(0.4+u),1.6,1); M.m.material.opacity=1;
+      if(!Wb.tr){ const N=900, g=new THREE.BufferGeometry(), P=new Float32Array(N*3), Cc=new Float32Array(N*3); g.setAttribute('position',new THREE.BufferAttribute(P,3)); g.setAttribute('color',new THREE.BufferAttribute(Cc,3)); Wb.tr={m:new THREE.Points(g,new THREE.PointsMaterial({size:1.1,map:softTex(255,255,255),vertexColors:true,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})),q:[...Array(N)].map(()=>({l:0})),i:0}; Wb.tr.m.frustumCulled=false; A.g.add(Wb.tr.m); }
+      Wb.met.forEach(M=>{ M.t+=dt; const u=Math.min(1,M.t/M.L), e=u*u, pos=M.from.clone().lerp(M.to,e), ahead=M.from.clone().lerp(M.to,Math.min(1,e+0.04)); M.m.position.copy(pos); { const skW=A.skyG.getWorldPosition(new THREE.Vector3()); if(!Wb.mp) Wb.mp=[]; Wb.mp[M.k]=pos.clone().sub(skW).applyAxisAngle(new THREE.Vector3(0,1,0),-Wb.em.rotation.y); } M.m.lookAt(camera.position); const dir=ahead.sub(pos).project(camera), ang=Math.atan2(dir.y,dir.x); M.m.rotation.z=ang; M.m.scale.set(18*(0.4+u),1.6,1); M.m.material.opacity=1; for(let z=0;z<3;z++){ const q=Wb.tr.q[Wb.tr.i=(Wb.tr.i+1)%Wb.tr.q.length]; q.l=0.5+Math.random()*0.7; q.L=q.l; q.x=pos.x+(Math.random()-0.5)*2; q.y=pos.y+(Math.random()-0.5)*2; q.z=pos.z+(Math.random()-0.5)*2; q.h=Math.random(); }
         if(u>=1&&!M.done){ M.done=1; A.g.remove(M.m); Wb.fall[M.k]=2; if(U4.uBlF) U4.uBlF.value.set(M.to.x,M.to.z,0,1); haptic(8); if(sound.C&&Math.random()<0.5) A4_tone([1318.5,1567.98,1760,1975.5][(Math.random()*4)|0],sound.C.currentTime,1.2,0.012,'sine'); } }); Wb.met=Wb.met.filter(M=>!M.done);
+      { const P=Wb.tr.m.geometry.attributes.position, Cc=Wb.tr.m.geometry.attributes.color; Wb.tr.q.forEach((q,i)=>{ if(q.l>0){ q.l-=dt; q.y-=dt*2; const k=Math.max(0,q.l/q.L); P.setXYZ(i,q.x,q.y,q.z); const rb=[0.5+0.5*Math.cos(6.283*(q.h)),0.5+0.5*Math.cos(6.283*(q.h+0.33)),0.5+0.5*Math.cos(6.283*(q.h+0.67))]; Cc.setXYZ(i,(0.6+0.4*rb[0])*k,(0.7+0.3*rb[1])*k,(0.7+0.3*rb[2])*k); } else Cc.setXYZ(i,0,0,0); }); P.needsUpdate=true; Cc.needsUpdate=true; }
+      // cinema: bars, and the camera lifts to the dome, then follows the stars down
+      if(T>31&&!Wb.bar){ Wb.bar=1; A4_bars(1); } A.lookY=0; { const up=smooth(31,37,T)*(1-smooth(42,47,T)); if(T>31&&T<58){ A.lookP=0.42*up-0.06*smooth(43,48,T); A.lookK=Math.min(1,smooth(31,34,T)*(1-smooth(55,58,T))); } }
+      // the supernova: at the top of the sky, just before they fall
+      if(T>39.4&&!Wb.nova){ Wb.nova={t:0}; const cv=document.createElement('canvas'); cv.width=cv.height=256; const x=cv.getContext('2d'); const gr=x.createRadialGradient(128,128,0,128,128,128); gr.addColorStop(0,'rgba(255,255,255,1)'); gr.addColorStop(0.12,'rgba(220,255,245,0.9)'); gr.addColorStop(0.4,'rgba(140,220,255,0.25)'); gr.addColorStop(1,'rgba(0,0,0,0)'); x.fillStyle=gr; x.fillRect(0,0,256,256); x.translate(128,128); for(let r=0;r<36;r++){ x.rotate(6.2832/36); const L=60+Math.random()*68, g2=x.createLinearGradient(0,0,L,0); g2.addColorStop(0,'rgba(255,255,255,0.9)'); g2.addColorStop(1,'rgba(255,255,255,0)'); x.fillStyle=g2; x.fillRect(0,-(r%3?0.7:1.6),L,r%3?1.4:3.2); }
+        Wb.nova.m=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})); Wb.nova.m.position.set(0,378,0); Wb.nova.m.frustumCulled=false; A.skyG.add(Wb.nova.m); haptic([60,40,120]); A4_snd('tom',0.25,1); A4_snd('tom',0.18,0.8); if(sound.C){ const t0=sound.C.currentTime; A4_tone(55,t0,6,0.05,'sine'); [440,554.37,659.25,880,1108.7].forEach((f,i)=>A4_tone(f,t0+0.05*i,5,0.02,'triangle')); } }
+      if(Wb.nova){ const N=Wb.nova; N.t+=dt; const u=N.t; N.m.scale.setScalar(40+260*(1-Math.exp(-u*1.6))); N.m.material.opacity=Math.min(1,u*4)*Math.exp(-Math.max(0,u-1.2)*0.55); N.m.material.rotation=u*0.12; if(u<0.25) A.press=Math.max(A.press||0,0.7); }
+      if(T>55&&Wb.bar===1){ Wb.bar=2; A4_bars(0); }
       // draw: stars and lines follow where the stars are now
       const sp=Wb.sm.geometry.attributes.position, ss=Wb.sm.geometry.attributes.aS, ep=Wb.em.geometry.attributes.position, ea=Wb.em.geometry.attributes.aA, cur=Wb.V.map((v,q)=>(Wb.fall[q]===1&&Wb.mp&&Wb.mp[q])?Wb.mp[q].clone():Wb.Pc[q].clone().lerp(v.clone().multiplyScalar(Wb.R0),mig));
       Wb.lit.forEach((t,q)=>{ sp.array[q*3]=cur[q].x; sp.array[q*3+1]=cur[q].y; sp.array[q*3+2]=cur[q].z; if(t>=0){ Wb.lit[q]=t+dt; const tw=0.8+0.2*Math.sin(time*1.7+q*1.3); ss.array[q]=Wb.fall[q]?0:(0.9+0.4*mig)*tw*(1+1.4*Math.exp(-Wb.lit[q]*3))*Math.min(1,Wb.lit[q]*2); } });
