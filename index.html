@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.65 -->
+<!-- Thin Veil · beta 0.66 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -146,7 +146,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.65</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.66</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -168,7 +168,7 @@
     <button id="tvInst" style="display:none">install</button>
     <p id="tvInstTip" style="display:none"></p>
     <p class="warn">Headphones recommended &nbsp;·&nbsp; Contains flashing lights</p>
-    <p id="tvby">by Wim Nel</p>
+    <p id="tvby">by Wim</p>
     <button id="goDes">test: Burnt wood</button>
     <button id="goMorn" class="tbx">test: The morning</button>
     <button id="goWave" class="tbx">test: The wave</button>
@@ -8143,7 +8143,7 @@ addEventListener('resize',()=>{ renderer.setSize(innerWidth,innerHeight); makeTa
       const P=dust.geometry.attributes.position; for(let q=0;q<N;q++){ const v=dv[q]; v[0]+=dt*v[2]; P.setXYZ(q,Math.cos(v[0])*v[1],((P.getY(q)+dt*(0.05+0.04*Math.sin(t+v[3]))+0.4)%4.6)-0.4,Math.sin(v[0])*v[1]); } P.needsUpdate=true;
       R.render(S,C); }; frame(); }catch(e){ console.warn('lantern',e); cv.style.display='none'; } } }
 { const by=document.getElementById('tvby'), st=document.getElementById('start'); let tp=[]; if(TVDEV) st.classList.add('tests');
-  if(by){ by.addEventListener('pointerdown',e=>{ e.stopPropagation(); const n=performance.now(); tp=tp.filter(x=>n-x<2000); tp.push(n); if(tp.length>=5){ tp=[]; TVDEV=!TVDEV; try{ localStorage.setItem('tv_dev',TVDEV?'1':'0'); }catch(e2){} st.classList.toggle('tests',TVDEV); const b=document.getElementById('tvDevBtn'); if(b) b.style.display=TVDEV?'':'none'; by.textContent=TVDEV?'dev on':'dev off'; setTimeout(()=>{ by.textContent='by Wim Nel'; },1200); } }); }
+  if(by){ by.addEventListener('pointerdown',e=>{ e.stopPropagation(); const n=performance.now(); tp=tp.filter(x=>n-x<2000); tp.push(n); if(tp.length>=5){ tp=[]; TVDEV=!TVDEV; try{ localStorage.setItem('tv_dev',TVDEV?'1':'0'); }catch(e2){} st.classList.toggle('tests',TVDEV); const b=document.getElementById('tvDevBtn'); if(b) b.style.display=TVDEV?'':'none'; by.textContent=TVDEV?'dev on':'dev off'; setTimeout(()=>{ by.textContent='by Wim'; },1200); } }); }
   const ib=document.getElementById('tvInst'), tip=document.getElementById('tvInstTip'); let bip=null, inFrame=true; try{ inFrame=window.top!==window; }catch(e){}
   const alone=matchMedia('(display-mode: fullscreen)').matches||matchMedia('(display-mode: standalone)').matches||navigator.standalone===true, ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
   const show=()=>{ if(ib&&!alone&&!inFrame) ib.style.display='inline-block'; };
