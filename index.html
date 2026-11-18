@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.35 -->
+<!-- Thin Veil · beta 0.36 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -132,7 +132,7 @@
 </head>
 <body>
 <div id="start" class="min tests">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.35</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.36</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -6420,9 +6420,9 @@ function A4_update(dt){ const A=A4; if(!A) return; if(typeof mists!=='undefined'
   // THE CHOICE: three burning wrecks across the way, two gaps between them; the middle one is drifting, one gap is closing. Pick
   { const B=A.brn||{st:'off'}, live=B.st==='on'&&A.fire>0.5;
     if(live&&!A.f.gapC&&(A.pB||0)>=0.55&&!A.nmc&&A.phase==='sail'){ A.f.gapC=1; const fw=[-Math.sin(A.h),-Math.cos(A.h)], rt=[Math.cos(A.h),-Math.sin(A.h)], G={t:0,cl:Math.random()<0.5?-1:1,fw,rt,cx:A.bx+fw[0]*150,cz:A.bz+fw[1]*150,w:[]};
-      [-1,0,1].forEach(k=>{ const w=A4_wreck(2.4); w.rotation.y=A.h+Math.PI/2; A.g.add(w); G.w.push({g:w,k,lat:k*20}); }); A.gapC=G; STY.lines=[]; STY.busy=0; say('fox',"Two gaps. ...One's closing. Pick one. PICK ONE.",0.2); A4_snd('tom',0.5,0.6); haptic([40,60,40]); }
+      [-1,0,1].forEach(k=>{ const w=A4_wreck(2.9); w.rotation.y=A.h+Math.PI/2; A.g.add(w); G.w.push({g:w,k,lat:k*20}); }); A.gapC=G; STY.lines=[]; STY.busy=0; say('fox',"Two gaps. ...One's closing. Pick one. PICK ONE.",0.2); A4_snd('tom',0.5,0.6); haptic([40,60,40]); }
     const G=A.gapC; if(G){ G.t+=dt; G.w[1].lat=Math.min(10.5,G.t*0.8)*G.cl;
-      G.w.forEach(o=>{ const x=G.cx+G.rt[0]*o.lat, z=G.cz+G.rt[1]*o.lat, d=Math.hypot(x-A.bx,z-A.bz); o.g.position.set(x,A4_wave(x,z,A.st,A.amp)*(1-0.85*smooth(50,260,d))-0.8,z); o.g.rotation.z=0.05*Math.sin(time*0.6+o.k); A4_wreckTick(o.g); });
+      G.w.forEach(o=>{ const x=G.cx+G.rt[0]*o.lat, z=G.cz+G.rt[1]*o.lat, d=Math.hypot(x-A.bx,z-A.bz); o.g.position.set(x,A4_wave(x,z,A.st,A.amp)+(A.breathY||0)+0.4,z); o.g.rotation.z=0.05*Math.sin(time*0.6+o.k); A4_wreckTick(o.g); });
       const rx=A.bx-G.cx, rz=A.bz-G.cz, al=rx*G.fw[0]+rz*G.fw[1], lt=rx*G.rt[0]+rz*G.rt[1];
       if(!G.res&&al>-3){ const hit=G.w.some(o=>Math.abs(lt-o.lat)<6.4); G.res=hit?'hit':'ok';
         if(hit){ A.speed*=0.35; A.jolt=1; A.flinch=1; A.press=1; A4_snd('hiss',0.6,0.9); A4_snd('tom',0.4,0.9); haptic([80,40,120]); STY.lines=[]; STY.busy=0; say('fox',"That one. You picked THAT one. ...We're on fire. More on fire.",0.2); }
@@ -7838,7 +7838,7 @@ function frame(){
   dev.cpu=dev.cpu*0.9+(performance.now()-nowMs)*0.1; renderer.info.autoReset=false; renderer.info.reset();
   if(started) gpu('portal',renderImpossible);
   { const wk=(A2?'2.'+A2.ph+'.'+(A2.P?A2.P.kind:'-')+'.'+(A2.holOn?1:0):'')+(A3?'3.'+(A3.room||0):'')+(A4?'4':'')+(ROOM?'r':'')+(STY.stage||'')+((A2||A3)?Math.floor(time/3):''); if(wk!==warmKey){ warmKey=wk; warmNew(); } }
-  const _cp0x=camera.position.x, _cp0y=camera.position.y, _cp0z=camera.position.z; if(typeof A4!=='undefined'&&A4&&(A4.camX||0)>0.002){ const k=A4.camX*A4.camX*(3-2*A4.camX), v=A4.camXv||[0,1]; camera.position.x+=v[0]*30*k; camera.position.z+=v[1]*30*k; camera.position.y+=4*k; camera.updateMatrixWorld(); } if(typeof A4!=='undefined'&&A4){ if(A4.lookK>0.002){ const k=A4.lookK*A4.lookK*(3-2*A4.lookK); camera.rotation.y+=(A4.lookY||0)*k; camera.rotation.x+=(A4.lookP||0)*k; } if(A4.dutch) camera.rotation.z+=A4.dutch; if(A4.tiltB) camera.rotation.x+=A4.tiltB; if(A4.camLow) camera.position.y-=A4.camLow; if((A4.fovK||0)>0.001){ if(camera.userData.f0===undefined) camera.userData.f0=camera.fov; camera.fov=camera.userData.f0+A4.fovK*30; camera.updateProjectionMatrix(); } else if(camera.userData.f0!==undefined){ camera.fov=camera.userData.f0; delete camera.userData.f0; camera.updateProjectionMatrix(); } if(A4.hh){ camera.rotation.x+=A4.hh[0]; camera.rotation.y+=A4.hh[1]; camera.rotation.z+=A4.hh[2]; } camera.updateMatrixWorld(); } if(typeof A4!=='undefined'&&A4&&A4.camK>0.002){ const k=A4.camK*A4.camK*(3-2*A4.camK); camera.getWorldDirection(A2_v); camera.position.x-=A2_v.x*8.5*k; camera.position.z-=A2_v.z*8.5*k; camera.position.y+=3.2*k; camera.rotation.x-=0.2*k; camera.updateMatrixWorld(); }
+  const _cp0x=camera.position.x, _cp0y=camera.position.y, _cp0z=camera.position.z; if(typeof A4!=='undefined'&&A4&&(A4.camX||0)>0.002){ const k=A4.camX*A4.camX*(3-2*A4.camX), v=A4.camXv||[0,1]; camera.position.x+=v[0]*30*k; camera.position.z+=v[1]*30*k; camera.position.y+=4*k; camera.updateMatrixWorld(); } if(typeof A4!=='undefined'&&A4){ if(A4.lookK>0.002){ const k=A4.lookK*A4.lookK*(3-2*A4.lookK); camera.rotation.y+=(A4.lookY||0)*k; camera.rotation.x+=(A4.lookP||0)*k; } if(A4.dutch) camera.rotation.z+=A4.dutch; if(A4.tiltB) camera.rotation.x+=A4.tiltB; if(A4.camLow) camera.position.y-=A4.camLow; const _pX=(A4.phase!=='door'&&innerHeight>innerWidth)?Math.min(14,(innerHeight/innerWidth-1)*16):0; if((A4.fovK||0)>0.001||_pX>0.01){ if(camera.userData.f0===undefined) camera.userData.f0=camera.fov; camera.fov=camera.userData.f0+(A4.fovK||0)*30*(1-_pX/40)+_pX; camera.updateProjectionMatrix(); } else if(camera.userData.f0!==undefined){ camera.fov=camera.userData.f0; delete camera.userData.f0; camera.updateProjectionMatrix(); } if(A4.hh){ camera.rotation.x+=A4.hh[0]; camera.rotation.y+=A4.hh[1]; camera.rotation.z+=A4.hh[2]; } camera.updateMatrixWorld(); } if(typeof A4!=='undefined'&&A4&&A4.camK>0.002){ const k=A4.camK*A4.camK*(3-2*A4.camK); camera.getWorldDirection(A2_v); camera.position.x-=A2_v.x*8.5*k; camera.position.z-=A2_v.z*8.5*k; camera.position.y+=3.2*k; camera.rotation.x-=0.2*k; camera.updateMatrixWorld(); }
   if(typeof A4!=='undefined'&&A4){ const ddx=camera.position.x-_cp0x, ddy=camera.position.y-_cp0y, ddz=camera.position.z-_cp0z; for(const o of [A4.rainL,A4.lens,A4.esnow]) if(o) o.position.set(ddx,ddy,ddz); }
   if(STY.stage==='morn'&&MORN&&MORN.camP){ camera.position.copy(MORN.camP); camera.quaternion.copy(MORN.camQ); camera.updateMatrixWorld(); }
   gpu('scene',()=>{ renderer.setRenderTarget(rtScene); renderer.render(scene,camera); });
