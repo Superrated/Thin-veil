@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.33 -->
+<!-- Thin Veil · beta 0.34 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -132,7 +132,7 @@
 </head>
 <body>
 <div id="start" class="min tests">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.33</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.34</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -2986,7 +2986,7 @@ const beams=(()=>{ const base=new THREE.PlaneGeometry(1,1); const g=new THREE.In
   g.setAttribute('aOff',new THREE.InstancedBufferAttribute(off,3)); g.instanceCount=N;
   const m=new THREE.Mesh(g,mbeamMat); m.frustumCulled=false; scene.add(m); return m; })();
 function livingUpdate(dt,gw){
-  const w=gw[0], on=w>0.01;
+  const w=gw[0], on=w>0.01&&!(typeof A4!=='undefined'&&A4);
   grass.visible=smoke.visible=beams.visible=on; mists.forEach(m=>{ m.visible=on; m.position.x=Math.round(camera.position.x/10)*10; m.position.z=Math.round(camera.position.z/10)*10; });
   grassMat.uniforms.uAmt.value=w; grassMat.uniforms.uLeaf.value.set(...PAL.leaf); mistMat.uniforms.uAmt.value=w;
   smokeMat.uniforms.uAmt.value=w*(ent.has('fire')?0:1); mbeamMat.uniforms.uAmt.value=w*(U.uMoonOn.value||U.uDay.value)*beamsAmtCover;
