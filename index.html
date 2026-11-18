@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.11 -->
+<!-- Thin Veil · beta 0.12 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -132,7 +132,7 @@
 </head>
 <body>
 <div id="start" class="min tests">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.11</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.12</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -5687,7 +5687,7 @@ void main(){ vec2 p=vW.xz; float d=length(p-uCamP.xz); if(uAur<0.01&&smoothstep(
   { const B=A.boat=new THREE.Group(), hull=new THREE.Mesh(A4_boatGeo(),M(0.14)); hull.position.y=0.66; B.add(hull); for(const [yy,sc,l] of [[0.66,1,0.55],[0.5,0.94,0.06],[0.34,0.82,0.06]]){ const st=new THREE.Mesh(new THREE.TorusGeometry(1,0.03,4,36),M(l)); st.rotation.x=Math.PI/2; st.scale.set(0.86*sc,2.3*sc,1); st.position.set(0,yy,-0.12); B.add(st); } const stem=new THREE.Mesh(new THREE.BoxGeometry(0.07,0.75,0.1),M(0.06)); stem.position.set(0,0.86,-2.55); stem.rotation.x=-0.35; const rud=new THREE.Mesh(new THREE.BoxGeometry(0.05,0.9,0.45),M(0.08)); rud.position.set(0,0.3,2.25); B.add(stem,rud);
     const fl=new THREE.Mesh(new THREE.CircleGeometry(1,20),M(0.22)); fl.rotation.x=-Math.PI/2; fl.scale.set(0.62,2.0,1); fl.position.y=0.16; B.add(fl); A.deck=fl; for(const px of [-0.3,0,0.3]){ const pk=new THREE.Mesh(new THREE.BoxGeometry(0.035,0.01,3.4-Math.abs(px)*2.2),M(0.2)); pk.position.set(px,0.172,0.1); B.add(pk); }
     { const v=[]; for(const sd of [-1,1]) v.push(0,0,-2.62, sd*0.95,0.2,-0.9, sd*1.5,0,-0.3,  0,0,-2.62, sd*1.5,0,-0.3, sd*0.8,0,-1.0,  sd*0.95,0.2,-0.9, sd*1.25,0.34,-0.2, sd*1.5,0,-0.3); const bg=new THREE.BufferGeometry(); bg.setAttribute('position',new THREE.Float32BufferAttribute(v,3)); A.bowW=new THREE.Mesh(bg,M(0.84)); A.bowW.position.y=0.3; A.bowW.frustumCulled=false; B.add(A.bowW);
-      for(const sd of [-1,1]){ const sh=new THREE.Mesh(new THREE.CylinderGeometry(0.012,0.012,7.2,4),M(0.06)); sh.position.set(sd*0.41,4.25,-1.1); sh.rotation.z=sd*0.115; sh.rotation.x=0.055; B.add(sh); }
+      
       const pg=new THREE.BufferGeometry(); pg.setAttribute('position',new THREE.Float32BufferAttribute([0,0.16,0, 0,-0.16,0, 0,0,1.1],3)); A.pen=new THREE.Mesh(pg,new THREE.MeshBasicMaterial({color:new THREE.Color(0.8,0.1,0.05),fog:false,side:THREE.DoubleSide})); A.pen.position.set(0,8.6,-1.3); B.add(A.pen);
       A.lampB=new THREE.Group(); A.lampB.position.set(0,1.75,-2.5); const lh=new THREE.Mesh(new THREE.CylinderGeometry(0.01,0.01,0.3,4),M(0.05)); lh.position.y=-0.15; const lb=new THREE.Mesh(new THREE.BoxGeometry(0.16,0.2,0.16),M(0.97)); lb.position.y=-0.4; const lc=new THREE.Mesh(new THREE.ConeGeometry(0.14,0.1,4),M(0.05)); lc.position.y=-0.26; const lf=new THREE.Mesh(new THREE.BoxGeometry(0.2,0.03,0.2),M(0.05)); lf.position.y=-0.51; A.lampB.add(lh,lb,lc,lf); const lp=new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.025,0.65,5),M(0.07)); lp.position.set(0,1.45,-2.5); B.add(A.lampB,lp); }
     const mast=new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.045,8.2,6),M(0.08)); mast.position.set(0,4.4,-1.3); B.add(mast);
