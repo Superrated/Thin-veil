@@ -5379,6 +5379,25 @@ function A4_cometRibbon(A,c){ const N=20;
   P.needsUpdate=true; Co.needsUpdate=true; c.rb.visible=true; c.hd.visible=true; c.hd.position.set(c.p.x,c.p.y,c.p.z); const dc=Math.hypot(c.p.x-cam.x,c.p.y-cam.y,c.p.z-cam.z), near=c.nm||dc<150;
   const hs=(c.nm?13:8)*(near?0.42:1.1)*(0.9+0.2*Math.random()); c.hd.scale.set(hs,hs,1); c.hd.material.opacity=near?0.5:1;
   if(c.rk){ c.rk.visible=near; if(near){ c.rk.position.set(c.p.x,c.p.y,c.p.z); c.rk.scale.setScalar(c.nm?6.0:3.0); c.rk.rotation.x+=c.rkR.x*0.05; c.rk.rotation.y+=c.rkR.y*0.07; c.rk.rotation.z+=c.rkR.z*0.04; c.rk.material.map.offset.x=(time*0.05)%1; } } }
+// ---- a burning wreck: a charred hull with ember seams, a broken mast, a scrap of burnt sail, fire on deck and at the waterline ----
+function A4_wreck(sc){ const g=new THREE.Group(), W=new THREE.Group(); g.add(W); W.scale.setScalar(sc||1);
+  if(!A4_wreck.R){ const hg=A4_boatGeo(); hg.computeBoundingBox(); A4_wreck.R={hg,bb:hg.boundingBox,char:new THREE.MeshBasicMaterial({color:0x1a0c07,side:THREE.DoubleSide}),dark:new THREE.MeshBasicMaterial({color:0x0b0604,side:THREE.DoubleSide}),ember:new THREE.MeshBasicMaterial({color:0xff5a14,fog:false}),hot:new THREE.MeshBasicMaterial({color:0xffb040,fog:false}),ft:flameTex(),gl:softTex(255,120,40)}; }
+  const R=A4_wreck.R, bb=R.bb, hl=bb.max.z-bb.min.z, hw=bb.max.x-bb.min.x, top=bb.max.y+0.62;
+  const hull=new THREE.Mesh(R.hg,R.char); hull.position.y=0.62; hull.rotation.z=(Math.random()-0.5)*0.25; W.add(hull);
+  // ember seams along both gunwales, broken into glowing runs, and cracks down the sides
+  for(const sx of [-1,1]){ let z=bb.min.z+0.3; while(z<bb.max.z-0.4){ const L=0.4+Math.random()*1.1; if(Math.random()<0.75){ const e=new THREE.Mesh(new THREE.BoxGeometry(0.07,0.06,L),Math.random()<0.3?R.hot:R.ember); e.position.set(sx*(hw*0.47),top-0.04,z+L/2); W.add(e); } z+=L+0.15+Math.random()*0.4; }
+    for(let k=0;k<3;k++){ const c=new THREE.Mesh(new THREE.BoxGeometry(0.04,0.35+Math.random()*0.3,0.05),R.ember); c.position.set(sx*hw*0.5,top-0.3,bb.min.z+hl*(0.2+0.3*k)+Math.random()*0.4); c.rotation.x=(Math.random()-0.5)*0.9; W.add(c); } }
+  // the mast: snapped, leaning, the break glowing
+  const mh=1.8+Math.random()*2.2, m=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.08,mh,5),R.dark); m.position.set(0,top+mh/2-0.1,-0.4); const mg=new THREE.Group(); mg.add(m); mg.rotation.set((Math.random()-0.5)*0.5,0,(Math.random()<0.5?-1:1)*(0.25+Math.random()*0.35)); W.add(mg);
+  const tip=new THREE.Mesh(new THREE.ConeGeometry(0.07,0.25,5),R.hot); tip.position.set(0,top+mh,-0.4); mg.add(tip);
+  // what's left of the sail: a black rag with a burning edge
+  { const sg=new THREE.BufferGeometry(); sg.setAttribute('position',new THREE.Float32BufferAttribute([0,top+0.4,-0.35, 0,top+mh*0.85,-0.35, 0,top+0.5,0.9+Math.random()*0.6],3)); const sl=new THREE.Mesh(sg,R.dark); mg.add(sl);
+    const eg=new THREE.Mesh(new THREE.BoxGeometry(0.05,0.05,1.2),R.ember); eg.position.set(0,top+0.45,0.3); eg.rotation.x=-0.1; mg.add(eg); }
+  // fire on deck, and firelight on the water under her
+  const fl=[]; for(let q=0;q<4;q++){ const f=new THREE.Sprite(new THREE.SpriteMaterial({map:R.ft,transparent:true,depthWrite:false,fog:false})); f.center.set(0.5,0.02); f.position.set((Math.random()-0.5)*hw*0.6,top-0.1,bb.min.z+hl*(0.15+0.23*q)); f.userData.p=Math.random()*6; f.userData.s=1.3+Math.random()*1.1; W.add(f); fl.push(f); }
+  const pool=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({map:R.gl,color:0xff8a3a,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})); pool.rotation.x=-Math.PI/2; pool.scale.set(hw*4,hl*2.2,1); pool.position.y=0.35; W.add(pool);
+  g.userData.wfl=fl; return g; }
+function A4_wreckTick(g){ const fl=g.userData.wfl; if(!fl) return; for(const f of fl){ const q=0.8+0.3*Math.sin(time*9+f.userData.p)+0.15*Math.sin(time*23+f.userData.p*2); f.scale.set(f.userData.s*0.9*(1.15-0.2*q),f.userData.s*1.9*q,1); } }
 function A4_done(){ return STY.lines.length===0&&STY.busy<=0; }
 function A4_once(k,txt,gap,who){ const A=A4; if(STY.mute&&(who||'fox')==='fox') return false; if(A.f[k]) return false; if((who||'fox')==='fox'&&!A4_KEY.has(k)){ A.f[k]=1; return true; } if(A.phase==='sail'&&A.brn&&A.brn.st==='out'&&(who||'fox')==='fox'&&(STY.lines.length||STY.busy>-0.8)) return false; A.f[k]=1; say(who||'fox',txt,gap===undefined?0.9:gap); return true; }
 function A4_snd(name,rate,vol,pos){ if(sound.C) sound.play(name,sound.C.currentTime,rate,vol,true,pos?{sfx:true,pos,ref:10}:{sfx:true}); }
@@ -5981,7 +6000,7 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
     // heat mirage
     finalU.uDist.value+=(((F>0.5&&on)?0.07+0.07*A.torPull:0)-finalU.uDist.value)*Math.min(1,dt*2); finalU.uDistP.value.set(0.5,0.5,0);
     // the fox: panics, then goes small and only counts
-    { const sm=(F>0.5&&B.st==='on'&&pB>0.47)?0.62:1; A.small2=(A.small2||1)+(sm-(A.small2||1))*Math.min(1,dt*1.5); if(sm<1){ A.yankT=Math.max(A.yankT,8); if(done) A4_once('fc1',"...one. ...two. ...three boats. Four. I'm counting the boats. Don't make me count the boats.",1.5); if(A.f.fc1&&done&&pB>0.62) A4_once('fc2',"...twelve. ...thirteen. They're all ours. Every one of them is ours.",1.5); } }
+    { const sm=(F>0.5&&B.st==='on'&&pB>0.66)?0.62:1; A.small2=(A.small2||1)+(sm-(A.small2||1))*Math.min(1,dt*1.5); if(sm<1){ A.yankT=Math.max(A.yankT,8); if(done) A4_once('fc1',"...one. ...two. ...three boats. Four. I'm counting the boats. Don't make me count the boats.",1.5); if(A.f.fc1&&done&&pB>0.62) A4_once('fc2',"...twelve. ...thirteen. They're all ours. Every one of them is ours.",1.5); } }
     // the roar, that drops out to whispers; and something in it, screaming
     if(sound.C&&A.bus){ const C=sound.C, t0=C.currentTime; if(!A.roar){ const n=C.sampleRate*2, b=C.createBuffer(1,n,C.sampleRate), d=b.getChannelData(0); for(let i=0;i<n;i++) d[i]=Math.random()*2-1;
         const mk=(type,f,q)=>{ const s=C.createBufferSource(); s.buffer=b; s.loop=true; s.playbackRate.value=0.7+Math.random()*0.6; const fi=C.createBiquadFilter(); fi.type=type; fi.frequency.value=f; fi.Q.value=q; const g=C.createGain(); g.gain.value=0; s.connect(fi); fi.connect(g); g.connect(A.bus); s.start(); return {s,fi,g}; };
@@ -5995,10 +6014,10 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
       if(STY.mute){ R.lo.g.gain.setTargetAtTime(0,t0,0.05); } }
     // the fire burns through the picture: tearing glitches, colours coming apart, lightning that shows who is standing on the fire. All of it worse toward the end
     { const live=B.st==='on'&&F>0.5, pf=live?A.pB:0;
-      if(live&&pf>0.58){ A.glT=(A.glT||0)-dt; if(A.glT<0){ A.glT=(pf>0.9?0.4+Math.random()*0.6:(pf>0.74?1.2+Math.random()*1.5:2.5+Math.random()*2.5)); glitch=Math.max(glitch,0.03);  finalU.uTearS.value=Math.random()*97; finalU.uTearK.value=Math.floor(Math.random()*4); A4_snd('hiss',0.35+Math.random()*0.2,0.25+0.3*pf); A.splK=Math.max(A.splK||0,0.3+0.6*pf); if(Math.random()<0.3+0.5*pf) haptic(15+Math.round(30*pf)); } }
+      if(live&&pf>0.58&&pf<0.78){ A.glT=(A.glT||0)-dt; if(A.glT<0){ A.glT=(pf>0.9?0.4+Math.random()*0.6:(pf>0.74?1.2+Math.random()*1.5:2.5+Math.random()*2.5)); glitch=Math.max(glitch,0.03);  finalU.uTearS.value=Math.random()*97; finalU.uTearK.value=Math.floor(Math.random()*4); A4_snd('hiss',0.35+Math.random()*0.2,0.25+0.3*pf); A.splK=Math.max(A.splK||0,0.3+0.6*pf); if(Math.random()<0.3+0.5*pf) haptic(15+Math.round(30*pf)); } }
       A.splK=Math.max(0,(A.splK||0)-dt*2.2); if(live&&Math.random()<dt*(0.02+0.12*pf)) A.splK=0.5+0.5*pf; finalU.uSplit.value+=((A.splK||0)-finalU.uSplit.value)*Math.min(1,dt*6);
       if(!A.ffig){ A.ffig=[0,1,2,3,4,5].map(()=>{ const h=makeHuman(BLACK); h.visible=false; A.g.add(h); return h; }); }
-      if(live&&pf>0.03){ A.bLt=(A.bLt===undefined?1:A.bLt)-dt; if(A.bLt<0){ A.bLt=pf<0.58?8+Math.random()*3:(pf<0.74?3.4:2.4); A.ltN=-1; const figs=pf>=0.58; A.figT=figs?0.32:0; A.figN=(A.figN||0)+(figs?1:0); const n=figs?Math.min(6,1+A.figN):0, fx=-Math.sin(player.yaw), fz=-Math.cos(player.yaw), base=Math.atan2(fx,fz);
+      if(live&&pf>0.03&&pf<0.78){ A.bLt=(A.bLt===undefined?1:A.bLt)-dt; if(A.bLt<0){ A.bLt=pf<0.58?8+Math.random()*3:(pf<0.74?3.4:2.4); A.ltN=-1; const figs=pf>=0.58; A.figT=figs?0.32:0; A.figN=(A.figN||0)+(figs?1:0); const n=figs?Math.min(6,1+A.figN):0, fx=-Math.sin(player.yaw), fz=-Math.cos(player.yaw), base=Math.atan2(fx,fz);
           A.ffig.forEach((h,i)=>{ if(i>=n){ h.visible=false; h.userData.on=0; return; } const ax=base+(Math.random()-0.5)*1.3, dist=Math.max(7,30-A.figN*3.2)+Math.random()*6-(i===0?3:0), x=A.bx+Math.sin(ax)*dist, z=A.bz+Math.cos(ax)*dist; h.position.set(x,A4_wave(x,z,A.st,A.amp)+(A.breathY||0)-0.2,z); h.rotation.y=Math.atan2(A.bx-x,A.bz-z); h.scale.setScalar(1.05+0.25*Math.random()); h.userData.on=1; });
           if(figs&&A.figN>=2&&done) A4_once('lfg',"In the flash. People. Standing on the fire. ...Standing where we're going.",0.8); } }
       A.figT=(A.figT||0)-dt; A.ffig.forEach(h=>{ h.visible=false&&Math.floor(A.figT*30)%3!==1; if(A.figT<=0) h.userData.on=0; }); }
@@ -6049,15 +6068,15 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
   // things burning down out of the sky, in waves: one, then three, then a downpour; his little boats, two great ships, his kitchen, and wreckage between
   { const B=A.brn||{st:'off'}, live=B.st==='on'&&A.fire>0.5, pf=live?A.pB:0;
     if(!A.fall){ A.fall=[]; const hg=A4_boatGeo(), dk=new THREE.MeshBasicMaterial({color:0x120604,side:THREE.DoubleSide,fog:false}), mk=(ty)=>{ const g=new THREE.Group();
-        if(ty==='boat'){ const h=new THREE.Mesh(hg,dk); h.position.y=0.62; const m=new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.07,6,5),dk); m.position.set(0,3.4,-0.6); g.add(h,m); }
-        else if(ty==='ship'){ const h=new THREE.Mesh(hg,dk); h.scale.set(4,3,5); h.position.y=1.5; g.add(h); for(const z of [-5,1,7]){ const m=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.3,15,6),dk); m.position.set(0,9,z); g.add(m); } g.scale.setScalar(2.2); }
+        if(ty==='boat'){ g.add(A4_wreck(1)); }
+        else if(ty==='ship'){ g.add(A4_wreck(4.5)); }
         else if(ty==='chair'){ const st=new THREE.Mesh(new THREE.BoxGeometry(0.9,0.08,0.9),dk); st.position.y=0.9; const bk=new THREE.Mesh(new THREE.BoxGeometry(0.9,1.0,0.08),dk); bk.position.set(0,1.4,-0.42); g.add(st,bk); for(const [x,z] of [[-0.4,-0.4],[0.4,-0.4],[-0.4,0.4],[0.4,0.4]]){ const l=new THREE.Mesh(new THREE.BoxGeometry(0.07,0.9,0.07),dk); l.position.set(x,0.45,z); g.add(l); } g.scale.setScalar(2.2); }
         else if(ty==='clock'){ const f=new THREE.Mesh(new THREE.CircleGeometry(1.4,24),new THREE.MeshBasicMaterial({color:0xe8dcc0,side:THREE.DoubleSide,fog:false})); const r=new THREE.Mesh(new THREE.RingGeometry(1.4,1.62,24),dk); const h1=new THREE.Mesh(new THREE.BoxGeometry(0.1,0.9,0.05),dk); h1.position.set(0,0.42,0.02); const h2=new THREE.Mesh(new THREE.BoxGeometry(0.08,1.2,0.05),dk); h2.position.set(0,-0.57,0.03); g.add(f,r,h1,h2); g.scale.setScalar(2); }
         else { const pl=new THREE.Mesh(new THREE.BoxGeometry(0.35,0.12,ty==='mast'?7:3),dk); g.add(pl); }
         const big=ty==='ship', fl=new THREE.Sprite(new THREE.SpriteMaterial({map:A.ffr[0],transparent:true,alphaTest:0.4,depthWrite:false,fog:false})); fl.center.set(0.5,0.1); fl.position.y=big?6:1; g.add(fl); if(A.flSp){ A.flSp.push(fl); fl.userData.fk=(Math.random()*6)|0; }
         g.userData={ty,fl,on:0,done:0,big}; g.visible=false; A.g.add(g); return g; };
       const T=['boat','boat','boat','boat','boat','boat','boat','boat','boat','ship','ship','plank','plank','plank','plank','mast','plank','plank'];
-      const C=[0.30, 0.55,0.57,0.60, 0.71,0.74,0.76,0.78,0.80, 0.66,0.79, 0.83,0.86, 0.47,0.53,0.62,0.69,0.82];
+      const C=[0.24, 0.68,0.71,0.74, 0.77,0.79,0.81,2,2, 0.75,2, 0.83,0.86, 0.45,0.50,0.62,0.72,0.82];
       const N=[0, 0,1,0, 0,0,1,0,0, 0,0, 0,0, 0,0,0,0,0];   // 1 = lands close to you
       T.forEach((t,i)=>{ const g=mk(t); g.userData.cue=C[i]; g.userData.near=N[i]; A.fall.push(g); }); }
     const fw=[-Math.sin(A.h),-Math.cos(A.h)], rt=[Math.cos(A.h),-Math.sin(A.h)];
@@ -6202,7 +6221,7 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
   // the tear opens fast, holds, and closes: reality behind reality
   if(finalU.uTear){ if(A.tearT>0){ A.tearT-=dt; A.tearA+=dt; const u=A.tearA/A.tearD; finalU.uTear.value=Math.pow(Math.sin(Math.PI*Math.min(1,u)),0.5)*(0.6+0.4*(A.pB||0)); } else finalU.uTear.value=0; if(A.phase!=='sail') finalU.uTear.value=0; }
   // the fire takes its time: two and a half minutes however well you sail (progress is held back to the fire's own clock)
-  { const B=A.brn||{st:'off'}; if(B.st==='on'&&!A.tube){ A.tBurn=(A.tBurn||0)+dt; const pm=0.33+0.27*Math.min(1,A.tBurn/150); A.D=Math.max(A.D,A4_D0*(1-pm)); } }
+  { const B=A.brn||{st:'off'}; if(B.st==='on'&&!A.tube){ A.tBurn=(A.tBurn||0)+dt; const pm=0.33+0.27*Math.min(1,A.tBurn/120); A.D=Math.max(A.D,A4_D0*(1-pm)); } }
   // the Dark carries you a little: its beats are on its own script, so the sailing between them needn't drag
   if((A.pD||-1)>=0&&!A.tube&&A.phase==='sail') A.D-=Math.max(0,A.speed)*0.4*dt;
   // spray streaks: every flying drop leaves a short line along its path
@@ -6252,9 +6271,9 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
       A.cm=[]; for(let i=0;i<(MOBILE?12:18);i++){ const N=26, g2=new THREE.BufferGeometry(); g2.setAttribute('position',new THREE.BufferAttribute(new Float32Array(N*3),3)); g2.setAttribute('color',new THREE.BufferAttribute(new Float32Array(N*3),3)); const tr=new THREE.Points(g2,new THREE.PointsMaterial({size:10,sizeAttenuation:true,map:smT,vertexColors:true,transparent:true,depthWrite:false,fog:false})); tr.frustumCulled=false; tr.visible=false; A.g.add(tr);
         const gl=new THREE.Sprite(new THREE.SpriteMaterial({map:smT,color:0xff7a30,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})); gl.visible=false; A.g.add(gl); A.cm.push({tr,gl,head:A4_fpProxy(A,16),on:0,fade:0,hist:[],N}); } }
     const launch=(c,sx,sy,sz,tx,tz,T)=>{ c.on=1; c.t=0; c.T=T; c.p=new THREE.Vector3(sx,sy,sz); const ty=A4_wave(tx,tz,A.st,A.amp); c.v=new THREE.Vector3((tx-sx)/T,(ty-sy)/T,(tz-sz)/T); c.tx=tx; c.tz=tz; c.hist=[]; c.fade=0; c.tr.visible=true; c.gl.visible=true; c.head.visible=true; };
-    A.cmT=(A.cmT===undefined?4:A.cmT)-dt; if(burning&&pB>0.09&&pB<0.9&&A.cmT<0){ A.cmT=(0.35+Math.random()*0.9*(1-0.6*pB))/(0.2+0.8*smooth(0,0.4,pB)); const c=A.cm.find(q=>!q.on&&q.fade<=0&&!q.nm); if(c){ const an=A.h+(Math.random()-0.5)*2.6, ds=80+Math.random()*320, tx=A.bx-Math.sin(an)*ds, tz=A.bz-Math.cos(an)*ds, az=Math.random()*6.283, hd=220+Math.random()*120; launch(c,tx+Math.sin(az)*hd,230+Math.random()*80,tz+Math.cos(az)*hd,tx,tz,2.6+Math.random()*1.4); if(done) A4_once('cm1',"Fire. Out of the sky. ...It's raining what's left of somebody's sky.",0.4); } }
+    A.cmT=(A.cmT===undefined?4:A.cmT)-dt; if(burning&&pB>0.09&&pB<0.78&&A.cmT<0){ A.cmT=(0.35+Math.random()*0.9*(1-0.6*pB))/(0.2+0.8*smooth(0,0.4,pB)); const c=A.cm.find(q=>!q.on&&q.fade<=0&&!q.nm); if(c){ const an=A.h+(Math.random()-0.5)*2.6, ds=80+Math.random()*320, tx=A.bx-Math.sin(an)*ds, tz=A.bz-Math.cos(an)*ds, az=Math.random()*6.283, hd=220+Math.random()*120; launch(c,tx+Math.sin(az)*hd,230+Math.random()*80,tz+Math.cos(az)*hd,tx,tz,2.6+Math.random()*1.4); if(done) A4_once('cm1',"Fire. Out of the sky. ...It's raining what's left of somebody's sky.",0.4); } }
     // the one that nearly has you: a cutscene
-    if(burning&&pB>=0.40&&!A.f.nmc&&A.cm){ A.f.nmc=1; const c=A.cm.find(q=>!q.on)||A.cm[0]; c.nm=1; const sd=Math.random()<0.5?-1:1, T=3.0, sp=Math.max(0,A.speed||0), Px=A.bx+fw[0]*sp*T*0.92, Pz=A.bz+fw[1]*sp*T*0.92, tx=Px-fw[0]*24+rt[0]*sd*7, tz=Pz-fw[1]*24+rt[1]*sd*7;
+    if(burning&&pB>=0.35&&!A.f.nmc&&A.cm){ A.f.nmc=1; const c=A.cm.find(q=>!q.on)||A.cm[0]; c.nm=1; const sd=Math.random()<0.5?-1:1, T=3.0, sp=Math.max(0,A.speed||0), Px=A.bx+fw[0]*sp*T*0.92, Pz=A.bz+fw[1]*sp*T*0.92, tx=Px-fw[0]*24+rt[0]*sd*7, tz=Pz-fw[1]*24+rt[1]*sd*7;
       { const hd=[-Math.sin(A.hL||A.h),-Math.cos(A.hL||A.h)]; const tx2=Px-hd[0]*60+rt[0]*sd*4, tz2=Pz-hd[1]*60+rt[1]*sd*4; launch(c,Px+hd[0]*300+rt[0]*sd*6,80,Pz+hd[1]*300+rt[1]*sd*6,tx2,tz2,T); } A.nmc={t:0,c,sd,hit:0}; A4_bars(1); A.camHold=Math.max(A.camHold||0,5.5); A.dutchS=sd; A.dutchT=0.13*sd; A4_braam(A,0.05,0.2); STY.lines=[]; STY.busy=0; say('fox',"UP. Look UP—",0.05); haptic(60); }
     if(A.nmc){ const N=A.nmc, c=N.c; N.t+=rdt; const into=Math.min(1,N.t/0.7); if(!N.hit){ ts=Math.min(ts,1-0.72*into); A.lookY=wrapA(Math.atan2(-(c.p.x-camera.position.x),-(c.p.z-camera.position.z))-player.yaw); A.lookP=Math.max(-0.5,Math.min(1.3,Math.atan2(c.p.y-camera.position.y,Math.hypot(c.p.x-camera.position.x,c.p.z-camera.position.z))))-(player.pitch||0); A.lookK=into; A.dutchT=0.13*N.sd;
         if(!c.on){ N.hit=1; N.ht=N.t; N.ix=c.tx; N.iz=c.tz; flash=Math.max(flash,0.65); A4_braam(A,0.0,0.32); A.wet=1; A.press=1; A.gK=1; A.jolt=1; haptic(400); for(const q of A.spP){ if(Math.random()<0.7){ q.l=1.2+Math.random(); q.x=A.bx+(Math.random()-0.5)*5; q.z=A.bz+(Math.random()-0.5)*5; q.y=A.by+1+Math.random()*3; q.vx=(Math.random()-0.5)*6; q.vz=(Math.random()-0.5)*6; q.vy=2+Math.random()*6; } } } }
@@ -6367,8 +6386,20 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
   // the last act's music stays in the last act: the score bus is silent out here (its echo used to leak through)
   if(sound.C&&sound.mus&&!A.musZ){ A.musZ=1; const t0=sound.C.currentTime; try{ sound.mus.gain.cancelScheduledValues(t0); sound.mus.gain.setTargetAtTime(0,t0,0.6); if(sound.bed&&sound.bed.g){ sound.bed.g.gain.cancelScheduledValues(t0); sound.bed.g.gain.setTargetAtTime(0,t0,0.6); } }catch(e){} }
   if(sound.C&&sound.mus&&A.musZ&&sound.mus.gain.value>0.02&&!A.over){ try{ sound.mus.gain.setTargetAtTime(0,sound.C.currentTime,0.3); }catch(e){} }
-  // the burning boats: a pool of firelight on the water under each one, so they sit in the sea
-  if(A.fleet){ if(!A.flGl){ A.flGl=1; const tx=softTex(255,120,40); A.fleet.forEach(b=>{ const m=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({map:tx,color:0xff8a3a,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})); m.rotation.x=-Math.PI/2; m.scale.set(9,13,1); m.position.y=0.5; b.add(m); }); } }
+  // the burning boats out on the water: rebuilt as proper wrecks
+  if(A.fleet&&!A.flRe){ A.flRe=1; A.fleet.forEach(b=>{ b.children.slice().forEach(c=>b.remove(c)); const w=A4_wreck(1.3); b.add(w); b.userData.fl=[]; b.userData.wk=w; }); }
+  if(A.fleet&&A.flRe) A.fleet.forEach(b=>{ if(b.visible&&b.userData.wk) A4_wreckTick(b.userData.wk); });
+  // THE CHOICE: three burning wrecks across the way, two gaps between them; the middle one is drifting, one gap is closing. Pick
+  { const B=A.brn||{st:'off'}, live=B.st==='on'&&A.fire>0.5;
+    if(live&&!A.f.gapC&&(A.pB||0)>=0.55&&!A.nmc&&A.phase==='sail'){ A.f.gapC=1; const fw=[-Math.sin(A.h),-Math.cos(A.h)], rt=[Math.cos(A.h),-Math.sin(A.h)], G={t:0,cl:Math.random()<0.5?-1:1,fw,rt,cx:A.bx+fw[0]*150,cz:A.bz+fw[1]*150,w:[]};
+      [-1,0,1].forEach(k=>{ const w=A4_wreck(2.4); w.rotation.y=A.h+Math.PI/2; A.g.add(w); G.w.push({g:w,k,lat:k*20}); }); A.gapC=G; STY.lines=[]; STY.busy=0; say('fox',"Two gaps. ...One's closing. Pick one. PICK ONE.",0.2); A4_snd('tom',0.5,0.6); haptic([40,60,40]); }
+    const G=A.gapC; if(G){ G.t+=dt; G.w[1].lat=Math.min(10.5,G.t*0.8)*G.cl;
+      G.w.forEach(o=>{ const x=G.cx+G.rt[0]*o.lat, z=G.cz+G.rt[1]*o.lat, d=Math.hypot(x-A.bx,z-A.bz); o.g.position.set(x,A4_wave(x,z,A.st,A.amp)*(1-0.85*smooth(50,260,d))-0.8,z); o.g.rotation.z=0.05*Math.sin(time*0.6+o.k); A4_wreckTick(o.g); });
+      const rx=A.bx-G.cx, rz=A.bz-G.cz, al=rx*G.fw[0]+rz*G.fw[1], lt=rx*G.rt[0]+rz*G.rt[1];
+      if(!G.res&&al>-3){ const hit=G.w.some(o=>Math.abs(lt-o.lat)<6.4); G.res=hit?'hit':'ok';
+        if(hit){ A.speed*=0.35; A.jolt=1; A.flinch=1; A.press=1; A4_snd('hiss',0.6,0.9); A4_snd('tom',0.4,0.9); haptic([80,40,120]); STY.lines=[]; STY.busy=0; say('fox',"That one. You picked THAT one. ...We're on fire. More on fire.",0.2); }
+        else { A.gB=Math.max(A.gB||0,0.7); A4_snd('gust',1.3,0.5); haptic(30); STY.lines=[]; STY.busy=0; say('fox',"...Through. You picked. I'd still be picking.",0.3); } }
+      if(al>45||G.t>45){ G.w.forEach(o=>A.g.remove(o.g)); A.gapC=null; } } }
 
   A.heel+=((A.lean*0.15-A.side*0.1*(A.speed/9)*(1+0.7*A.grv)-Math.max(-1.2,Math.min(1.2,A.hv))*0.2)-A.heel)*Math.min(1,dt*2); A.by=A4_wave(A.bx,A.bz,A.st,A.amp)+(A.breathY||0);
   const B=A.boat, pitchB=(A4_wave(A.bx-Math.sin(A.h)*2,A.bz-Math.cos(A.h)*2,A.st,A.amp)-A4_wave(A.bx+Math.sin(A.h)*2,A.bz+Math.cos(A.h)*2,A.st,A.amp))/4; B.position.set(A.bx,A.by-0.25,A.bz); B.rotation.set(0,0,0); B.rotation.order='YXZ'; B.rotation.y=A.h; A.pitchS=(A.pitchS||0)+(pitchB*0.65-(A.pitchS||0))*Math.min(1,dt*2.5); B.rotation.x=A.pitchS; B.rotation.z=-A.heel;
