@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.13 -->
+<!-- Thin Veil · beta 0.14 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -132,7 +132,7 @@
 </head>
 <body>
 <div id="start" class="min tests">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.13</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.14</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -6514,15 +6514,15 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
         const B=Wb.bl; if(B){ B.t+=dt; const pl=0.5+0.5*Math.sin(time*3.2); B.m.position.set(B.x,A4_wave(B.x,B.z,A.st,A.amp)+0.15,B.z); B.m.scale.setScalar(5.5*(0.9+0.12*pl)*Math.min(1,B.t*1.5)); B.m.material.opacity=(0.55+0.45*pl)*Math.min(1,B.t);
           const d=Math.hypot(A.bx-B.x,A.bz-B.z), fw=[-Math.sin(A.h),-Math.cos(A.h)], behind=((B.x-A.bx)*fw[0]+(B.z-A.bz)*fw[1])<-18;
           if(d<6){ A.g.remove(B.m); Wb.bl=null; Wb.blT=1.2+Math.random(); haptic([20,30,40]); A4_snd('hiss',1.6,0.35); A.gB=Math.max(A.gB||0,0.4);
-            const st=addStar(dirAhead((Math.random()-0.5)*2.2,0.14+Math.random()*0.55),false); if(Wb.n===1){ STY.lines=[]; STY.busy=0; say('fox',"It went up. ...It's a star now. You made a star. Do another.",0.6); } if(Wb.n===5){ STY.lines=[]; STY.busy=0; say('fox',"They're holding hands. ...Up there. Look.",0.6); }
+            const st=addStar(dirAhead(Wb.n*2.39996+(Math.random()-0.5)*0.6,0.14+Math.random()*0.6),false); if(Wb.n===1){ STY.lines=[]; STY.busy=0; say('fox',"It went up. ...It's a star now. You made a star. Do another.",0.6); } if(Wb.n===5){ STY.lines=[]; STY.busy=0; say('fox',"They're holding hands. ...Up there. Look.",0.6); }
             // a spark rises from the water to its star
             const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:Wb.tex,color:0xaaffee,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})); sp.scale.setScalar(3); A.g.add(sp); Wb.rise=(Wb.rise||[]); Wb.rise.push({sp,t:0,from:new THREE.Vector3(B.x,0.5,B.z),st}); }
           else if(behind||B.t>16){ A.g.remove(B.m); Wb.bl=null; Wb.blT=1; } } }
       (Wb.rise||[]).forEach(R=>{ R.t+=dt; const u=Math.min(1,R.t/1.4), to=R.st.p.clone().add(skC); R.sp.position.lerpVectors(R.from,to,u*u); R.sp.material.opacity=1-u*0.6; if(u>=1){ A.g.remove(R.sp); R.done=1; } }); if(Wb.rise) Wb.rise=Wb.rise.filter(R=>!R.done);
       // the spectacle: once there are enough (or the dark moves on), the sky fills in by itself, joins up, and folds into one wheel above the water
       if(!Wb.sp&&Wb.n>0&&(Wb.n>=10||(A.pD||-1)>=0.3)){ Wb.sp=1; Wb.spT=0; STY.lines=[]; STY.busy=0; say('fox',"Look what you did. ...That's all you, up there. All of it.",1.2); }
-      if(Wb.sp){ Wb.spT+=dt; if(Wb.spT<9&&Wb.st.length<34){ Wb.auT=(Wb.auT||0)-dt; if(Wb.auT<0){ Wb.auT=0.32; addStar(dirAhead((Math.random()-0.5)*2.6,0.12+Math.random()*0.6),true); } }
-        if(Wb.spT>9&&!Wb.fold){ Wb.fold=1; const N=Wb.st.length; Wb.st.forEach((o,i)=>{ const ring=i%2, a=i/N*6.2832*(ring?1:1)+(ring?0.1:0), R=ring?0.28:0.17, c=dirAhead(0,0.36), up=new THREE.Vector3(0,1,0), side=new THREE.Vector3().crossVectors(c,up).normalize(), upv=new THREE.Vector3().crossVectors(side,c).normalize(); o.q=c.clone().add(side.multiplyScalar(Math.cos(a)*R)).add(upv.multiplyScalar(Math.sin(a)*R)).normalize().multiplyScalar(380); }); if(sound.C){ const t0=sound.C.currentTime; [220,277.18,329.63,440,554.37,659.25].forEach((f,i)=>A4_tone(f,t0+i*0.25,8-i*0.3,0.02,'sine')); } } } } }
+      if(Wb.sp){ Wb.spT+=dt; if(Wb.spT<10&&Wb.st.length<56){ Wb.auT=(Wb.auT||0)-dt; if(Wb.auT<0){ Wb.auT=0.2; addStar(dirAhead(Math.random()*6.2832,0.1+Math.pow(Math.random(),0.7)*1.2),true); } }
+        if(Wb.spT>9&&!Wb.fold){ Wb.fold=1; const N=Wb.st.length; Wb.st.forEach((o,i)=>{ const k=i%3, nk=Math.ceil((N-k)/3), j=Math.floor(i/3), a=j/nk*6.2832+(k===1?Math.PI/nk:0), el=[0.22,0.5,1.12][k]; o.q=new THREE.Vector3(Math.sin(a)*Math.cos(el),Math.sin(el),-Math.cos(a)*Math.cos(el)).multiplyScalar(380); }); if(sound.C){ const t0=sound.C.currentTime; [220,277.18,329.63,440,554.37,659.25].forEach((f,i)=>A4_tone(f,t0+i*0.25,8-i*0.3,0.02,'sine')); } } } } }
 
   A.heel+=((A.lean*0.15-A.side*0.1*(A.speed/9)*(1+0.7*A.grv)-Math.max(-1.2,Math.min(1.2,A.hv))*0.2)-A.heel)*Math.min(1,dt*2); A.by=A4_wave(A.bx,A.bz,A.st,A.amp)+(A.breathY||0);
   const B=A.boat, pitchB=(A4_wave(A.bx-Math.sin(A.h)*2,A.bz-Math.cos(A.h)*2,A.st,A.amp)-A4_wave(A.bx+Math.sin(A.h)*2,A.bz+Math.cos(A.h)*2,A.st,A.amp))/4; B.position.set(A.bx,A.by-0.25,A.bz); B.rotation.set(0,0,0); B.rotation.order='YXZ'; B.rotation.y=A.h; A.pitchS=(A.pitchS||0)+(pitchB*0.65-(A.pitchS||0))*Math.min(1,dt*2.5); B.rotation.x=A.pitchS; B.rotation.z=-A.heel;
