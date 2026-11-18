@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.27 -->
+<!-- Thin Veil · beta 0.28 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -132,7 +132,7 @@
 </head>
 <body>
 <div id="start" class="min tests">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.27</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.28</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -6288,7 +6288,7 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
       A.cm=[]; for(let i=0;i<(MOBILE?12:18);i++){ const N=26, g2=new THREE.BufferGeometry(); g2.setAttribute('position',new THREE.BufferAttribute(new Float32Array(N*3),3)); g2.setAttribute('color',new THREE.BufferAttribute(new Float32Array(N*3),3)); const tr=new THREE.Points(g2,new THREE.PointsMaterial({size:10,sizeAttenuation:true,map:smT,vertexColors:true,transparent:true,depthWrite:false,fog:false})); tr.frustumCulled=false; tr.visible=false; A.g.add(tr);
         const gl=new THREE.Sprite(new THREE.SpriteMaterial({map:smT,color:0xff7a30,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})); gl.visible=false; A.g.add(gl); A.cm.push({tr,gl,head:A4_fpProxy(A,16),on:0,fade:0,hist:[],N}); } }
     const launch=(c,sx,sy,sz,tx,tz,T)=>{ c.on=1; c.t=0; c.T=T; c.p=new THREE.Vector3(sx,sy,sz); const ty=A4_wave(tx,tz,A.st,A.amp); c.v=new THREE.Vector3((tx-sx)/T,(ty-sy)/T,(tz-sz)/T); c.tx=tx; c.tz=tz; c.hist=[]; c.fade=0; c.tr.visible=true; c.gl.visible=true; c.head.visible=true; };
-    A.cmT=(A.cmT===undefined?4:A.cmT)-dt; if(burning&&pB>0.12&&pB<0.78&&A.cmT<0&&A.f.nmc&&!A.nmc){ A.cmT=(0.35+Math.random()*0.9*(1-0.6*pB))/(0.2+0.8*smooth(0,0.4,pB)); const c=A.cm.find(q=>!q.on&&q.fade<=0&&!q.nm); if(c){ A.aimT=(A.aimT===undefined?0:A.aimT)-1; const aim=A.aimT<=0&&!A.gapC&&(A.speed||0)>2; let tx,tz,T=2.6+Math.random()*1.4; if(aim){ A.aimT=2+Math.floor(Math.random()*2); T=3.4; if(pB>0.45&&Math.random()<0.4) A.dbl={t:0.5,lat:(Math.random()<0.5?-1:1)*9}; const sp=Math.max(0,A.speed||0), lat=(Math.random()-0.5)*7; tx=A.bx+fw[0]*sp*T*0.95+rt[0]*lat; tz=A.bz+fw[1]*sp*T*0.95+rt[1]*lat; } else { const an=A.h+(Math.random()-0.5)*2.6, ds=80+Math.random()*320; tx=A.bx-Math.sin(an)*ds; tz=A.bz-Math.cos(an)*ds; } const az=Math.random()*6.283, hd=220+Math.random()*120; launch(c,tx+Math.sin(az)*hd,230+Math.random()*80,tz+Math.cos(az)*hd,tx,tz,T); c.aim=aim?1:0; c.wh=0; if(aim&&!A.f.ring){ A.f.ring=1; STY.lines=[]; STY.busy=0; say('fox',"A ring. On the water. ...That's where it lands. Don't be where it lands.",0.1); } if(done) A4_once('cm1',"Fire. Out of the sky. ...It's raining what's left of somebody's sky.",0.4); } }
+    A.cmT=(A.cmT===undefined?4:A.cmT)-dt; if(burning&&pB>0.12&&pB<0.78&&A.cmT<0&&A.f.nmc&&!A.nmc){ A.cmT=(0.35+Math.random()*0.9*(1-0.6*pB))/(0.2+0.8*smooth(0,0.4,pB)); const c=A.cm.find(q=>!q.on&&q.fade<=0&&!q.nm); if(c){ A.aimT=(A.aimT===undefined?0:A.aimT)-1; const aim=A.aimT<=0&&!A.gapC; let tx,tz,T=2.6+Math.random()*1.4; if(aim){ A.aimT=2+Math.floor(Math.random()*2); T=3.4; if(pB>0.45&&Math.random()<0.4) A.dbl={t:0.5,lat:(Math.random()<0.5?-1:1)*9}; const sp=Math.max(0,A.speed||0), lat=(Math.random()-0.5)*7; tx=A.bx+fw[0]*sp*T*0.95+rt[0]*lat; tz=A.bz+fw[1]*sp*T*0.95+rt[1]*lat; } else { const an=A.h+(Math.random()-0.5)*2.6, ds=80+Math.random()*320; tx=A.bx-Math.sin(an)*ds; tz=A.bz-Math.cos(an)*ds; } const az=Math.random()*6.283, hd=220+Math.random()*120; launch(c,tx+Math.sin(az)*hd,230+Math.random()*80,tz+Math.cos(az)*hd,tx,tz,T); c.aim=aim?1:0; c.wh=0; if(aim&&!A.f.ring){ A.f.ring=1; STY.lines=[]; STY.busy=0; say('fox',"A ring. On the water. ...That's where it lands. Don't be where it lands.",0.1); } if(done) A4_once('cm1',"Fire. Out of the sky. ...It's raining what's left of somebody's sky.",0.4); } }
     if(A.dbl&&burning&&!A.gapC){ A.dbl.t-=dt; if(A.dbl.t<0){ const c=A.cm.find(q=>!q.on&&q.fade<=0&&!q.nm); if(c){ const T=3.0, sp=Math.max(0,A.speed||0), tx=A.bx+fw[0]*sp*T*0.95+rt[0]*A.dbl.lat, tz=A.bz+fw[1]*sp*T*0.95+rt[1]*A.dbl.lat, az=Math.random()*6.283, hd=240; launch(c,tx+Math.sin(az)*hd,250,tz+Math.cos(az)*hd,tx,tz,T); c.aim=1; c.wh=0; } A.dbl=null; } }
     // the one that nearly has you: a cutscene
     if(burning&&pB>=0.06&&!A.f.nmc&&A.cm){ A.f.nmc=1; const c=A.cm.find(q=>!q.on)||A.cm[0]; c.nm=1; const sd=Math.random()<0.5?-1:1, T=3.0, sp=Math.max(0,A.speed||0), Px=A.bx+fw[0]*sp*T*0.92, Pz=A.bz+fw[1]*sp*T*0.92, tx=Px-fw[0]*24+rt[0]*sd*7, tz=Pz-fw[1]*24+rt[1]*sd*7;
