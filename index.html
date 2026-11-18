@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.29 -->
+<!-- Thin Veil · beta 0.30 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -132,7 +132,7 @@
 </head>
 <body>
 <div id="start" class="min tests">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.29</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.30</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -1854,8 +1854,8 @@ finalU.uThump={value:0}; finalU.uVeil={value:0}; window.__lino=finalU; blitScene
      float ad=abs(d); col*=1.0-0.75*span*smoothstep(w+0.05,w,ad);                                  // the picture chars back from the rip
      if(ad<w){ vec2 q=vec2(0.5+(p.x-lx)*1.1,y)+vec2(sin(t*0.4+sd)*0.03,0.0); col=tvWorld(uTearK,q,t)*(0.85+0.15*smoothstep(0.0,w,w-ad)); }  // the other side, quite still
      float rim=smoothstep(w+0.008,w,ad)*smoothstep(max(w-0.006,0.0),w,ad)*step(0.001,span); col=mix(col,mix(vec3(1.0,0.35,0.06),vec3(1.0,0.95,0.8),tvN(vec2(y*40.0,t*6.0))),rim); }   // and its edge burns
-   if(uThump>0.001) col*=1.0+uThump*0.55;
-   if(uVig>0.001){ float vr=length((oUv-0.5)*vec2(uAspect,1.0)); float vk=uVig*smoothstep(0.1,0.78,vr); col=mix(col,col*vec3(0.6,0.07,0.05),min(1.0,vk*0.95)); col*=1.0-min(0.93,vk*0.8); }
+   if(uThump>0.001){ float vr0=length((oUv-0.5)*vec2(uAspect,1.0)); col*=1.0+uThump*0.6*(1.0-smoothstep(0.15,0.6,vr0)); }
+   if(uVig>0.001){ float vr=length((oUv-0.5)*vec2(uAspect,1.0)); float vk=uVig*smoothstep(0.02,0.62,vr); col*=1.0-min(0.97,vk*1.15); col+=vec3(1.0,0.06,0.03)*uThump*smoothstep(0.3,0.62,vr)*smoothstep(0.95,0.62,vr)*0.55; }
    if(uGrn>0.001){ col+=(tvH(gl_FragCoord.xy*0.37+vec2(fract(t*7.13)*91.0,fract(t*3.7)*57.0))-0.5)*uGrn*(1.0-uVeil); col*=1.0-uFlk*tvH(vec2(floor(t*24.0),3.0)); }
    gl_FragColor=vec4(clamp(col,0.0,1.0),1.0); }`})));
 
@@ -5661,6 +5661,12 @@ function A4_oldMan(M){ const g=new THREE.Group(), inn=new THREE.Group(); g.add(i
   const arm=new THREE.Group(); arm.add(add(new THREE.CylinderGeometry(0.06,0.05,0.7,5),ink,0,0.35,0,arm)); arm.add(add(new THREE.SphereGeometry(0.06,6,4),face,0,0.74,0,arm)); arm.position.set(0.24,1.7,0.03); inn.add(arm);
   let av=false; Object.defineProperty(arm,'visible',{get(){ return av; },set(x){ av=!!x; rs.visible=rh.visible=!av; }}); arm.visible=false;
   g.visible=false; g.userData={arm,t:0,seen:0,head:HD,inn}; return g; }
+// ---- the heart in the fire: a deep synthesized lub-dub, straight to the master so it survives the silence; 180 a minute by the end ----
+function A4_heart(d,x){ const C=sound.C; if(!C||!sound.out) return; const t=C.currentTime+0.01, gap=0.19-0.07*x, v=0.45+0.3*d+0.35*x;
+  [[0,1],[gap,0.62]].forEach(([dt0,k])=>{ const t0=t+dt0, o=C.createOscillator(), o2=C.createOscillator(), g=C.createGain(), g2=C.createGain();
+    o.type='sine'; o.frequency.setValueAtTime(95,t0); o.frequency.exponentialRampToValueAtTime(42,t0+0.11); g.gain.setValueAtTime(0.0001,t0); g.gain.exponentialRampToValueAtTime(v*k,t0+0.006); g.gain.exponentialRampToValueAtTime(0.0001,t0+0.26+0.1*(1-x));
+    o2.type='triangle'; o2.frequency.setValueAtTime(180,t0); o2.frequency.exponentialRampToValueAtTime(60,t0+0.04); g2.gain.setValueAtTime(0.0001,t0); g2.gain.exponentialRampToValueAtTime(v*k*0.35,t0+0.003); g2.gain.exponentialRampToValueAtTime(0.0001,t0+0.06);
+    o.connect(g); o2.connect(g2); g.connect(sound.out); g2.connect(sound.out); o.start(t0); o2.start(t0); o.stop(t0+0.45); o2.stop(t0+0.1); }); }
 
 function A4_build(){ if(A4) A4_stop(); gfox.scale.setScalar(1.45*0.8); const A={f:{},pt:0,D:A4_D0,h:0,hv:0,heel:0,lean:0,boom:0.8,side:1,yank:0,yankT:9,steadyT:0,speed:0,bx:0,bz:0,by:0,amp:0.55,fire:0,ink:0,surge:{st:'far',t:0,d:520,H:40,n:0,wait:26},eyes:[0,0,0],hand:0,wz:{n:22,t:0,k:0},thN:0,crk:2,phase:'sail',small:0,doorT:0};
   A4=A; A.amp=1.1; A.atmo0=JSON.parse(JSON.stringify(WATMO.salt)); A.lakeR=LAKE.r; LAKE.hide=true; A.hid=[]; const sg=wG.salt; if(sg){ sg.children.forEach(c=>{ A.hid.push([c,c.visible]); c.visible=false; }); }
@@ -5937,7 +5943,7 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
   // ----- the veil: the print is the fox's picture, laid over a real night. Now and then it thins, and nobody explains -----
   { A.veilT=(A.veilT||0)-dt; A.calmT=(A.calmT||0)-dt; A.blsT=(A.blsT||0)-dt; A.starK=A.starK||0;
     if(!A.f.v1&&!A.moor&&A.bz<-70&&p<0.07){ A.f.v1=1; A.veilT=3.4; A.veilK=0.92; A.calmT=5; A4_snd('hiss',0.5,0.12); haptic(15); A4_once('v1s',"Don't look at that. That's not finished.",1.4); }
-    if(A.brkHit&&!A.f.v2&&p<0.45){ A.f.v2=1; A.blsT=7; A.veilT=1.2; A.veilK=0.35; A.petT=0.001; A4_once('v2s',"Blossom. Out here. ...That's off the orchard. It's come through.",1.6); }
+    if(A.brkHit&&!A.f.v2&&p<0.45){ A.f.v2=1; A.blsT=7; A.veilT=0; A.veilK=0; A.petT=0.001; A4_once('v2s',"Blossom. Out here. ...That's off the orchard. It's come through.",1.6); }
     A.spray.material.color.setRGB(0.95,A.blsT>0?0.62:0.95,A.blsT>0?0.74:0.95);
     const wk=0, nar=A.calm2?1:0; A.starK+=(nar-A.starK)*Math.min(1,dt*0.5); if(nar){ A.calmT=Math.max(A.calmT,1); if(false) A4_once('v2b',"Stars. Through the water. ...I know those. Those are the ones from the flat. They came with us.",1.2); }
     if(!A.f.v3&&p>0.66&&p<0.86&&S.st==='hang'&&S.t>2.5){ A.f.v3=1; A.v3T=1.1; A.ltN=-1; }
@@ -6077,8 +6083,8 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
     if(A.fire>0.05||A.f.sb){ const k=Math.floor(time*14); for(const o of A.flSp){ if(!o.visible) continue; o.material.map=A.ffr[(k+o.userData.fk)%A.ffr.length]; if(((k+o.userData.fk)%5)===0) o.scale.x=-Math.abs(o.scale.x); } } }
   // the heartbeat: faster as the fire closes in, hard under the wave; silent the moment the fire goes out
   { const B=A.brn||{st:'off'}, pf=B.st==='on'?smooth(0.35,0.6,p):0; let dz=0;
-    if(B.st==='ign') dz=0.3; if(B.st==='on'){ const pb=A.pB||0; dz=0.4+0.38*smooth(0.05,0.7,pb)+0.22*smooth(0.75,0.95,pb)+0.15*(A.torPull||0); if(A.wvc||A.nmc) dz=1; }
-    if(S.st==='hang'||S.st==='rush') dz=Math.max(dz,0.45+0.2*p); if(A.qOn) dz=Math.max(dz,0.5); if(p>0.6&&p<0.86&&!A.f.hand) dz=Math.max(dz,0.3);
+    if(B.st==='ign') dz=0.3; if(B.st==='on'){ const pb=A.pB||0; A.hbX=smooth(88,118,A.tBurn||0); dz=0.4+0.3*smooth(0.05,0.7,pb)+0.3*A.hbX+0.15*(A.torPull||0); if(A.wvc||A.nmc) dz=1; } else A.hbX=0;
+    if(S.st==='hang'||S.st==='rush') dz=Math.max(dz,0.45+0.2*p); if(A.qOn) dz=Math.max(dz,0.5); 
     if(A.snuff>0||A.hand>0.5||A.phase==='door') dz=Math.min(dz,A.hand>0.5?0.15:0); A.dz=dz; }
   // things burning down out of the sky, in waves: one, then three, then a downpour; his little boats, two great ships, his kitchen, and wreckage between
   { const B=A.brn||{st:'off'}, live=B.st==='on'&&A.fire>0.5, pf=live?A.pB:0;
@@ -7781,9 +7787,9 @@ function frame(){
     if(rew.on) dz=Math.max(dz,0.5);
     if(ego.on) dz=Math.max(dz,Math.min(1,0.3+ego.t/9));
     if(typeof A4!=='undefined'&&A4&&A4.dz!==undefined) dz=Math.max(dz,A4.dz); danger+=(dz-danger)*Math.min(1,dt*1.5);
-    hbPh+=dt*(52+danger*95)/60; if(hbPh>=1){ hbPh-=1; if(started&&danger>0.12){ sound.heart(danger); haptic(danger>0.5?[25,70,18]:14); } }
+    const hbX=(typeof A4!=='undefined'&&A4&&A4.hbX)||0; hbPh+=dt*((52+danger*95)*(1-hbX)+180*hbX)/60; if(hbPh>=1){ hbPh-=1; if(started&&danger>0.12){ if(typeof A4!=='undefined'&&A4&&A4.brn&&A4.brn.st==='on') A4_heart(danger,hbX); else sound.heart(danger); haptic(danger>0.5?[25,70,18]:14); } }
     const pulse=Math.max(Math.exp(-hbPh*14),0.7*Math.exp(-Math.abs(hbPh-0.17)*14));
-    U.uPulse.value=pulse*(0.12+danger*0.9); postU.uPulse.value=pulse*danger; if(finalU.uVig) finalU.uVig.value=(typeof A4!=='undefined'&&A4)?danger*(0.25+0.75*pulse):0; if(finalU.uThump){ let tk=0; if(typeof A4!=='undefined'&&A4){ const Bh=A4.brn||{}; tk=Bh.st==='on'?0.75+0.25*smooth(0.6,0.97,A4.pB||0):0.4; } const env=Math.max(Math.exp(-hbPh*4),0.75*Math.exp(-Math.abs(hbPh-0.17)*4.5)); finalU.uThump.value=danger>0.12?env*tk*Math.min(1,danger*2):0; if(finalU.uVig&&typeof A4!=='undefined'&&A4) finalU.uVig.value=Math.min(1.5,(0.25+1.0*env)*Math.min(1,danger*1.7)*(0.6+0.4*tk)); } sound.setDanger(started?danger:0); }
+    U.uPulse.value=pulse*(0.12+danger*0.9); postU.uPulse.value=pulse*danger; if(finalU.uVig) finalU.uVig.value=(typeof A4!=='undefined'&&A4)?danger*(0.25+0.75*pulse):0; if(finalU.uThump){ let tk=0; if(typeof A4!=='undefined'&&A4){ const Bh=A4.brn||{}; tk=Bh.st==='on'?(0.75+0.25*smooth(0.6,0.97,A4.pB||0))*(1+0.9*hbX):0.4; } const env=Math.max(Math.exp(-hbPh*4),0.75*Math.exp(-Math.abs(hbPh-0.17)*4.5)); finalU.uThump.value=danger>0.12?env*tk*Math.min(1,danger*2):0; if(finalU.uVig&&typeof A4!=='undefined'&&A4) finalU.uVig.value=Math.min(2.2,(0.25+1.0*env)*Math.min(1,danger*1.7)*(0.6+0.4*tk)*(1+0.8*hbX)); } sound.setDanger(started?danger:0); }
   // faces in the burning clouds: they come apart when you look straight at them
   { const fx=-Math.sin(player.yaw)*Math.cos(player.pitch), fy=Math.sin(player.pitch), fz=-Math.cos(player.yaw)*Math.cos(player.pitch);
     FACE_DIRS.forEach((d,k)=>{ const look=fx*d.x+fy*d.y+fz*d.z>0.988; faceVis[k]=Math.min(1,Math.max(0,faceVis[k]+(look?-dt*2.5:dt*0.2))); });
