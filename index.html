@@ -7499,7 +7499,7 @@ function frame(){
   U.uFire.value=gw[0]*(frozen?0.9:(0.85+0.15*Math.sin(time*13)*Math.sin(time*7.3)))*(cold?0:1.15)*(WORLDS_ON&&WORLD!=='lake'&&WORLD!=='sea'?0:1);
   U.uFireCol.value.set(0.32,0.62,1.0); flameMat.color.setRGB(0.3,0.6,1.0);
   crystals.visible=!cold; crystals.rotation.y=frozen?0.3:time*0.15; sparksUpdate(dt,gw[0]*(cold?0:1),frozen);
-  fireG.visible=gw[0]>0.02; fireG.scale.setScalar(Math.max(gw[0],0.001));
+  fireG.visible=gw[0]>0.02&&!(typeof A4!=='undefined'&&A4); fireG.scale.setScalar(Math.max(gw[0],0.001));
   if(!frozen) campT.value=time; campMat.uniforms.uCold.value=1; fireG.children.forEach(o=>{ if(o.isInstancedMesh) o.visible=!cold; });
   if(!frozen) flames.forEach((f,i)=>{f.scale.set(1,0.8+0.3*Math.sin(time*(9+i*3)+i),1); f.rotation.y=time*(1+i);});
   stoneG.visible=!missing.has('stone'); cabinG.visible=!missing.has('cabin');
@@ -7523,7 +7523,7 @@ function frame(){
   blooms.forEach(b=>b.upd(gw[b.L],time));
   quantumUpdate(dt); if(!NORMAL&&!STY.on) supUpdate(dt,gw); if(wc.on) wcUpdate(dt); else if(TL.on) tlUpdate(dt); else if(STY.on) storyUpdate(dt); else guideFoxUpdate(dt); entApply(gw); livingUpdate(dt,gw); voicesUpdate(dt,gw); wakingUpdate(dt,gw); worldVis(); storyPost(); worldAtmo(); mountOceanVis(dt); worldDoors(); animalsAnim(dt); if(wc.on){ lhG.visible=false; } stormUpdate(dt,gw);
   sound.listen(camera.position,[-Math.sin(player.yaw)*Math.cos(player.pitch),Math.sin(player.pitch),-Math.cos(player.yaw)*Math.cos(player.pitch)]);
-  sound.setFire(gw[0]*(returns>=2||missing.has('fire')?0:(ent.has('fire')?0.25:0.9)));
+  sound.setFire((typeof A4!=='undefined'&&A4)?0:gw[0]*(returns>=2||missing.has('fire')?0:(ent.has('fire')?0.25:0.9)));
   if(curFrag){ const g=curFrag.g; g.rotation.y=time*0.4; const ss=shardState();
     if(curFrag.L===6){ curFrag.fall=Math.max(0,curFrag.fall-Math.max(0,wtime-curFrag.lastW)*0.045); curFrag.lastW=wtime; }
     if(!collectT){ g.visible=ss.vis>0.04; if(g.userData.shell) g.userData.shell.material.opacity=0.25+0.6*ss.vis; g.scale.setScalar(curFrag.L===1&&!ss.ok?0.6+0.1*Math.sin(time*9):1); }
