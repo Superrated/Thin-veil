@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.49 -->
+<!-- Thin Veil · beta 0.50 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -132,7 +132,7 @@
 </head>
 <body>
 <div id="start" class="min tests">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.49</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.50</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -6555,7 +6555,7 @@ function A4_update(dt){ const A=A4; if(!A) return; if(typeof mists!=='undefined'
       if(T>59.6&&!A.f.land){ STY.lines=[]; STY.busy=0; A.f.land=1; A.landT=0; if(Wb.mo) Wb.mo.m.visible=false; } }
     Wb&&(Wb.em.visible=Wb.sm.visible=A.aur>0.01);
     // once you are at the house, the night's sky is put away
-    if(A.phase!=='sail'||A.f.land&&A.landT>1.5){ A.aur=0; if(Wb&&Wb.G2) Wb.G2.visible=false; if(Wb&&Wb.spi) Wb.spi.visible=false; if(A.aur3) A.aur3.forEach(m=>{ m.visible=false; }); if(Wb&&Wb.nova&&Wb.nova.m) Wb.nova.m.visible=false; if(Wb&&Wb.ring) Wb.ring.visible=false; if(Wb&&Wb.mo) Wb.mo.m.visible=false; }
+    if(A.phase!=='sail'||A.f.land&&A.landT>1.5){ if(Wb&&Wb.G2) Wb.G2.visible=false; if(Wb&&Wb.spi) Wb.spi.visible=false; if(Wb&&Wb.nova&&Wb.nova.m) Wb.nova.m.visible=false; if(Wb&&Wb.ring) Wb.ring.visible=false; if(Wb&&Wb.mo) Wb.mo.m.visible=false; }
   }
   // eternal bliss: a warm chord that grows with every star you light, opens up, and blooms at the crown; it lets go when his light goes out
   { const dark=A.calT!==undefined&&A.calT>3&&p<0.86&&A.phase==='sail'&&!A.tube, Wb=A.web, C=sound.C;
