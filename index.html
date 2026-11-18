@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.59 -->
+<!-- Thin Veil · beta 0.60 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -135,7 +135,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.59</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.60</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -6917,15 +6917,18 @@ function memUpdate(dt){ const t=STY.t, M=MEMO, L=["There you are. Sit. It's only
 function mornSkyGLSL(){ return `
   uniform float uSun;
   vec3 mSky(vec3 d,float t){ float e=max(d.y,0.0), az=atan(d.x,-d.z), se=-0.035+0.4*uSun;
+    vec3 nt=mix(vec3(0.92,0.32,0.18),vec3(0.55,0.16,0.28),smoothstep(0.0,0.07,e)); nt=mix(nt,vec3(0.17,0.09,0.28),smoothstep(0.05,0.24,e)); nt=mix(nt,vec3(0.03,0.04,0.12),smoothstep(0.2,0.7,e)); nt+=vec3(1.0,0.36,0.12)*0.45*exp(-length(vec2(az-0.35,e))*3.0)*smoothstep(0.25,0.0,e);
     vec3 c=mix(vec3(1.0,0.84,0.66),vec3(0.96,0.7,0.72),smoothstep(0.0,0.07,e)); c=mix(c,vec3(0.82,0.66,0.82),smoothstep(0.05,0.2,e)); c=mix(c,vec3(0.56,0.56,0.8),smoothstep(0.18,0.45,e)); c=mix(c,vec3(0.3,0.33,0.6),smoothstep(0.42,0.95,e));
-    vec3 m=mix(vec3(1.0,0.92,0.8),vec3(0.86,0.84,0.92),smoothstep(0.0,0.1,e)); m=mix(m,vec3(0.66,0.76,0.94),smoothstep(0.08,0.4,e)); m=mix(m,vec3(0.46,0.6,0.9),smoothstep(0.38,0.95,e)); c=mix(c,m,uSun);
+    vec3 m=mix(vec3(1.0,0.92,0.8),vec3(0.86,0.84,0.92),smoothstep(0.0,0.1,e)); m=mix(m,vec3(0.66,0.76,0.94),smoothstep(0.08,0.4,e)); m=mix(m,vec3(0.46,0.6,0.9),smoothstep(0.38,0.95,e)); float k1=smoothstep(0.0,0.5,uSun), k2=smoothstep(0.5,1.0,uSun); c=mix(nt,c,k1); c=mix(c,m,k2);
+    { vec2 sq=floor(vec2(az*140.0,e*140.0)); float st=step(0.9965,fract(sin(dot(sq,vec2(12.9898,78.233)))*43758.5453)); c+=vec3(0.9,0.92,1.0)*st*(1.0-k1)*smoothstep(0.08,0.3,e)*(0.6+0.4*sin(t*2.0+sq.x)); }
     vec2 sp=vec2(az-0.35,e-se); float sd=length(sp);
     float aw=e-0.32-0.06*sin(az*2.0+t*0.05)-0.03*sin(az*5.3-t*0.08); float ab=exp(-aw*aw*90.0)*(0.55+0.45*sin(az*9.0+t*0.11+3.0*sin(az*1.7)))*smoothstep(0.4,1.6,sd);
     float cur=pow(max(0.0,sin(az*23.0+t*0.2+4.0*sin(az*2.3+t*0.03))),3.0); vec3 ac=mix(vec3(0.45,0.95,0.7),vec3(0.75,0.55,1.0),smoothstep(-0.05,0.08,aw)); c+=ac*ab*(0.12+0.1*cur)*(1.0-0.85*uSun);
-    c+=vec3(1.0,0.7,0.36)*0.32*exp(-sd*6.0); c+=vec3(1.0,0.85,0.6)*(0.12+0.06*uSun)*exp(-sd*1.8);
+    c+=vec3(1.0,0.7,0.36)*0.32*exp(-sd*6.0)*(0.25+0.75*k1); c+=vec3(1.0,0.85,0.6)*0.12*exp(-sd*1.8)*(0.3+0.7*k1)*(1.0-0.5*k2); c+=vec3(1.0,0.45,0.15)*0.35*exp(-sd*2.5)*k1*(1.0-k2);
     float ra=atan(sp.y,sp.x); float ry=pow(0.5+0.5*sin(ra*7.0+t*0.05+1.6*sin(ra*3.0-t*0.03)),4.0)*0.6+pow(0.5+0.5*sin(ra*13.0-t*0.04+2.0*sin(ra*2.0+t*0.02)),6.0)*0.4; c+=vec3(1.0,0.82,0.55)*ry*0.09*smoothstep(1.1,0.05,sd)*smoothstep(0.0,0.06,sd)*step(0.0,d.y)*(0.4+0.6*smoothstep(-0.03,0.05,se));
-    float cl=sin(az*2.6+e*24.0+t*0.02+1.7*sin(az*1.3+t*0.01))+0.7*sin(az*6.1-e*38.0+t*0.035); float cm=smoothstep(0.7,1.05,cl)*smoothstep(0.03,0.1,e)*smoothstep(0.42,0.2,e)*0.45; vec3 cc=mix(vec3(0.95,0.66,0.66),vec3(1.0,0.88,0.62),exp(-abs(az-0.35)*1.4)); cc=mix(cc,vec3(1.0,0.97,0.94),uSun*0.7); c=mix(c,cc,cm*0.9);
-    c=mix(c,vec3(1.0,0.96,0.84),1.0-smoothstep(0.028,0.034,sd)); return c*(0.86+0.1*uSun); }`; }
+    float cl=sin(az*2.6+e*24.0+t*0.02+1.7*sin(az*1.3+t*0.01))+0.7*sin(az*6.1-e*38.0+t*0.035); float cm=smoothstep(0.7,1.05,cl)*smoothstep(0.03,0.1,e)*smoothstep(0.42,0.2,e)*0.45; vec3 cc=mix(vec3(0.95,0.66,0.66),vec3(1.0,0.88,0.62),exp(-abs(az-0.35)*1.4)); cc=mix(mix(vec3(0.3,0.16,0.3),vec3(0.9,0.4,0.3),exp(-abs(az-0.35)*1.4)),cc,k1); cc=mix(cc,vec3(1.0,0.97,0.94),k2*0.7); c=mix(c,cc,cm*0.9);
+    c=mix(c,vec3(1.0,0.96,0.84),1.0-smoothstep(0.028,0.034,sd)); return c*(0.86+0.1*uSun); }
+  `; }
 
 // the shape of his shore
 function mornGLH(){ return `float mshore(float x){ return 2.0+4.0*sin(x*0.06+0.5)+1.5*sin(x*0.17); } float mH(float x,float z){ float d=z-mshore(x); float h=d<0.0?d*0.09:min(1.25,d*0.11); if(d>11.0) h=1.25+0.22*sin(x*0.1)*sin(z*0.08)+0.12*sin(z*0.05+x*0.03); h+=min(9.0,pow(max(0.0,abs(x)-38.0)*0.22,1.4))*(d>-2.0?1.0:0.0)+min(9.0,pow(max(0.0,z-60.0)*0.25,1.4)); h-=max(0.0,abs(x)-95.0)*0.9; return h; }`; }
@@ -6950,7 +6953,7 @@ function mornEnter(){ STY.stage='morn'; STY.t=0; STY.lines=[]; STY.busy=99; cons
       fragmentShader:'uniform float uT; varying vec3 vD;'+mornSkyGLSL()+' void main(){ vec3 d=normalize(vD); vec3 c=d.y>-0.02?mSky(d,uT):mix(vec3(0.2,0.36,0.46),vec3(0.95,0.75,0.55),exp((d.y)*18.0)); gl_FragColor=vec4(pow(clamp(c,0.0,1.0),vec3(2.2)),1.0); }'})); M.sky.renderOrder=-10; M.sky.frustumCulled=false; G.add(M.sky); }
   // the sea: act IV's carved sea, in the morning's colours
   { const U=M.SU={}; (A4_SEA_VS+'\n'+A4_SEA_FS).replace(/uniform\s+(\w+)\s+([^;]+);/g,(m,ty,nms)=>{ nms.split(',').forEach(nm=>{ nm=nm.trim(); if(!nm||U[nm]) return; U[nm]={value:ty==='float'?0:ty==='vec2'?new THREE.Vector2():ty==='vec3'?new THREE.Vector3():ty==='vec4'?new THREE.Vector4():null}; }); return m; });
-    const lin=(r,g,b)=>new THREE.Vector3(Math.pow(r,2.2),Math.pow(g,2.2),Math.pow(b,2.2)); M.seaPal={a:[lin(0.3,0.3,0.5),lin(0.44,0.46,0.66),lin(0.62,0.62,0.8),lin(0.8,0.7,0.82),lin(0.86,0.8,0.86),lin(0.98,0.8,0.74)],b:[lin(0.24,0.36,0.46),lin(0.38,0.58,0.7),lin(0.58,0.76,0.84),lin(0.74,0.84,0.88),lin(0.84,0.9,0.92),lin(0.86,0.88,0.92)]};
+    const lin=(r,g,b)=>new THREE.Vector3(Math.pow(r,2.2),Math.pow(g,2.2),Math.pow(b,2.2)); M.seaPal={n:[lin(0.07,0.07,0.16),lin(0.12,0.11,0.25),lin(0.28,0.18,0.34),lin(0.62,0.32,0.34),lin(0.78,0.46,0.4),lin(0.6,0.24,0.22)],a:[lin(0.3,0.3,0.5),lin(0.44,0.46,0.66),lin(0.62,0.62,0.8),lin(0.8,0.7,0.82),lin(0.86,0.8,0.86),lin(0.98,0.8,0.74)],b:[lin(0.24,0.36,0.46),lin(0.38,0.58,0.7),lin(0.58,0.76,0.84),lin(0.74,0.84,0.88),lin(0.84,0.9,0.92),lin(0.86,0.88,0.92)]};
     if(U.uAmp) U.uAmp.value=0.2; if(U.uWd) U.uWd.value.set(0.6,0.8); if(U.uLines) U.uLines.value=1; if(U.uIgnR) U.uIgnR.value=1e4; if(U.uClr) U.uClr.value=15; if(U.uGu) U.uGu.value.set(0,0,9,0); if(U.uBl) U.uBl.value.set(0,0,7,0); if(U.uMycP) U.uMycP.value=-1;
     const g=new THREE.PlaneGeometry(1500,1500,MOBILE?90:150,MOBILE?90:150); g.rotateX(-Math.PI/2); { const P=g.attributes.position, ex=MOBILE?1.95:1.7; for(let q=0;q<P.count;q++){ const x=P.getX(q)/750, z=P.getZ(q)/750; P.setX(q,Math.sign(x)*Math.pow(Math.abs(x),ex)*750); P.setZ(q,Math.sign(z)*Math.pow(Math.abs(z),ex)*750); } }
     M.sea=new THREE.Mesh(g,new THREE.ShaderMaterial({uniforms:U,vertexShader:A4_SEA_VS,fragmentShader:A4_SEA_FS,fog:false})); M.sea.frustumCulled=false; G.add(M.sea);
@@ -6971,7 +6974,7 @@ function mornEnter(){ STY.stage='morn'; STY.t=0; STY.lines=[]; STY.busy=99; cons
           meadow+=vec3(1.0,0.98,0.95)*step(0.992,h2(floor(p*7.0)+floor(uT*1.5)))*0.5*(1.0-0.7*uSun);
           float rip=0.5+0.5*sin(d*7.0+n2(p*0.7)*4.0); vec3 sand=c*(0.95+0.06*rip); sand=mix(sand,c*0.86,smoothstep(1.4,0.2,d)*0.6);
           c=mix(sand,meadow,gr);
-          float dist=length(vW-cameraPosition); vec3 haze=mix(vec3(0.96,0.82,0.8),vec3(0.86,0.9,0.95),uSun); c=mix(c,haze,smoothstep(35.0,170.0,dist)*0.65);
+          float dist=length(vW-cameraPosition); vec3 haze=mix(mix(vec3(0.3,0.16,0.3),vec3(0.96,0.82,0.8),smoothstep(0.0,0.5,uSun)),vec3(0.86,0.9,0.95),smoothstep(0.5,1.0,uSun)); c=mix(c,haze,smoothstep(35.0,170.0,dist)*0.65);
           gl_FragColor=vec4(pow(clamp(c,0.0,1.0),vec3(2.2)),1.0); }`})); G.add(land);
     for(let i=0;i<22;i++){ const sx=i%2?1:-1, x=sx*(36+Math.random()*10), z=mornShore(sx*40)+Math.random()*30, s=1+Math.random()*2.6, rk=mornRock(s,i); rk.position.set(x,mornH(x,z)+s*0.15,z); rk.rotation.y=Math.random()*6; G.add(rk); } }
 
@@ -6986,19 +6989,19 @@ function mornEnter(){ STY.stage='morn'; STY.t=0; STY.lines=[]; STY.busy=99; cons
         float h=(0.22+0.36*aI.z)*m; float a=aI.z*31.4; vec3 p=position; vY=p.y; vR=aI.z; vD=d; vec2 lx=vec2(cos(a),sin(a))*p.x;
         float sw=(0.18*sin(uT*1.5+wx*0.35+wz*0.27)+0.06*sin(uT*3.3+aI.z*20.0))*p.y*p.y; vec2 dp=vec2(wx,wz)-uC.xz; float dl=length(dp); vec2 push=dl>0.01?dp/dl*(1.0-smoothstep(0.25,1.1,dl))*0.55*p.y:vec2(0.0);
         vec3 w=vec3(wx+lx.x+sw*0.7+push.x, mH(wx,wz)+p.y*h, wz+lx.y+sw*0.4+push.y); gl_Position=projectionMatrix*viewMatrix*modelMatrix*vec4(w,1.0); }`,
-      fragmentShader:`uniform float uSun; varying float vY; varying float vR; varying float vD; void main(){ vec3 b=mix(vec3(0.66,0.78,0.66),vec3(0.7,0.74,0.8),step(0.7,vR)); vec3 tp=mix(vec3(0.9,0.96,0.88),vec3(0.93,0.92,0.97),step(0.7,vR)); vec3 c=mix(b,tp,vY); c=mix(c,vec3(0.95,0.95,0.98),smoothstep(0.75,1.0,vY)*0.45*(1.0-0.6*uSun)); c*=0.92+0.16*uSun; gl_FragColor=vec4(pow(c,vec3(2.2)),1.0); }`})); M.grass.frustumCulled=false; G.add(M.grass);
+      fragmentShader:`uniform float uSun; varying float vY; varying float vR; varying float vD; void main(){ vec3 b=mix(vec3(0.66,0.78,0.66),vec3(0.7,0.74,0.8),step(0.7,vR)); vec3 tp=mix(vec3(0.9,0.96,0.88),vec3(0.93,0.92,0.97),step(0.7,vR)); vec3 c=mix(b,tp,vY); c=mix(c,vec3(0.95,0.95,0.98),smoothstep(0.75,1.0,vY)*0.45*(1.0-0.6*uSun)); c*=0.92+0.16*uSun; gl_FragColor=vec4(pow(c,vec3(2.2)),1.0); }`})); M.grass.frustumCulled=false; M.grass.visible=false;
     // flowers: little five-petalled heads standing up out of the grass
-    const NF=MOBILE?260:420, RF=20, fg=new THREE.InstancedBufferGeometry(); fg.setAttribute('position',new THREE.Float32BufferAttribute([-1,-1,0, 1,-1,0, 1,1,0, -1,1,0],3)); fg.setIndex([0,1,2, 0,2,3]);
+    const NF=MOBILE?1100:1800, RF=18, fg=new THREE.InstancedBufferGeometry(); fg.setAttribute('position',new THREE.Float32BufferAttribute([-1,-1,0, 1,-1,0, 1,1,0, -1,1,0],3)); fg.setIndex([0,1,2, 0,2,3]);
     const fi=new Float32Array(NF*3); for(let i=0;i<NF;i++){ fi[i*3]=(Math.random()*2-1)*RF; fi[i*3+1]=(Math.random()*2-1)*RF; fi[i*3+2]=Math.random(); } fg.setAttribute('aI',new THREE.InstancedBufferAttribute(fi,3)); fg.instanceCount=NF;
     M.flow=new THREE.Mesh(fg,new THREE.ShaderMaterial({uniforms:M.GU,transparent:false,fog:false,vertexShader:GLH+`
       attribute vec3 aI; uniform vec3 uC; uniform float uT; varying vec2 vQ; varying float vR;
-      void main(){ float R=${RF}.0; float wx=uC.x+mod(aI.x-uC.x+R,2.0*R)-R, wz=uC.z+mod(aI.y-uC.z+R,2.0*R)-R; float d=wz-mshore(wx); float m=smoothstep(10.0,12.0,d)*(1.0-smoothstep(R-4.0,R,length(vec2(wx,wz)-uC.xz)))*step(abs(wx),44.0);
-        vQ=position.xy; vR=aI.z; vec3 c=vec3(wx+0.04*sin(uT*1.4+wx),mH(wx,wz)+0.38+0.25*aI.z,wz+0.03*sin(uT*1.2+wz)); vec4 mv=viewMatrix*modelMatrix*vec4(c,1.0); mv.xy+=position.xy*0.12*m; gl_Position=projectionMatrix*mv; }`,
-      fragmentShader:`varying vec2 vQ; varying float vR; void main(){ float r=length(vQ), a=atan(vQ.y,vQ.x); float pet=0.62+0.38*cos(a*5.0+vR*6.0); if(r>pet) discard; vec3 c=vR<0.3?vec3(0.98,0.97,0.94):(vR<0.55?vec3(0.98,0.84,0.4):(vR<0.8?vec3(0.95,0.64,0.76):vec3(0.74,0.66,0.94))); c=mix(vec3(0.98,0.82,0.3),c,smoothstep(0.18,0.3,r)); gl_FragColor=vec4(pow(c,vec3(2.2)),1.0); }`})); M.flow.frustumCulled=false; G.add(M.flow);
+      void main(){ float R=${RF}.0; float wx=uC.x+mod(aI.x-uC.x+R,2.0*R)-R, wz=uC.z+mod(aI.y-uC.z+R,2.0*R)-R; float d=wz-mshore(wx); float m=smoothstep(9.0,10.5,d)*(1.0-smoothstep(R-3.0,R,length(vec2(wx,wz)-uC.xz)))*step(abs(wx),44.0);
+        vQ=position.xy; vR=aI.z; vec3 c=vec3(wx+0.04*sin(uT*1.4+wx),mH(wx,wz)+0.12+0.22*aI.z,wz+0.03*sin(uT*1.2+wz)); vec4 mv=viewMatrix*modelMatrix*vec4(c,1.0); mv.xy+=position.xy*(0.1+0.07*fract(aI.z*7.0))*m; gl_Position=projectionMatrix*mv; }`,
+      fragmentShader:`varying vec2 vQ; varying float vR; void main(){ float r=length(vQ), a=atan(vQ.y,vQ.x); float pet=0.62+0.38*cos(a*5.0+vR*6.0); if(r>pet) discard; float q=fract(vR*13.0); vec3 c=q<0.28?vec3(1.0,0.98,0.95):(q<0.48?vec3(1.0,0.82,0.3):(q<0.68?vec3(1.0,0.56,0.72):(q<0.84?vec3(0.72,0.6,1.0):vec3(1.0,0.45,0.35)))); c=mix(vec3(0.98,0.82,0.3),c,smoothstep(0.18,0.3,r)); gl_FragColor=vec4(pow(c,vec3(2.2)),1.0); }`})); M.flow.frustumCulled=false; G.add(M.flow);
     // reeds where the sand meets the hills
     { const geos=[]; for(let i=0;i<40;i++){ const sx=i%2?1:-1, x=sx*(16+Math.random()*24), z=mornShore(x)+0.6+Math.random()*2.2; for(let k=0;k<7;k++){ const h=0.9+Math.random()*0.9, gg=new THREE.ConeGeometry(0.025,h,3); gg.translate(0,h/2,0); gg.rotateZ((Math.random()-0.5)*0.35); gg.rotateX((Math.random()-0.5)*0.3); gg.translate(x+(Math.random()-0.5)*0.6,mornH(x,z)-0.05,z+(Math.random()-0.5)*0.5); geos.push(gg.toNonIndexed()); }
         const tg=new THREE.CylinderGeometry(0.05,0.05,0.22,5); tg.translate(x,mornH(x,z)+1.5,z); geos.push(tg.toNonIndexed()); }
-      geos.forEach(g=>{ g.deleteAttribute('uv'); g.deleteAttribute('normal'); }); M.reeds=new THREE.Mesh(mergeGeometries(geos),B(0x6f7a52)); G.add(M.reeds); } }
+      geos.forEach(g=>{ g.deleteAttribute('uv'); g.deleteAttribute('normal'); }); M.reeds=null; } }
   // soft clouds drifting low round the sky, and a halo round the sun
   { M.cloud=[...Array(12)].map((_,i)=>{ const s=new THREE.Sprite(new THREE.SpriteMaterial({map:softTex(255,255,255),transparent:true,opacity:0.55,depthWrite:false,fog:false})); const az=(i/12)*6.283+Math.random()*0.4, el=0.05+Math.random()*0.22; s.scale.set(220+Math.random()*200,40+Math.random()*40,1); G.add(s); return {s,az,el,v:0.004+Math.random()*0.004}; });
     M.halo=new THREE.Sprite(new THREE.SpriteMaterial({map:softTex(255,214,160),transparent:true,opacity:0.55,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})); M.halo.scale.setScalar(320); G.add(M.halo); }
@@ -7083,21 +7086,31 @@ function mornEnter(){ STY.stage='morn'; STY.t=0; STY.lines=[]; STY.busy=99; cons
     document.body.appendChild(e); M.noteEl=e; }
   // the sound: water on the sand, birds, gulls, and a small tune for a new day
   if(sound.C){ const C=sound.C, out=C.createGain(); out.gain.value=0; out.connect(sound.out); out.gain.setTargetAtTime(1,C.currentTime,4); M.out=out;
-    const n=C.createBufferSource(), buf=C.createBuffer(1,C.sampleRate*4,C.sampleRate), dd=buf.getChannelData(0); for(let i=0;i<dd.length;i++) dd[i]=Math.random()*2-1; n.buffer=buf; n.loop=true; const lp=C.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=600; const wg=C.createGain(); wg.gain.value=0.05; n.connect(lp); lp.connect(wg); wg.connect(out); n.start(); M.wave={wg,lp}; M.nb=buf;
-    const dl=C.createDelay(1.5), fb=C.createGain(), dw=C.createGain(); dl.delayTime.value=0.62*1.5; fb.gain.value=0.32; dw.gain.value=0.35; dl.connect(fb); fb.connect(dl); dl.connect(dw); dw.connect(out); M.mus=C.createGain(); M.mus.gain.value=0; M.mus.connect(out); M.mus.connect(dl); M.mus.gain.setTargetAtTime(1,C.currentTime+6,5); M.beat=C.currentTime+7; M.step=0; }
+    const n=C.createBufferSource(), buf=C.createBuffer(1,C.sampleRate*4,C.sampleRate), dd=buf.getChannelData(0); for(let i=0;i<dd.length;i++) dd[i]=Math.random()*2-1; n.buffer=buf; n.loop=true; const lp=C.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=600; const wg=C.createGain(); wg.gain.value=0.05; M.wave=null; M.nb=buf;
+    const dl=C.createDelay(1.5), fb=C.createGain(), dw=C.createGain(); dl.delayTime.value=0.62*1.5; fb.gain.value=0.32; dw.gain.value=0.35; dl.connect(fb); fb.connect(dl); dl.connect(dw); dw.connect(out); M.mus=C.createGain(); M.mus.gain.value=0; M.mus.connect(out); M.mus.connect(dl); M.mus.gain.setTargetAtTime(1,C.currentTime+2,3); M.beat=C.currentTime+2.5; M.mstep=0; }
   player.x=0; player.z=0; player.yaw=-0.25; player.pitch=-0.05; vel.x=vel.z=0;
 }
 
 function mornChirp(t0){ const C=sound.C; if(!C||!sound.out) return; const n=2+Math.floor(Math.random()*4), base=2400+Math.random()*1600, pan=Math.random()*2-1; for(let i=0;i<n;i++){ const o=C.createOscillator(), g=C.createGain(), t=t0+i*(0.09+Math.random()*0.06); o.type='sine'; o.frequency.setValueAtTime(base*(0.9+Math.random()*0.3),t); o.frequency.exponentialRampToValueAtTime(base*(1.2+Math.random()*0.4),t+0.06); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(0.025,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+0.09); let out=g; if(C.createStereoPanner){ const p=C.createStereoPanner(); p.pan.value=pan; g.connect(p); out=p; } o.connect(g); out.connect(MORN&&MORN.out||sound.out); o.start(t); o.stop(t+0.12); } }
 function mornGull(t0){ const C=sound.C; if(!C) return; const o=C.createOscillator(), g=C.createGain(); o.type='triangle'; o.frequency.setValueAtTime(900,t0); o.frequency.exponentialRampToValueAtTime(1500,t0+0.12); o.frequency.exponentialRampToValueAtTime(700,t0+0.45); g.gain.setValueAtTime(0,t0); g.gain.linearRampToValueAtTime(0.012,t0+0.05); g.gain.exponentialRampToValueAtTime(0.0001,t0+0.5); o.connect(g); g.connect(MORN&&MORN.out||sound.out); o.start(t0); o.stop(t0+0.55); }
-function mornStep(wet){ const C=sound.C, M=MORN; if(!C||!M||!M.nb) return; const t=C.currentTime+0.01, s=C.createBufferSource(); s.buffer=M.nb; const f=C.createBiquadFilter(); f.type=wet?'bandpass':'lowpass'; f.frequency.value=wet?1400+Math.random()*600:700+Math.random()*300; const g=C.createGain(); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(wet?0.05:0.03,t+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t+(wet?0.3:0.16)); s.connect(f); f.connect(g); g.connect(M.out||sound.out); s.start(t,Math.random()*3,0.4); }
+function mornStep(wet){ return; const C=sound.C, M=MORN; if(!C||!M||!M.nb) return; const t=C.currentTime+0.01, s=C.createBufferSource(); s.buffer=M.nb; const f=C.createBiquadFilter(); f.type=wet?'bandpass':'lowpass'; f.frequency.value=wet?1400+Math.random()*600:700+Math.random()*300; const g=C.createGain(); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(wet?0.05:0.03,t+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t+(wet?0.3:0.16)); s.connect(f); f.connect(g); g.connect(M.out||sound.out); s.start(t,Math.random()*3,0.4); }
 // a small tune for a new day: A major, I V vi IV, a soft bell of a melody over it, echoed
 function mornNote(f,t,dur,v){ const C=sound.C, M=MORN; if(!C||!M||!M.mus) return; const o=C.createOscillator(), o2=C.createOscillator(), g=C.createGain(); o.type='sine'; o2.type='triangle'; o.frequency.value=f; o2.frequency.value=f*2.001; const g2=C.createGain(); g2.gain.value=0.18; o2.connect(g2); g2.connect(g); o.connect(g); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(v,t+0.015); g.gain.exponentialRampToValueAtTime(0.0001,t+dur); g.connect(M.mus); o.start(t); o2.start(t); o.stop(t+dur+0.05); o2.stop(t+dur+0.05); }
-function mornMusic(){ const C=sound.C, M=MORN; if(!C||!M||!M.mus) return; const SP=0.62; while(M.beat<C.currentTime+0.3){ const t=M.beat, s=M.step, bar=Math.floor(s/8)%4, st=s%8;
-    const CH=[[220,277.18,329.63],[164.81,207.65,246.94],[185,220,277.18],[146.83,185,220]][bar], SC=[440,493.88,554.37,659.25,739.99,880];
-    if(st===0){ mornNote(CH[0]*0.5,t,SP*8.5,0.05); CH.forEach((f,i)=>mornNote(f,t+i*0.04,SP*7,0.016)); }
-    const R=[1,0,1,0,1,1,0,(bar===3?0:1)][st]; if(R&&Math.random()<0.88){ const tones=[CH[0]*2,CH[1]*2,CH[2]*2].concat(SC); M.mel=M.mel===undefined?2:M.mel; M.mel=Math.max(0,Math.min(SC.length-1,M.mel+[-1,0,1,1,-1,2,-2][(Math.random()*7)|0])); const f=(st===0||Math.random()<0.35)?CH[(Math.random()*3)|0]*2:SC[M.mel]; mornNote(f,t,SP*3.2,0.03); }
-    M.step++; M.beat+=SP; } }
+function mornTone(f,t,dur,v,type,dest){ const C=sound.C; const o=C.createOscillator(), g=C.createGain(); o.type=type||'sine'; o.frequency.value=f; g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(v,t+0.012); g.gain.exponentialRampToValueAtTime(0.0001,t+dur); o.connect(g); g.connect(dest); o.start(t); o.stop(t+dur+0.05); return o; }
+function mornMusic(){ const C=sound.C, M=MORN; if(!C||!M||!M.mus) return; const E=0.375, SW=0.07;
+  while(M.beat<C.currentTime+0.35){ const st=M.mstep, bar=Math.floor(st/8)%4, s8=st%8, t=M.beat+(s8%2?SW:0);
+    const CH=[[220,277.18,329.63,415.3],[185,220,277.18,329.63],[246.94,293.66,369.99,440],[164.81,207.65,293.66,369.99]][bar], BS=[[110,110,164.81,138.59],[92.5,92.5,138.59,110],[123.47,123.47,185,146.83],[82.41,82.41,123.47,103.83]][bar];
+    // keys: laid-back stabs on 1 and the "and" of 2, warm and a touch wobbly
+    if(s8===0||s8===3||(s8===6&&bar%2)){ const v=s8===0?0.022:0.015; CH.forEach((f,i)=>{ mornTone(f*(1+(Math.random()-0.5)*0.003),t+i*0.012,s8===0?1.4:0.7,v,'sine',M.mus); mornTone(f*2.002,t+i*0.012,0.35,v*0.25,'triangle',M.mus); }); }
+    // bass: round, on the beat, walking into the next bar
+    if(s8%2===0){ const bf=BS[s8/2]; mornTone(bf,t,0.5,0.06,'sine',M.mus); mornTone(bf*2,t,0.18,0.012,'triangle',M.mus); }
+    // a soft kick on 1 and 3
+    if(s8===0||s8===4){ const o=C.createOscillator(), g=C.createGain(); o.frequency.setValueAtTime(110,t); o.frequency.exponentialRampToValueAtTime(42,t+0.12); g.gain.setValueAtTime(0.07,t); g.gain.exponentialRampToValueAtTime(0.0001,t+0.25); o.connect(g); g.connect(M.mus); o.start(t); o.stop(t+0.3); }
+    // shaker on the offbeats
+    if(s8%2===1&&M.nb){ const n=C.createBufferSource(); n.buffer=M.nb; const f=C.createBiquadFilter(); f.type='highpass'; f.frequency.value=6000; const g=C.createGain(); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(0.012,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+0.09); n.connect(f); f.connect(g); g.connect(M.mus); n.start(t,Math.random()*3,0.12); }
+    // a whistled tune, every other time round
+    if(Math.floor(st/32)%2===1){ const MEL=[[0,659.25,2],[3,739.99,1],[4,880,3],[8,739.99,2],[11,659.25,1],[12,554.37,4],[16,587.33,2],[19,659.25,1],[20,739.99,3],[24,659.25,2],[27,554.37,1],[28,493.88,4]], s32=st%32; MEL.forEach(([at,f,len])=>{ if(at===s32){ const o=mornTone(f,t,len*E+0.4,0.022,'sine',M.mus); const lf=C.createOscillator(), lg=C.createGain(); lf.frequency.value=5.2; lg.gain.value=f*0.006; lf.connect(lg); lg.connect(o.frequency); lf.start(t); lf.stop(t+len*E+0.5); } }); }
+    M.mstep++; M.beat+=E; } }
 
 function mornUpdate(dt){ const M=MORN; if(!M) return; M.t+=dt; const t=M.t, C=sound.C, G=M.g; STY.lines=[]; STY.busy=99; coatFig.visible=false;
   // only the morning exists (and the fox, once he's up)
@@ -7114,10 +7127,10 @@ function mornUpdate(dt){ const M=MORN; if(!M) return; M.t+=dt; const t=M.t, C=so
     player.x=0; player.z=0; vel.x=vel.z=0; player.pitch=Math.max(-1.2,Math.min(1.2,player.pitch));
     M.camP=new THREE.Vector3(M.px,2000+Math.max(M.eye,-0.36)+1.62+(ml>0.1?0.035*Math.sin(M.bob):0),M.pz); M.camQ=new THREE.Quaternion().setFromEuler(new THREE.Euler(player.pitch,player.yaw,0,'YXZ')); M.U.uCam.value.copy(M.camP);
     M.sky.position.set(M.camP.x,0,M.camP.z); }
-  { const U=M.SU, ss=M.U.uSun.value, pa=M.seaPal; if(U.uT) U.uT.value=t; if(U.uCamP) U.uCamP.value.set(M.camP.x,M.camP.y,M.camP.z); for(let i=0;i<5;i++){ const k='uP'+i; if(U[k]) U[k].value.copy(pa.a[i]).lerp(pa.b[i],ss); } if(U.uFogC) U.uFogC.value.copy(pa.a[5]).lerp(pa.b[5],ss); M.sea.position.set(Math.round(M.px/10)*10,0,Math.round(M.pz/10)*10); M.glit.position.x=M.px; M.glit.position.z=M.pz; }
+  { const U=M.SU, ss=M.U.uSun.value, pa=M.seaPal; if(U.uT) U.uT.value=t; if(U.uCamP) U.uCamP.value.set(M.camP.x,M.camP.y,M.camP.z); const k1=smooth(0,0.5,ss), k2=smooth(0.5,1,ss); for(let i=0;i<6;i++){ const k=i<5?'uP'+i:'uFogC'; if(U[k]) U[k].value.copy(pa.n[i]).lerp(pa.a[i],k1).lerp(pa.b[i],k2); } M.sea.position.set(Math.round(M.px/10)*10,0,Math.round(M.pz/10)*10); M.glit.position.x=M.px; M.glit.position.z=M.pz; }
   M.GU.uC.value.set(M.px,0,M.pz);
-  { const se=-0.035+0.4*M.U.uSun.value, sa=0.35, cx=M.camP.x, cy=M.camP.y, cz=M.camP.z; M.halo.position.set(cx+Math.sin(sa)*Math.cos(se)*700,(cy-2000)+Math.sin(se)*700,cz-Math.cos(sa)*Math.cos(se)*700); M.halo.material.opacity=0.5-0.2*M.U.uSun.value;
-    M.cloud.forEach(c=>{ c.az+=c.v*dt; const sn=Math.exp(-Math.abs(Math.atan2(Math.sin(c.az-sa),Math.cos(c.az-sa)))*1.2); c.s.position.set(cx+Math.sin(c.az)*Math.cos(c.el)*650,(cy-2000)+Math.sin(c.el)*650,cz-Math.cos(c.az)*Math.cos(c.el)*650); const col=new THREE.Color().setRGB(0.95,0.78+0.12*sn,0.86-0.15*sn).lerp(new THREE.Color(1,0.99,0.97),M.U.uSun.value*0.8); c.s.material.color.copy(col); }); }
+  { const se=-0.035+0.4*M.U.uSun.value, sa=0.35, cx=M.camP.x, cy=M.camP.y, cz=M.camP.z; M.halo.position.set(cx+Math.sin(sa)*Math.cos(se)*700,(cy-2000)+Math.sin(se)*700,cz-Math.cos(sa)*Math.cos(se)*700); M.halo.material.opacity=(0.5-0.2*M.U.uSun.value)*smooth(0.05,0.45,M.U.uSun.value)*(1-0.75*smooth(0.55,1,M.U.uSun.value));
+    M.cloud.forEach(c=>{ c.az+=c.v*dt; const sn=Math.exp(-Math.abs(Math.atan2(Math.sin(c.az-sa),Math.cos(c.az-sa)))*1.2); c.s.position.set(cx+Math.sin(c.az)*Math.cos(c.el)*650,(cy-2000)+Math.sin(c.el)*650,cz-Math.cos(c.az)*Math.cos(c.el)*650); const su=M.U.uSun.value, ka=smooth(0,0.5,su), kb=smooth(0.5,1,su); const col=new THREE.Color().setRGB(0.32+0.5*sn,0.18+0.12*sn,0.32).lerp(new THREE.Color().setRGB(0.95,0.78+0.12*sn,0.86-0.15*sn),ka).lerp(new THREE.Color(1,0.99,0.97),kb*0.8); c.s.material.color.copy(col); }); }
   // the wash: water runs up the sand and slides back
   { const W=M.wash, N=W.N, sp=W.sheet.geometry.attributes.position, fo=W.foam.geometry.attributes.position; for(let i=0;i<N;i++){ const x=-50+i*100/(N-1), s=mornShore(x), run=0.6+1.4*(0.5+0.5*Math.sin(t*0.55+x*0.035+Math.sin(x*0.11)*1.5)), zf=s+run, hf=Math.max(0,mornH(x,zf))+0.03;
       sp.setXYZ(i*2,x,0.02,s-1.2); sp.setXYZ(i*2+1,x,hf,zf); fo.setXYZ(i*2,x,hf+0.005,zf-0.22); fo.setXYZ(i*2+1,x,hf+0.012,zf+0.08); } sp.needsUpdate=true; fo.needsUpdate=true; }
@@ -7160,9 +7173,7 @@ function mornUpdate(dt){ const M=MORN; if(!M) return; M.t+=dt; const t=M.t, C=so
     if(c.run>0){ c.run-=dt; const side=[Math.cos(g.rotation.y),-Math.sin(g.rotation.y)], nx=g.position.x+side[0]*c.dir*2.2*dt, nz=g.position.z+side[1]*c.dir*2.2*dt, h=mornH(nx,nz); if(h>0.02&&h<1.1){ g.position.x=nx; g.position.z=nz; g.position.y=h; } c.legs.forEach((l,i)=>{ l.rotation.y=0.5*Math.sin(t*30+i*1.7); }); }
     else c.legs.forEach(l=>{ l.rotation.y*=0.9; }); });
   M.gulls.forEach(g=>{ g.a+=g.s*dt; g.m.position.set(10+Math.cos(g.a)*g.r,g.h+Math.sin(t*0.4+g.r)*0.6,-30+Math.sin(g.a)*g.r); g.m.rotation.y=-g.a+(g.s>0?0:Math.PI); g.m.scale.y=1.3*(0.85+0.3*Math.sin(t*3+g.r)); });
-  if(C){ M.chirp-=dt; if(M.chirp<0){ M.chirp=1.5+Math.random()*5; mornChirp(C.currentTime+0.05); } M.gull-=dt; if(M.gull<0){ M.gull=7+Math.random()*12; mornGull(C.currentTime+0.05); }
-    if(M.wave){ const near=Math.max(0,1-Math.max(0,M.pz-mornShore(M.px))/30); M.wave.wg.gain.setTargetAtTime((0.025+0.03*Math.max(0,Math.sin(t*0.55+M.px*0.035)))*(0.4+0.8*near),C.currentTime,0.3); M.wave.lp.frequency.setTargetAtTime(450+300*Math.max(0,Math.sin(t*0.55)),C.currentTime,0.3); }
-    mornMusic(); } }
+  if(C) mornMusic(); }
 
 function roomLeave(){ gfox.visible=true; if(ROOM) ROOM.g.visible=false; STY.room=false; STY.fallY=undefined; }
 function roomUpdate(dt){ if(STY.stage==='morn') return; if(!STY.room||!ROOM||STY.stage==='mem') return; const t=STY.t, done=STY.lines.length===0&&STY.busy<=0; if(STY.stage==='a1room'&&t>9&&done&&!STY.flags.rx1){ STY.flags.rx1=1; say('xt',"...Hello? Was that the door?",0.6); } ROOM.spin.rotation.y+=dt*0.5; coatFig.visible=false;
@@ -8049,7 +8060,7 @@ function frame(){
     const SH=[[0.86,0.95,1.14],[1.1,0.85,1.15],[0.85,1.08,0.95],[0.9,0.9,1.2],[1.12,0.9,0.85],[0.97,0.98,1.02],[1.05,0.97,0.85]], HI=[[1.08,1.0,0.9],[0.92,1.05,1.12],[1.1,1.05,0.8],[1.0,1.06,1.1],[1.08,0.95,0.82],[1.02,1.0,0.97],[1.1,1.0,0.85]];
     const md=tripMood==='unease'?[0.97,1.04,0.98]:(tripMood==='letting go'?[1.04,1.0,0.96]:[1,1,1.02]); const sv=finalU.uShadT.value, hv=finalU.uHighT.value; sv.set(0,0,0); hv.set(0,0,0);
     gw.forEach((w,i)=>{ sv.x+=SH[i][0]*w; sv.y+=SH[i][1]*w; sv.z+=SH[i][2]*w; hv.x+=HI[i][0]*w; hv.y+=HI[i][1]*w; hv.z+=HI[i][2]*w; }); sv.multiply(_md.set(...md));
-    if(WORLDS_ON&&WORLD!=='lake'){ const A=WATMO[WORLD]; sv.lerp(_wv1.set(...A.sh),gw[0]); hv.lerp(_wv2.set(...A.hi),gw[0]); } if(typeof A4!=='undefined'&&A4&&(A4.fire||0)>0.2){ const k=Math.min(1,A4.fire); sv.lerp(_wv1.set(1.18,0.9,0.84),k); hv.lerp(_wv2.set(1.06,0.97,0.9),k); } if(STY.stage==='morn'){ const mk=Math.min(1,(MORN?MORN.t:0)/10), su=MORN&&MORN.U?MORN.U.uSun.value:0; sv.lerp(_wv1.set(1.1+0.04*su,0.93+0.1*su,1.08-0.2*su),0.5+0.5*mk); hv.lerp(_wv2.set(1.08+0.06*su,0.98+0.07*su,1.06-0.14*su),0.5+0.5*mk); sv.multiplyScalar(1+(0.08+0.1*su)*mk); hv.multiplyScalar(1+(0.06+0.08*su)*mk); } }
+    if(WORLDS_ON&&WORLD!=='lake'){ const A=WATMO[WORLD]; sv.lerp(_wv1.set(...A.sh),gw[0]); hv.lerp(_wv2.set(...A.hi),gw[0]); } if(typeof A4!=='undefined'&&A4&&(A4.fire||0)>0.2){ const k=Math.min(1,A4.fire); sv.lerp(_wv1.set(1.18,0.9,0.84),k); hv.lerp(_wv2.set(1.06,0.97,0.9),k); } if(STY.stage==='morn'){ const mk=Math.min(1,(MORN?MORN.t:0)/6), su=MORN&&MORN.U?MORN.U.uSun.value:0, k1=smooth(0,0.5,su), k2=smooth(0.5,1,su), warm=Math.sin(Math.PI*Math.min(1,su/0.85)), br=0.34+0.66*smooth(0.05,0.62,su); sv.lerp(_wv1.set(0.9,0.86,1.25),(1-k1)*mk); sv.lerp(_wv1.set(1.38,0.86,0.66),warm*0.65*mk); hv.lerp(_wv2.set(1.3,1.0,0.72),warm*0.55*mk); sv.lerp(_wv1.set(1.1,1.04,0.92),k2*0.6*mk); hv.lerp(_wv2.set(1.12,1.06,0.94),k2*0.6*mk); sv.multiplyScalar(br*(1+0.12*k2)); hv.multiplyScalar(br*(1+0.1*k2)); } }
   if(wc.on||finalU.uMock.value>0.5) finalU.uInvVP.value.multiplyMatrices(camera.matrixWorld,camera.projectionMatrixInverse);
   gpu('final',()=>{ renderer.setRenderTarget(null); renderer.render(blitScene,orthoCam); });
   devCollect(); devShow();
