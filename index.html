@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.17 -->
+<!-- Thin Veil · beta 0.18 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -132,7 +132,7 @@
 </head>
 <body>
 <div id="start" class="min tests">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.17</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.18</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -6518,11 +6518,11 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
       // I. scattered: a star every third of a second, wherever it likes; lines between the ones that will one day be neighbours
       if(T>1&&T<20){ Wb.nT=(Wb.nT||0)-dt; if(Wb.nT<0){ Wb.nT=0.34; const k=Wb.order.find(q=>Wb.lit[q]<0); if(k!==undefined){ Wb.lit[k]=0; Wb.n++; Wb.E.forEach(([a,b],q)=>{ if(Wb.ek[q]<0&&Wb.lit[a]>=0&&Wb.lit[b]>=0) Wb.ek[q]=0; }); if(sound.C&&Wb.n%2) A4_tone([392,440,523.25,587.33,659.25,783.99,880][Wb.n%7],sound.C.currentTime+0.02,2.4,0.012,'sine'); } } }
       // II. order: they glide into the dome
-      const mig=smooth(21,31,T); if(T>21&&!Wb.s1){ Wb.s1=1; STY.lines=[]; STY.busy=0; say('fox',"...They're finding their places. Look. Every one of them knew where to go.",0.6); }
+      const mig=smooth(21,31,T); const quiet=!STY.lines.length&&STY.busy<0.3; if(T>0.5&&!Wb.s0&&quiet){ Wb.s0=1; say('fox',"...It's stopped. Everything's stopped. ...I don't know what to do when nothing's chasing us.",0.4); } if(T>13&&!Wb.sU&&quiet){ Wb.sU=1; say('fox',"I've never looked up. Not once. Too busy watching behind us.",0.4); } if(T>22&&!Wb.s1&&quiet){ Wb.s1=1; say('fox',"...They're finding their places. Nobody's rushing them.",0.4); } if(T>32.5&&!Wb.sD&&quiet){ Wb.sD=1; say('fox',"Don't steer. Don't do anything. ...Just this. This counts too.",0.4); }
       // III. finale: it turns, rainbow runs through it, and then it all comes down into the sea
       const rot=smooth(31,40,T)*(T-31)*0.035; Wb.em.rotation.y=Wb.sm.rotation.y=rot; Wb.em.material.uniforms.uRb.value=smooth(32,37,T); Wb.em.material.uniforms.uT.value=time;
       if(T>34&&!Wb.s2){ Wb.s2=1; if(sound.C){ const t0=sound.C.currentTime; [220,277.18,329.63,440,554.37,659.25,880].forEach((f,i)=>A4_tone(f,t0+i*0.2,9-i*0.4,0.02,'sine')); } }
-      if(T>41&&!Wb.s3){ Wb.s3=1; STY.lines=[]; STY.busy=0; say('fox',"They're coming down. ...Into the water. It's all right. They're coming home.",0.4); }
+      if(T>41&&!Wb.s3&&quiet){ Wb.s3=1; say('fox',"They're coming down. Even the sky doesn't keep anything. ...That's why you look while it's there.",0.4); } if(T>53&&!Wb.s4&&quiet){ Wb.s4=1; say('fox',"...Right. That was the most important thing we did all night. Don't tell anyone. They'll think we were lazy.",0.6); }
       if(T>42){ Wb.mT=(Wb.mT||0)-dt; if(Wb.mT<0){ Wb.mT=0.16; const k=Wb.order.find(q=>Wb.lit[q]>=0&&!Wb.fall[q]); if(k!==undefined){ Wb.fall[k]=1; const from=Wb.Pc[k].clone().applyAxisAngle(new THREE.Vector3(0,1,0),rot).add(A.skyG.getWorldPosition(new THREE.Vector3())), a=Math.random()*6.2832, r=12+Math.random()*60, to=new THREE.Vector3(A.bx+Math.cos(a)*r,0,A.bz+Math.sin(a)*r);
             if(!Wb.mtx) Wb.mtx=softTex(235,255,250); const m=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({map:Wb.mtx,color:0xddfff4,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})); m.frustumCulled=false; A.g.add(m); Wb.met.push({m,from,to,t:0,L:1.3+Math.random()*0.6}); } } }
       Wb.met.forEach(M=>{ M.t+=dt; const u=Math.min(1,M.t/M.L), e=u*u, pos=M.from.clone().lerp(M.to,e), ahead=M.from.clone().lerp(M.to,Math.min(1,e+0.04)); M.m.position.copy(pos); M.m.lookAt(camera.position); const dir=ahead.sub(pos).project(camera), ang=Math.atan2(dir.y,dir.x); M.m.rotation.z=ang; M.m.scale.set(18*(0.4+u),1.6,1); M.m.material.opacity=1;
