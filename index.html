@@ -1367,7 +1367,7 @@ const sky = new THREE.Mesh(new THREE.SphereGeometry(500,48,24), new THREE.Shader
    vec3 dir=normalize(vDir); float t=uTime; float y=dir.y;
    vec3 a,b; float tc; weights(vec3(0.0),a,b,tc);
    #ifndef LAYER
-   { vec3 a0,b0,a1,b1; float c0,c1; stageW(uFrom,a0,b0,c0); stageW(uTo,a1,b1,c1); a=mix(a0,a1,uSkyMix); b=mix(b0,b1,uSkyMix); tc=mix(c0,c1,uSkyMix); }
+   { vec3 a0,b0,a1,b1; float c0,c1; stageW(uFrom,a0,b0,c0); if(uMix>0.0001){ stageW(uTo,a1,b1,c1); } else { a1=a0; b1=b0; c1=c0; } a=mix(a0,a1,uSkyMix); b=mix(b0,b1,uSkyMix); tc=mix(c0,c1,uSkyMix); }
    #endif
    vec3 col=vec3(0.0);
    if(LW(6)&&tc>0.001){
@@ -1539,7 +1539,7 @@ postScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2), new THREE.ShaderMater
   vec3 hueShift(vec3 c,float h){ vec3 k=vec3(0.57735); float ca=cos(h); return c*ca+cross(k,c)*sin(h)+k*dot(k,c)*(1.0-ca); }
   vec2 kaleido(vec2 c,float n,float rot){ float r=length(c); float a=atan(c.y,c.x)+rot; float s=6.28318/n; a=mod(a,s); a=abs(a-s*0.5); return vec2(cos(a),sin(a))*r; }
   void main(){
-   vec3 a0,b0,a1,b1; float c0,c1; stageW(uFrom,a0,b0,c0); stageW(uTo,a1,b1,c1); vec3 a=mix(a0,a1,uMix), b=mix(b0,b1,uMix); float tc=mix(c0,c1,uMix);
+   vec3 a0,b0,a1,b1; float c0,c1; stageW(uFrom,a0,b0,c0); if(uMix>0.0001){ stageW(uTo,a1,b1,c1); } else { a1=a0; b1=b0; c1=c0; } vec3 a=mix(a0,a1,uMix), b=mix(b0,b1,uMix); float tc=mix(c0,c1,uMix);
    float t=uTime; vec2 uv=vUv; float trip=1.0-a.x;
    if(uGlitch>0.001){ float row=floor(uv.y*38.0); float on=step(0.72,hash(vec3(row,floor(t*15.0),2.0)));
      uv.x+=(hash(vec3(row,floor(t*20.0),1.0))-0.5)*0.12*uGlitch*on; }
@@ -1549,8 +1549,7 @@ postScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2), new THREE.ShaderMater
    c.y+=(0.02*trip*uWild+0.03*uTrans)*sin(c.x*8.0+t*1.5)*smoothstep(0.0,0.5,length(c));
    c+=b.y*0.006*uWild*vec2(sin(c.y*40.0+t*9.0),cos(c.x*35.0+t*7.0));
    float kAmt=clamp((a.y*0.6+b.x*0.25+a.z*0.15)*uWild+uTrans*0.55,0.0,1.0);
-   vec2 kc=kaleido(c,mix(6.0,10.0,b.x),t*0.15);
-   vec2 cc=mix(c,kc,smoothstep(0.0,1.0,kAmt));
+   vec2 cc=c; if(kAmt>0.0005){ vec2 kc=kaleido(c,mix(6.0,10.0,b.x),t*0.15); cc=mix(c,kc,smoothstep(0.0,1.0,kAmt)); }
    cc*=1.0-uTrans*0.12*sin(t*2.0);
    vec2 suv=mirror(cc/vec2(uAspect,1.0)+0.5);
    float ca=0.002+(0.006*trip+b.y*0.004)*uWild+0.01*uTrans;
@@ -1655,7 +1654,7 @@ window.__lino=finalU; blitScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),
   void main(){ vec2 oUv=vUv; vec2 fUv=vec2(mix(vUv.x,1.0-vUv.x,uFlipX),vUv.y);
    #define vUv fUv
 
-   vec3 a0,b0,a1,b1; float c0,c1; stageW(uFrom,a0,b0,c0); stageW(uTo,a1,b1,c1); vec3 a=mix(a0,a1,uMix), b=mix(b0,b1,uMix); float tc=mix(c0,c1,uMix);
+   vec3 a0,b0,a1,b1; float c0,c1; stageW(uFrom,a0,b0,c0); if(uMix>0.0001){ stageW(uTo,a1,b1,c1); } else { a1=a0; b1=b0; c1=c0; } vec3 a=mix(a0,a1,uMix), b=mix(b0,b1,uMix); float tc=mix(c0,c1,uMix);
    float t=uTime; vec2 uv=vUv; float trip=1.0-a.x;
    if(uDist>0.002){ float dk=uDist*(uDistP.z>0.001?smoothstep(uDistP.z*0.45,uDistP.z*1.2,length((uv-uDistP.xy)*vec2(uAspect,1.0))):1.0); vec2 q=uv-0.5;
      float tw=dk*0.55*length(q)*sin(t*0.31); q=mat2(cos(tw),-sin(tw),sin(tw),cos(tw))*q; q*=1.0+dk*0.07*sin(t*0.83);                                   // twist, and breathe
@@ -1671,8 +1670,7 @@ window.__lino=finalU; blitScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),
    c.y+=(0.02*trip*uWild+0.03*uTrans)*sin(c.x*8.0+t*1.5)*smoothstep(0.0,0.5,length(c));
    c+=b.y*0.006*uWild*vec2(sin(c.y*40.0+t*9.0),cos(c.x*35.0+t*7.0));
    float kAmt=clamp((a.y*0.6+b.x*0.25+a.z*0.15)*uWild+uTrans*0.55+uFold,0.0,1.0);
-   vec2 kc=kaleido(c,mix(6.0,10.0,b.x),t*0.15);
-   vec2 cc=mix(c,kc,smoothstep(0.0,1.0,kAmt));
+   vec2 cc=c; if(kAmt>0.0005){ vec2 kc=kaleido(c,mix(6.0,10.0,b.x),t*0.15); cc=mix(c,kc,smoothstep(0.0,1.0,kAmt)); }
    cc*=1.0-uTrans*0.12*sin(t*2.0);
    vec2 suv=mirror(cc/vec2(uAspect,1.0)+0.5);
    // sharp scene vs. what the half-res dream pass could keep: put the lost detail back
@@ -1688,7 +1686,7 @@ window.__lino=finalU; blitScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),
    float ls=max(dot(soft,vec3(0.3,0.59,0.11)),0.04), ld=dot(sc-soft,vec3(0.3,0.59,0.11));
    float dH=linD(texture2D(tDepth,suv).r); col*=1.0+clamp(ld/ls,-0.85,1.6)*uDetail*(1.0-0.85*smoothstep(22.0,90.0,dH));
    // ink: outlines from depth, with a slight hand-drawn boil
-   float dC=linD(texture2D(tDepth,suv).r); float solid=step(0.5,texture2D(tScene,suv).a)*step(dC,uNF.y*0.9);
+   float dC=dH; float solid=step(0.5,texture2D(tScene,suv).a)*step(dC,uNF.y*0.9);
    if(uLineAmt>0.01){ vec2 cell=floor(suv*vec2(70.0*uAspect,70.0));
      vec2 wob=(vec2(hash(vec3(cell,uBoil)),hash(vec3(cell,uBoil+7.0)))-0.5)*uTexS*1.6;
      vec2 su=suv+wob, tx=uTexS*(1.4+uTrans*1.5);
@@ -5424,7 +5422,7 @@ function HB_bucket(){ const L=[], m=new THREE.Matrix4(), q=new THREE.Quaternion(
   const box=(w,h,d,l,x,y,z,ry,rx,rz)=>add(new THREE.BoxGeometry(w,h,d),l,x,y,z,rx,ry,rz);
   const cyl=(r1,r2,h,n,l,x,y,z,rx,ry,rz)=>add(new THREE.CylinderGeometry(r1,r2,h,n),l,x,y,z,rx,ry,rz);
   const tri=(v,l)=>{ const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.Float32BufferAttribute(v,3)); return add(g,l); };
-  const mesh=(M)=>{ const g=mergeGeometries(L); L.length=0; const o=new THREE.Mesh(g,M(1,{vertexColors:true})); o.frustumCulled=false; return o; };
+  const mesh=(M)=>{ const g=mergeGeometries(L); L.length=0; const o=new THREE.Mesh(g,M(1,{vertexColors:true})); o.frustumCulled=true; return o; };
   return {add,box,cyl,tri,mesh,L}; }
 function HB_h(i,k){ const s=Math.sin(i*127.1+k*311.7)*43758.5453; return s-Math.floor(s); }
 
@@ -5615,17 +5613,17 @@ function A4_build(){ if(A4) A4_stop(); gfox.scale.setScalar(1.45*0.8); const A={
       void main(){ vec4 w=modelMatrix*vec4(position,1.0); w.y+=wv(w.xz)*(1.0-0.92*smoothstep(110.0,420.0,length(position.xz)))+uBreathY; vW=w.xyz; gl_Position=projectionMatrix*viewMatrix*w; }`,
       fragmentShader:`uniform float uT; uniform float uAmp; uniform vec3 uCamP; uniform vec4 uGu; uniform vec2 uWd; uniform vec3 uP0; uniform vec3 uP1; uniform vec3 uP2; uniform vec3 uP3; uniform vec3 uP4; uniform vec3 uFogC; uniform float uLines; uniform float uIgnR; uniform float uBurnOn; uniform float uClr; uniform float uSalt; uniform float uMyc; uniform float uMycR; uniform float uMycP; uniform vec2 uMycO; varying vec3 vW;
       float wv(vec2 p){ return uAmp*(0.85*sin(p.x*0.09+uT*0.9)*cos(p.y*0.07+uT*0.6)+0.6*(1.0-2.0*abs(sin((p.x+p.y)*0.105+uT*0.85)))+1.5*sin(p.y*0.035+uT*0.45)); }
-      void main(){ vec2 p=vW.xz; float d=length(p-uCamP.xz); float h=wv(p)/max(uAmp,0.01);
+      void main(){ vec2 p=vW.xz; float d=length(p-uCamP.xz); if(smoothstep(uBurnOn>0.5?420.0:160.0,uBurnOn>0.5?900.0:680.0,d)>0.996){ gl_FragColor=vec4(uFogC,1.0); return; } float h=wv(p)/max(uAmp,0.01);
         vec3 n=normalize(cross(dFdx(vW),dFdy(vW))); if(n.y<0.0) n=-n; float df=dot(n,normalize(vec3(0.5,0.62,0.6)));
         float sh=df*1.8+h*0.12; float fs=fwidth(sh)*0.8+0.002;
         vec3 c=mix(uP1,uP2,smoothstep(1.06-fs,1.06+fs,sh)); c=mix(c,uP3,smoothstep(1.36-fs,1.36+fs,sh)*0.8);
         float nr=1.0-smoothstep(50.0,190.0,d);
-        float cl=h*2.6+0.3*sin(p.x*0.07+p.y*0.04); float fc=fwidth(cl)+0.001; float ln=(1.0-smoothstep(0.11,0.11+fc*1.5,abs(fract(cl)-0.5)))*smoothstep(0.7,0.95,h)*nr*uLines*smoothstep(0.5,0.22,fc);
-        c=mix(c,uP4,ln*0.9);
+        float cl=h*2.6+0.3*sin(p.x*0.07+p.y*0.04); float fc=fwidth(cl)+0.001; if(nr>0.0&&uLines>0.001){ float ln=(1.0-smoothstep(0.11,0.11+fc*1.5,abs(fract(cl)-0.5)))*smoothstep(0.7,0.95,h)*nr*uLines*smoothstep(0.5,0.22,fc);
+        c=mix(c,uP4,ln*0.9); }
         vec2 wa=vec2(dot(p,uWd),dot(p,vec2(-uWd.y,uWd.x)));
         float nz=sin(wa.x*0.16-uT*0.9+sin(wa.y*0.31)*1.6)*sin(wa.y*0.34+sin(wa.x*0.11-uT*0.3)*1.9);
         float foam=smoothstep(1.62,1.68,h+0.5*nz+0.15*sin(wa.y*1.7+wa.x*0.4)); c=mix(c,uP4,foam);
-        { float gm=smoothstep(1.0,0.72,length(p-uGu.xy)/uGu.z)*uGu.w; float hx=abs(fract(wa.y*0.55+wa.x*0.2)-0.5); c=mix(c,mix(uP0,c,smoothstep(0.14,0.22,hx)),gm*0.8); }
+        if(uGu.w>0.001){ float gm=smoothstep(1.0,0.72,length(p-uGu.xy)/uGu.z)*uGu.w; float hx=abs(fract(wa.y*0.55+wa.x*0.2)-0.5); c=mix(c,mix(uP0,c,smoothstep(0.14,0.22,hx)),gm*0.8); }
         if(uMyc>0.001){ float dm=length(p-uMycO); float v1=abs(sin(p.x*0.11+sin(p.y*0.07)*2.3+sin(p.y*0.031+p.x*0.02)*3.0)), v2=abs(sin(p.y*0.13+sin(p.x*0.09)*2.1-sin(p.x*0.027)*2.6));
           float fv=fwidth(v1)+fwidth(v2)+0.002; float th=(1.0-smoothstep(0.03,0.09+fv,min(v1,v2)))*smoothstep(uMycR,uMycR-30.0,dm);
           float pl=uMycP>0.0?smoothstep(14.0,0.0,abs(dm-uMycP)):0.0; c=mix(c,vec3(0.55,1.0,0.82),th*uMyc*(0.55+0.45*pl)+pl*uMyc*0.25); }
@@ -7397,9 +7395,9 @@ function frame(){
   fpsAcc+=dt; fpsN++; rc.cool-=dt; rc.ceilT-=dt; if(trans&&prog<0.08) rc.cool=Math.max(rc.cool,3);
   if(fpsAcc>1.5){ fpsLast=fpsN/fpsAcc; fpsAcc=0; fpsN=0; const mr=rc.n?rc.miss/rc.n:0; rc.n=rc.miss=0; rc.lastMr=mr;
     let np=PR; if(time>6&&!document.hidden&&rc.cool<=0&&!devF.lock){
-      if(fpsLast<tgtFps*0.86) rc.bad++; else rc.bad=0;
-      if(rc.bad>=((A2||A3||A4||STY.on)?2:4)){ const fast=!!(A2||A3||A4||STY.on); rc.bad=0; rc.ceil=PR; rc.ceilT=25; np=fast?Math.max(0.62,PR*(fpsLast<tgtFps*0.67?0.88:0.94)):Math.max(MOBILE?0.85:0.8,PR*0.96); rc.good=0; rc.cool=fast?1.5:2.5; }
-      else if(fpsLast>tgtFps*0.93){ rc.good++; const cap=rc.ceilT>0?rc.ceil-0.02:PR_MAX; if(rc.good>=2&&PR<cap){ np=Math.min(cap,PR+0.06); rc.good=0; } }
+      if(fpsLast<tgtFps*0.67) rc.bad++; else rc.bad=0;
+      if(rc.bad>=((A2||A3||A4||STY.on)?2:4)){ const fast=!!(A2||A3||A4||STY.on); rc.bad=0; rc.ceil=PR; rc.ceilT=25; np=fast?Math.max(0.62,PR*0.9):Math.max(MOBILE?0.85:0.8,PR*0.96); rc.good=0; rc.cool=fast?1.5:2.5; }
+      else if(fpsLast>tgtFps*0.8){ rc.good++; const cap=rc.ceilT>0?rc.ceil-0.02:PR_MAX; if(rc.good>=2&&PR<cap){ np=Math.min(cap,PR+0.06); rc.good=0; } }
       else rc.good=0; }
     if(Math.abs(np-PR)>0.01){ PR=np; makeTargets(); } }
   // stage progression
