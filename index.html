@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.23 -->
+<!-- Thin Veil · beta 0.24 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -132,7 +132,7 @@
 </head>
 <body>
 <div id="start" class="min tests">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.23</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.24</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -6808,103 +6808,100 @@ function memEnter(){ MEMO={f:{},n:-1}; STY.stage='mem'; STY.t=0; STY.lines=[]; S
 function memUpdate(dt){ const t=STY.t, M=MEMO, L=["There you are. Sit. It's only leek and potato, but it's hot. Mostly potato. The leek was a rumour.","Going out again? ...Take the coat, then. No. Take mine. Yours is more hole than coat.","Back before dark, mind. I'll put the lamp in the window, so you can find the door.","Supper's at seven. I'll wait. I always wait up."], D=5.6, k=Math.floor((t-1.2)/D), u=(t-1.2)-k*D;
   if(t>1.2&&k<L.length){ if(k!==M.n&&u<1){ M.n=k; M.el.textContent=L[k]; M.el.style.opacity=1; if(sound.C) sound.play(k===0?'tick':'glass',sound.C.currentTime,k===0?0.9:0.5,0.14,true,{sfx:true}); } if(u>D-1.5) M.el.style.opacity=0; }
   if(t>1.2+L.length*D+0.6){ M.el.remove(); MEMO=null; noteEl.style.opacity=0; STY.stage='pro0'; STY.t=0; STY.flags.w=0; } }
-// ===== THE MORNING: the one reality the fox never named. His kitchen, in daylight; just you; the fox asleep by the stove =====
+// ===== THE MORNING: the day after. His shore at sunrise; the boat back at the jetty; the fox asleep. Nothing to do. It doesn't end =====
 
-function mornEnter(){ roomEnter(); STY.stage='morn'; STY.t=0; STY.lines=[]; STY.busy=0; const G=ROOM.g, M=MORN={t:0,f:{},bird:3,steam:[]};
-  blackEl.style.transition='opacity 4s ease'; blackEl.style.opacity=0; hush(false); if(sound.C&&sound.mus) sound.mus.gain.setTargetAtTime(0,sound.C.currentTime,0.5);
-  // daylight: everything a little brighter; the lamp out; its warm night glows gone
-  M.mats=[]; G.traverse(o=>{ if(o.isSprite&&o.material&&o.material.blending===THREE.AdditiveBlending){ o.visible=false; M.mats.push([o,'v']); } else if(o.isMesh&&o.material&&o.material.color){ const m=o.material; if(m.blending===THREE.AdditiveBlending){ o.visible=false; M.mats.push([o,'v']); return; } if(m.userData.mornC===undefined){ m.userData.mornC=m.color.getHex(); m.color.multiplyScalar(1.9); m.color.r=Math.min(0.86,m.color.r*1.04); m.color.g=Math.min(0.82,m.color.g); m.color.b=Math.min(0.76,m.color.b); M.mats.push([m,'c']); } } });
-  // the window: a real view, not a picture. It moves as you move: sunrise over a calm sea, islands, birds, a sail
-  { M.wU={uT:{value:0},uK:{value:0},uCall:{value:0}};
-    const wm=new THREE.ShaderMaterial({uniforms:M.wU,fog:false,
-      vertexShader:'varying vec3 vW; void main(){ vec4 w=modelMatrix*vec4(position,1.0); vW=w.xyz; gl_Position=projectionMatrix*viewMatrix*w; }',
-      fragmentShader:`uniform float uT; uniform float uK; uniform float uCall; varying vec3 vW;
-        float hs(vec2 p){ return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453); }
-        float bnd(float x,float e){ float w=max(fwidth(x),0.002); return smoothstep(e-w,e+w,x); }
-        void main(){ vec3 d=normalize(vW-cameraPosition); float az=atan(d.x,-d.z), h=(d.y-0.075)*0.85;
-          float se=0.02+0.11*uK, sa=0.32; vec2 sp=vec2(az-sa,h-se); float sd=length(sp);
-          // sky: gold at the sea, peach, rose, then morning blue; painted in bands
-          float e=max(h,0.0); vec3 c=vec3(1.0,0.83,0.5); c=mix(c,vec3(1.0,0.68,0.5),bnd(e,0.05)); c=mix(c,vec3(0.93,0.58,0.6),bnd(e,0.12)); c=mix(c,vec3(0.86,0.66,0.74),bnd(e,0.2)); c=mix(c,vec3(0.6,0.7,0.88),bnd(e,0.3)); c=mix(c,vec3(0.48,0.66,0.9),bnd(e,0.42));
-          c+=vec3(1.0,0.7,0.35)*0.5*exp(-sd*6.0)*(0.6+0.4*uK);
-          // rays fanning from the sun
-          float ra=atan(sp.y,sp.x), ry=step(0.62,fract(ra*7.0/3.14159+uT*0.004+0.15*sin(ra*3.0)));
-          c=mix(c,c*1.12+vec3(0.08,0.05,0.0),ry*smoothstep(0.9,0.1,sd)*step(0.0,h)*0.8);
-          // clouds: long painted strands, lit gold underneath on the sun side
-          float cl=sin(az*2.6+e*24.0+uT*0.02+1.7*sin(az*1.3+uT*0.01))+0.7*sin(az*6.1-e*38.0+uT*0.035);
-          float cm=bnd(cl,0.95)*smoothstep(0.04,0.09,e)*smoothstep(0.42,0.26,e), lit=exp(-abs(az-sa)*1.6);
-          vec3 cc=mix(vec3(0.82,0.55,0.62),vec3(1.0,0.86,0.6),lit); cc=mix(cc,cc*0.82,bnd(cl,1.25)); c=mix(c,cc,cm);
-          // the sun itself
-          c=mix(c,vec3(1.0,0.98,0.88),1.0-smoothstep(0.034,0.04,sd));
-          // birds
-          for(int i=0;i<6;i++){ float fi=float(i); vec2 bp=vec2(az-(fract(uT*0.011*(1.0+fi*0.21)+fi*0.31)*2.2-1.1),h-(0.15+0.07*sin(fi*2.3)+0.012*sin(uT*0.6+fi)))/(0.011-0.0012*fi);
-            float fl=0.35+0.45*sin(uT*(7.0+fi)+fi*1.7); float bd=abs(bp.y-abs(bp.x)*fl)+9.0*step(1.0,abs(bp.x)); c=mix(c,vec3(0.22,0.16,0.22),(1.0-smoothstep(0.12,0.22,bd))*step(0.0,h)); }
-          // islands on the horizon, blue with distance
-          float ih=0.03*max(0.0,sin(az*4.3+1.1)*0.7+sin(az*11.0+0.4)*0.3-0.15)+0.018*max(0.0,sin(az*2.1-2.0)-0.6);
-          if(h>=0.0&&h<ih) c=mix(vec3(0.5,0.4,0.56),c,0.25+0.4*smoothstep(0.0,ih,h));
-          // the sea
-          if(h<0.0){ float dz=1.0/max(-h,0.004); vec3 sc=mix(vec3(0.2,0.42,0.56),vec3(0.95,0.72,0.55),exp(h*22.0)); sc=mix(sc,vec3(0.2,0.42,0.52),0.4*bnd(sin(dz*1.4+uT*0.5+sin(az*9.0)*2.0),0.6)*smoothstep(-0.02,-0.25,h));
-            float pw=0.03+(-h)*0.7, path=exp(-pow((az-sa)/pw,2.0));
-            vec2 g=floor(vec2(az*260.0/(0.4+(-h)*4.0),dz*3.0+uT*1.2)); float sp2=step(0.9,hs(g+floor(uT*3.0)));
-            sc=mix(sc,vec3(1.0,0.86,0.6),path*0.55); sc+=vec3(1.0,0.95,0.8)*sp2*path*1.2;
-            // a little sail, crossing
-            vec2 bq=vec2(az-(-0.75+mod(uT*0.0035,1.6)),h+0.012)/0.01; float hull=step(abs(bq.x),1.0)*step(abs(bq.y+0.3),0.25); float sail=step(0.0,bq.y)*step(bq.y,2.2)*step(abs(bq.x-0.1),0.9*(1.0-bq.y/2.2));
-            sc=mix(sc,vec3(0.25,0.18,0.18),hull); sc=mix(sc,vec3(1.0,0.95,0.86),sail);
-            c=sc; }
-          c*=0.92+0.12*uK; c=mix(c,c*1.25+vec3(0.1,0.08,0.04),uCall*0.6);
-          gl_FragColor=vec4(pow(clamp(c,0.0,1.0),vec3(2.2)),1.0); }`});
-    const w=new THREE.Mesh(new THREE.PlaneGeometry(2.3,1.7),wm); w.position.set(0,2.25,-7.38); G.add(w); M.win=w; }
-  // a patch of sun across the floor, coming in at the window
-  { const c=document.createElement('canvas'); c.width=c.height=128; const x=c.getContext('2d'); const gr=x.createRadialGradient(64,64,10,64,64,64); gr.addColorStop(0,'rgba(255,240,200,1)'); gr.addColorStop(1,'rgba(255,240,200,0)'); x.fillStyle=gr; x.fillRect(0,0,128,128);
-    const sm=new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c),transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending,fog:false}); const sp=new THREE.Mesh(new THREE.PlaneGeometry(3.4,5.5),sm); sp.rotation.x=-Math.PI/2; sp.position.set(0.3,0.03,-4.4); G.add(sp); M.sun=sp;
-    const beam=new THREE.Mesh(new THREE.PlaneGeometry(2.2,3.6),new THREE.MeshBasicMaterial({map:sm.map,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending,fog:false,side:THREE.DoubleSide})); beam.position.set(0.2,1.5,-5.8); beam.rotation.x=-0.9; G.add(beam); M.beam=beam; }
-  // the fox, asleep by the stove, small
-  { const F=ROOM.fox; F.visible=true; F.scale.setScalar(1.0); F.position.set(-3.6,0.05,-2.6); F.rotation.set(0,0.5,Math.PI/2*0.92); M.fox=F; gfox.visible=false; }
-  // the table: cleared. Whatever was on it last night is gone; a fresh top, a mug, the note
-  { const T=[4.6,-2.6]; G.children.slice().forEach(o=>{ if(o===M.win||o===M.sun||o===M.beam) return; const dx=o.position.x-T[0], dz=o.position.z-T[1]; if(Math.hypot(dx,dz)<0.95&&o.position.y>0.6&&o.position.y<1.4){ o.visible=false; M.mats.push([o,'v']); } });
-    const wd=new THREE.MeshBasicMaterial({color:0x8a6442,fog:false}), top=new THREE.Mesh(new THREE.CylinderGeometry(0.76,0.76,0.07,24),wd); top.position.set(T[0],0.785,T[1]); G.add(top); M.extra=[top];
-    const ring=new THREE.Mesh(new THREE.TorusGeometry(0.74,0.018,4,36),new THREE.MeshBasicMaterial({color:0x4a3220,fog:false})); ring.rotation.x=Math.PI/2; ring.position.set(T[0],0.82,T[1]); G.add(ring); M.extra.push(ring);
-    const cr=new THREE.MeshBasicMaterial({color:0xf2ead8,fog:false}), mug=new THREE.Mesh(new THREE.CylinderGeometry(0.055,0.05,0.11,14),cr); mug.position.set(T[0]-0.32,0.875,T[1]+0.18); G.add(mug); const hd=new THREE.Mesh(new THREE.TorusGeometry(0.03,0.009,5,10),cr); hd.position.set(T[0]-0.265,0.88,T[1]+0.18); G.add(hd); const tea=new THREE.Mesh(new THREE.CircleGeometry(0.046,14),new THREE.MeshBasicMaterial({color:0x8a4f22,fog:false})); tea.rotation.x=-Math.PI/2; tea.position.set(T[0]-0.32,0.926,T[1]+0.18); G.add(tea); M.extra.push(mug,hd,tea); M.mugP=[T[0]-0.32,T[1]+0.18];
-    const c=document.createElement('canvas'); c.width=512; c.height=400; const x=c.getContext('2d'); x.fillStyle='#e6d6b6'; x.fillRect(0,0,512,400); x.strokeStyle='rgba(120,100,70,0.25)'; x.lineWidth=2; for(let i=0;i<7;i++){ x.beginPath(); x.moveTo(20,72+i*48); x.lineTo(492,72+i*48); x.stroke(); } x.fillStyle='#1a0f08'; x.font='bold italic 40px Georgia,serif'; ["Kettle's on.","The day's yours, and","they don't make more.","Go and be unreasonable","with it."].forEach((l,i)=>x.fillText(l,30,62+i*48)); x.font='italic 30px Georgia,serif'; x.fillText("P.S. Window's open. Mind the step.",30,62+5*48+12);
-    const n=new THREE.Mesh(new THREE.PlaneGeometry(0.5,0.39),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c),fog:false})); n.rotation.x=-Math.PI/2; n.rotation.z=Math.PI+0.5; n.position.set(T[0]+0.12,0.824,T[1]+0.3); G.add(n); M.note=n; M.extra.push(n);
-    const card=document.createElement('div'); card.style.cssText='position:fixed;left:50%;bottom:9%;transform:translateX(-50%) rotate(-1.5deg);width:min(82vw,420px);padding:22px 26px;background:#f7f0de;color:#2a1c12;font:italic 21px/1.5 Georgia,serif;box-shadow:0 8px 30px rgba(0,0,0,.35);opacity:0;transition:opacity 1s ease;pointer-events:none;z-index:9000;border-radius:2px'; card.innerHTML="Kettle's on.<br>The day's yours, and<br>they don't make more.<br>Go and be unreasonable<br>with it.<div style='margin-top:12px;font-size:17px'>P.S. Window's open. Mind the step.</div>"; document.body.appendChild(card); M.card=card; }
-  // the lamp in the window is out: he blew it out when the day came
-  G.children.forEach(o=>{ if(o.isMesh&&Math.abs(o.position.x)<0.05&&Math.abs(o.position.z+7.12)<0.05&&o.position.y>1.55&&o.position.y<1.7){ M.mats.push([o.material,'c']); o.material=o.material.clone(); o.material.color.setHex(0x9a9282); o.material.opacity=1; } });
-  // the stove's fire is out in the morning; its little window stays dark
-  G.children.forEach(o=>{ if(o.isMesh&&o.geometry&&o.geometry.type==='PlaneGeometry'&&Math.hypot(o.position.x+4.5,o.position.z+3.76)<0.25){ o.visible=false; M.mats.push([o,'v']); } });
-  // dust in the sunbeam, and blossom that blows in at the window
-  { const N=70, g=new THREE.BufferGeometry(), P=new Float32Array(N*3); g.setAttribute('position',new THREE.BufferAttribute(P,3)); M.dust=new THREE.Points(g,new THREE.PointsMaterial({color:0xfff0c8,size:0.025,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})); M.dust.frustumCulled=false; G.add(M.dust); M.dP=[...Array(N)].map(()=>[(Math.random()-0.5)*2.2,0.3+Math.random()*2.6,-6.6+Math.random()*3.4,Math.random()*6]);
+function mornSkyGLSL(){ return `
+  vec3 mSky(vec3 d,float t){ float e=max(d.y,0.0), az=atan(d.x,-d.z); vec3 c=mix(vec3(1.0,0.84,0.66),vec3(0.96,0.7,0.72),smoothstep(0.0,0.07,e)); c=mix(c,vec3(0.82,0.66,0.82),smoothstep(0.05,0.2,e)); c=mix(c,vec3(0.56,0.56,0.8),smoothstep(0.18,0.45,e)); c=mix(c,vec3(0.3,0.33,0.6),smoothstep(0.42,0.95,e));
+    vec2 sp=vec2(az-0.35,e-0.07); float sd=length(sp);
+    float aw=e-0.32-0.06*sin(az*2.0+t*0.05)-0.03*sin(az*5.3-t*0.08); float ab=exp(-aw*aw*90.0)*(0.55+0.45*sin(az*9.0+t*0.11+3.0*sin(az*1.7)))*smoothstep(0.4,1.6,sd);
+    float cur=pow(max(0.0,sin(az*23.0+t*0.2+4.0*sin(az*2.3+t*0.03))),3.0); vec3 ac=mix(vec3(0.45,0.95,0.7),vec3(0.75,0.55,1.0),smoothstep(-0.05,0.08,aw)); c+=ac*ab*(0.12+0.1*cur)*(0.8+0.2*sin(t*0.07)); c+=vec3(1.0,0.7,0.36)*0.32*exp(-sd*6.0); c+=vec3(1.0,0.85,0.6)*0.12*exp(-sd*1.8);
+    float ra=atan(sp.y,sp.x); c+=vec3(0.07,0.05,0.02)*step(0.6,fract(ra*7.0/3.14159+t*0.004))*smoothstep(0.9,0.1,sd)*step(0.0,d.y);
+    float cl=sin(az*2.6+e*24.0+t*0.02+1.7*sin(az*1.3+t*0.01))+0.7*sin(az*6.1-e*38.0+t*0.035); float cm=smoothstep(0.92,1.0,cl)*smoothstep(0.03,0.08,e)*smoothstep(0.45,0.25,e); vec3 cc=mix(vec3(0.95,0.66,0.66),vec3(1.0,0.88,0.62),exp(-abs(az-0.35)*1.4)); c=mix(c,cc,cm*0.9);
+    c=mix(c,vec3(1.0,0.96,0.84),1.0-smoothstep(0.028,0.034,sd)); return c*0.86; }`; }
+
+function mornEnter(){ STY.stage='morn'; STY.t=0; STY.lines=[]; STY.busy=99; const M=MORN={t:0,f:{},chirp:2,gull:5}; window.__mornP=()=>({M:MORN,player,LAKE,u:mornUpdate,cam:camera,r:renderer});
+  try{ localStorage.removeItem('tv_morn'); }catch(e){}
+  blackEl.style.transition='opacity 5s ease'; blackEl.style.opacity=0; hush(false); if(sound.C&&sound.mus) sound.mus.gain.setTargetAtTime(0,sound.C.currentTime,0.5);
+  const G=M.g=new THREE.Group(); G.position.set(0,2000,0); scene.add(G); const B=(c)=>new THREE.MeshBasicMaterial({color:c,fog:false}); M.U={uT:{value:0},uCam:{value:new THREE.Vector3()}};
+  // the sky, all round
+  { const g=new THREE.SphereGeometry(900,48,24); M.sky=new THREE.Mesh(g,new THREE.ShaderMaterial({uniforms:M.U,side:THREE.BackSide,depthWrite:false,fog:false,vertexShader:'varying vec3 vD; void main(){ vD=normalize(position); gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
+      fragmentShader:'uniform float uT; varying vec3 vD;'+mornSkyGLSL()+' void main(){ vec3 d=normalize(vD); vec3 c=d.y>-0.02?mSky(d,uT):mix(vec3(0.2,0.36,0.46),vec3(0.95,0.75,0.55),exp((d.y)*18.0)); gl_FragColor=vec4(pow(clamp(c,0.0,1.0),vec3(2.2)),1.0); }'})); M.sky.renderOrder=-10; M.sky.frustumCulled=false; G.add(M.sky); }
+  // the sea: glassy, the sky in it, a road of light to the sun
+  { const g=new THREE.PlaneGeometry(1800,1800,1,1); g.rotateX(-Math.PI/2); M.sea=new THREE.Mesh(g,new THREE.ShaderMaterial({uniforms:M.U,fog:false,vertexShader:'varying vec3 vW; void main(){ vec4 w=modelMatrix*vec4(position,1.0); vW=w.xyz; gl_Position=projectionMatrix*viewMatrix*w; }',
+      fragmentShader:'uniform float uT; uniform vec3 uCam; varying vec3 vW;'+mornSkyGLSL()+` float hs(vec2 p){ return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453); }
+        void main(){ vec3 d=normalize(vW-cameraPosition); vec2 p=vW.xz; vec3 n=normalize(vec3(0.03*sin(p.x*0.35+uT*0.9)+0.02*sin(p.y*0.5-uT*0.7)+0.015*sin((p.x+p.y)*1.3+uT*1.5),1.0,0.03*sin(p.y*0.31+uT*0.8)+0.02*sin(p.x*0.6+uT*0.6))); vec3 r=reflect(d,n); r.y=abs(r.y);
+          vec3 c=mSky(r,uT)*0.82; c=mix(vec3(0.12,0.3,0.38),c,0.35+0.6*pow(1.0-max(0.0,-d.y),2.5)); float az=atan(d.x,-d.z), dist=length(vW.xz-cameraPosition.xz);
+          float path=exp(-pow((az-0.35)/(0.03+60.0/max(dist,1.0)*0.02),2.0)); vec2 g=floor(vec2(p.x*1.2,p.y*1.2+uT*0.8)); float sp=step(0.93,hs(g+floor(uT*3.0))); c=mix(c,vec3(1.0,0.86,0.6),path*0.5); c+=vec3(1.0,0.95,0.8)*sp*path*1.3;
+          gl_FragColor=vec4(pow(clamp(c,0.0,1.0),vec3(2.2)),1.0); }`})); M.sea.frustumCulled=false; G.add(M.sea); }
+  // the shore: sand, grass, rocks
+  { const sand=new THREE.Mesh(new THREE.CylinderGeometry(42,50,3,40),B(0xd9c39a)); sand.position.set(0,-1.1,50); G.add(sand); const grass=new THREE.Mesh(new THREE.CylinderGeometry(33,38,3,40),new THREE.ShaderMaterial({uniforms:M.U,fog:false,vertexShader:'varying vec3 vW; void main(){ vec4 w=modelMatrix*vec4(position,1.0); vW=w.xyz; gl_Position=projectionMatrix*viewMatrix*w; }',
+      fragmentShader:`uniform float uT; varying vec3 vW; float h(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453); } float n(vec2 p){ vec2 i=floor(p),f=fract(p); f=f*f*(3.0-2.0*f); return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y); }
+        void main(){ vec2 p=vW.xz; float fr=n(p*0.35)*0.6+n(p*1.3)*0.4; vec3 c=mix(vec3(0.52,0.64,0.5),vec3(0.86,0.88,0.9),smoothstep(0.35,0.75,fr)); c=mix(c,vec3(0.96,0.72,0.8),step(0.965,h(floor(p*3.0)))*0.8);
+          float g=step(0.985,h(floor(p*9.0)+floor(uT*2.0))); c+=vec3(1.0,0.95,0.85)*g*0.7; gl_FragColor=vec4(pow(c,vec3(2.2)),1.0); }`})); grass.position.set(0,-0.5,54); G.add(grass);
+    for(let i=0;i<26;i++){ const a=-Math.PI*0.95+i/26*Math.PI*0.9+Math.random()*0.05, r=43+Math.random()*5, s=0.8+Math.random()*2.6; const rk=new THREE.Mesh(new THREE.IcosahedronGeometry(1,0),B([0x5d5a58,0x6e6862,0x4f4c4b][i%3])); rk.position.set(Math.cos(a)*r,-0.2+s*0.2,50+Math.sin(a)*r); rk.scale.set(s,s*0.6,s); rk.rotation.set(Math.random(),Math.random(),Math.random()); G.add(rk); } }
+  // his house: pale walls, dark roof, the lamp out, a little smoke
+  { const H=M.house=new THREE.Group(); H.position.set(-5,1,30); H.rotation.y=0.25; G.add(H);
+    const w=new THREE.Mesh(new THREE.BoxGeometry(7,4.2,5.4),B(0xece2cf)); w.position.y=2.1; H.add(w);
+    const rg=new THREE.BufferGeometry(); rg.setAttribute('position',new THREE.Float32BufferAttribute([-3.9,4.2,-3.1, 3.9,4.2,-3.1, 0,6.8,-3.1, -3.9,4.2,3.1, 3.9,4.2,3.1, 0,6.8,3.1],3)); rg.setIndex([0,1,2, 3,5,4, 0,2,5, 0,5,3, 1,4,5, 1,5,2]); rg.computeVertexNormals(); const roof=new THREE.Mesh(rg,new THREE.MeshBasicMaterial({color:0x5b3a32,side:THREE.DoubleSide,fog:false})); H.add(roof);
+    const win=new THREE.Mesh(new THREE.PlaneGeometry(1.4,1.2),B(0x8fa6b4)); win.position.set(1.6,2.4,-2.71); win.rotation.y=Math.PI; H.add(win); const fr1=new THREE.Mesh(new THREE.BoxGeometry(1.55,0.1,0.06),B(0x4a3b30)); fr1.position.set(1.6,2.4,-2.73); H.add(fr1); const fr2=new THREE.Mesh(new THREE.BoxGeometry(0.1,1.35,0.06),B(0x4a3b30)); fr2.position.set(1.6,2.4,-2.73); H.add(fr2);
+    const dr=new THREE.Mesh(new THREE.PlaneGeometry(1.1,2.2),B(0x6b4a36)); dr.position.set(-1.4,1.1,-2.71); dr.rotation.y=Math.PI; H.add(dr); const ch=new THREE.Mesh(new THREE.BoxGeometry(0.7,1.8,0.7),B(0x8a6f63)); ch.position.set(2,6.2,0.6); H.add(ch);
+    M.smoke=[...Array(7)].map((_,i)=>{ const s=new THREE.Sprite(new THREE.SpriteMaterial({map:softTex(240,236,230),transparent:true,opacity:0,depthWrite:false,fog:false})); H.add(s); return {s,t:i*1.1}; }); }
+  // the jetty, and his boat back at it
+  { const J=new THREE.Group(); J.position.set(4,0,8); G.add(J); for(let z=0;z<26;z+=0.9){ const pl=new THREE.Mesh(new THREE.BoxGeometry(2.4,0.18,0.8),B(z%1.8<0.9?0x8a6a4c:0x7d5f43)); pl.position.set(0,0.9,-z); J.add(pl); }
+    for(let z=0;z<=26;z+=4.3) for(const sx of [-1.15,1.15]){ const po=new THREE.Mesh(new THREE.CylinderGeometry(0.14,0.16,3.2,6),B(0x4e3a2b)); po.position.set(sx,-0.4,-z); J.add(po); }
+    const bt=M.boat=new THREE.Group(); bt.position.set(7.6,0,-12); bt.rotation.y=0.08; G.add(bt); const hl=new THREE.Mesh(A4_boatGeo(),B(0xe8e2d6)); hl.position.y=0.62; bt.add(hl); const st=new THREE.Mesh(A4_boatGeo(),B(0x3f5d74)); st.scale.set(1.01,0.25,1.01); st.position.y=0.5; bt.add(st);
+    const ms=new THREE.Mesh(new THREE.CylinderGeometry(0.035,0.05,7.5,6),B(0x3a2c22)); ms.position.set(0,4.4,-0.9); bt.add(ms); const fu=new THREE.Mesh(new THREE.CylinderGeometry(0.16,0.16,3,8),B(0xe0d6c2)); fu.rotation.x=Math.PI/2; fu.position.set(0,1.6,0.5); bt.add(fu);
+    const ln=new THREE.Mesh(new THREE.CylinderGeometry(0.02,0.02,3.6,4),B(0x6b5a48)); ln.position.set(5.8,0.95,-12); ln.rotation.z=Math.PI/2; G.add(ln);
+    // the fox, asleep at the end of the jetty
+    const F=M.fox=foxModel(); F.visible=true; F.userData.skipAnim=true; F.scale.setScalar(1.15); F.position.set(4.2,1.03,-14.2); F.rotation.set(0,0.6,Math.PI/2*0.92); G.add(F); }
+  // a little orchard behind his house: the act III trees, blossom in frost, a red thread tied from tree to tree
+  { const tg=A3_treeGeo(), tm=new THREE.ShaderMaterial({uniforms:M.U,fog:false,vertexShader:`attribute float aK; attribute float aR; uniform float uT; varying float vK; varying float vR; varying vec3 vN; varying float vY;
+        void main(){ vK=aK; vR=aR; vec3 p=position; float sw=max(0.0,p.y-1.6)*0.03*sin(uT*0.8+modelMatrix[3].x*0.3); p.x+=sw; p.z+=sw*0.6; if(aK>2.5){ p+=0.04*vec3(sin(uT*2.0+position.y*9.0),0.0,cos(uT*1.7+position.x*7.0)); }
+          vN=normalize(mat3(modelMatrix)*normal); vec4 w=modelMatrix*vec4(p,1.0); vY=p.y; gl_Position=projectionMatrix*viewMatrix*w; }`,
+      fragmentShader:`varying float vK; varying float vR; varying vec3 vN; varying float vY; void main(){ vec3 c;
+        if(vK<0.5){ c=mix(vec3(0.24,0.18,0.2),vec3(0.42,0.34,0.38),smoothstep(0.0,1.0,vN.y*0.5+0.5)); c=mix(c,vec3(0.92,0.93,0.97),smoothstep(0.55,0.9,vN.y)*0.8); }
+        else if(vK<1.5){ vec3 pk=mix(vec3(0.95,0.66,0.76),vec3(0.99,0.84,0.88),vR*2.5); float sun=clamp(dot(vN,normalize(vec3(0.35,0.35,-0.87)))*0.5+0.5,0.0,1.0); c=pk*(0.78+0.3*sun); c=mix(c,vec3(0.97,0.96,1.0),smoothstep(0.45,0.9,vN.y)*0.75); c+=vec3(1.0,0.75,0.5)*pow(sun,6.0)*0.25; }
+        else { c=mix(vec3(0.99,0.86,0.9),vec3(1.0,0.97,0.95),vR); }
+        gl_FragColor=vec4(pow(clamp(c,0.0,1.0),vec3(2.2)),1.0); }`});
+    const TP=[[-18,36],[-12,44],[-20,50],[-6,52],[4,46],[12,40],[18,48],[10,56],[-12,60]]; M.trees=TP.map(([x,z],i)=>{ const m=new THREE.Mesh(tg,tm); m.position.set(x,1,z); const sc=1.5+0.35*((i*7)%3)/2; m.scale.setScalar(sc); m.rotation.y=i*1.9; G.add(m); return m; });
+    const red=new THREE.MeshBasicMaterial({color:0xb4252e,fog:false}); for(let i=0;i<TP.length-1;i++){ const a=TP[i], b=TP[i+1], pts=[]; for(let k=0;k<=8;k++){ const u=k/8; pts.push(new THREE.Vector3(a[0]+(b[0]-a[0])*u,1+2.4-1.1*Math.sin(Math.PI*u),a[1]+(b[1]-a[1])*u)); } for(let k=0;k<8;k++) G.add(new THREE.Mesh(A3_tube(pts[k],pts[k+1],0.03),red)); }
     const pc=document.createElement('canvas'); pc.width=pc.height=32; const px=pc.getContext('2d'); px.fillStyle='#fff'; px.beginPath(); px.ellipse(16,16,13,8,0.4,0,6.283); px.fill(); const pt=new THREE.CanvasTexture(pc);
-    M.bl=[...Array(9)].map((_,i)=>{ const s=new THREE.Sprite(new THREE.SpriteMaterial({map:pt,color:0xf6b7c6,transparent:true,alphaTest:0.4,fog:false})); s.scale.setScalar(0.06); s.visible=false; G.add(s); return {s,t:-i*3.3-15}; }); }
-  // steam from the kettle
-  for(let i=0;i<5;i++){ const s=new THREE.Sprite(new THREE.SpriteMaterial({map:softTex(255,255,255),transparent:true,opacity:0,depthWrite:false,fog:false})); s.position.set(-4.45,1.3,-3.85); G.add(s); M.steam.push({s,t:i*0.6}); }
-  ROOM.clock(new Date().getHours(),new Date().getMinutes());
-  window.__mornP=()=>({M:MORN,player,LAKE,u:mornUpdate,cam:camera,r:renderer}); player.x=LAKE.x+1.2; player.z=LAKE.z+5.4; player.yaw=0.25; player.pitch=-0.05; }
-function mornChirp(t0){ const C=sound.C; if(!C||!sound.out) return; const n=2+Math.floor(Math.random()*4), base=2400+Math.random()*1600, pan=Math.random()*2-1; for(let i=0;i<n;i++){ const o=C.createOscillator(), g=C.createGain(), t=t0+i*(0.09+Math.random()*0.06); o.type='sine'; o.frequency.setValueAtTime(base*(0.9+Math.random()*0.3),t); o.frequency.exponentialRampToValueAtTime(base*(1.2+Math.random()*0.4),t+0.06); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(0.025,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+0.09); let out=g; if(C.createStereoPanner){ const p=C.createStereoPanner(); p.pan.value=pan; g.connect(p); out=p; } o.connect(g); out.connect(sound.out); o.start(t); o.stop(t+0.12); } }
-function mornUpdate(dt){ const M=MORN; if(!M) return; M.t+=dt; const t=M.t, done=STY.lines.length===0&&STY.busy<=0, C=sound.C;
+    M.pet=[...Array(MOBILE?40:70)].map((_,i)=>{ const T=TP[i%TP.length]; const s=new THREE.Sprite(new THREE.SpriteMaterial({map:pt,color:[0xf6b7c6,0xfbd3dc,0xffffff][i%3],transparent:true,alphaTest:0.4,fog:false})); s.scale.setScalar(0.16); G.add(s); return {s,t:Math.random()*14,ox:T[0],oz:T[1]}; });
+    // a few warm motes in the air: the only hint that last night happened
+    M.mote=[...Array(MOBILE?24:40)].map((_,i)=>{ const s=new THREE.Sprite(new THREE.SpriteMaterial({map:softTex(255,226,180),transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})); s.scale.setScalar(0.35); G.add(s); return {s,x:-20+Math.random()*40,z:-30+Math.random()*70,y:0.5+Math.random()*6,p:Math.random()*20}; }); }
+  // gulls, slow circles over the water
+  { const gg=new THREE.BufferGeometry(); gg.setAttribute('position',new THREE.Float32BufferAttribute([-0.9,0.25,0, 0,0,0.15, 0,0,-0.15, 0.9,0.25,0, 0,0,0.15, 0,0,-0.15],3)); gg.computeVertexNormals();
+    M.gulls=[...Array(5)].map((_,i)=>{ const m=new THREE.Mesh(gg,new THREE.MeshBasicMaterial({color:0xf2f0ea,side:THREE.DoubleSide,fog:false})); m.scale.setScalar(1.3); G.add(m); return {m,r:18+i*7,h:9+i*2.2,s:(0.06+0.02*i)*(i%2?1:-1),a:i*1.3}; }); }
+  // the sound: water against the jetty, birds, gulls, and one warm chord, very quiet
+  if(sound.C){ const C=sound.C, out=C.createGain(); out.gain.value=0; out.connect(sound.out); out.gain.setTargetAtTime(1,C.currentTime,4); M.out=out;
+    const n=C.createBufferSource(), buf=C.createBuffer(1,C.sampleRate*4,C.sampleRate), dd=buf.getChannelData(0); for(let i=0;i<dd.length;i++) dd[i]=Math.random()*2-1; n.buffer=buf; n.loop=true; const lp=C.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=600; const wg=C.createGain(); wg.gain.value=0.05; n.connect(lp); lp.connect(wg); wg.connect(out); n.start(); M.wave={wg,lp};
+    [220,277.18,329.63,440,554.37].forEach((f,i)=>{ const o=C.createOscillator(), g=C.createGain(); o.type='sine'; o.frequency.value=f*(1+0.002*i); g.gain.value=0; g.gain.setTargetAtTime(0.012-0.0015*i,C.currentTime+2+i,6); o.connect(g); g.connect(out); o.start(); }); }
+  player.x=0; player.z=0; player.yaw=0; player.pitch=0;
+}
+
+function mornChirp(t0){ const C=sound.C; if(!C||!sound.out) return; const n=2+Math.floor(Math.random()*4), base=2400+Math.random()*1600, pan=Math.random()*2-1; for(let i=0;i<n;i++){ const o=C.createOscillator(), g=C.createGain(), t=t0+i*(0.09+Math.random()*0.06); o.type='sine'; o.frequency.setValueAtTime(base*(0.9+Math.random()*0.3),t); o.frequency.exponentialRampToValueAtTime(base*(1.2+Math.random()*0.4),t+0.06); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(0.025,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+0.09); let out=g; if(C.createStereoPanner){ const p=C.createStereoPanner(); p.pan.value=pan; g.connect(p); out=p; } o.connect(g); out.connect(MORN&&MORN.out||sound.out); o.start(t); o.stop(t+0.12); } }
+function mornGull(t0){ const C=sound.C; if(!C) return; const o=C.createOscillator(), g=C.createGain(); o.type='triangle'; o.frequency.setValueAtTime(900,t0); o.frequency.exponentialRampToValueAtTime(1500,t0+0.12); o.frequency.exponentialRampToValueAtTime(700,t0+0.45); g.gain.setValueAtTime(0,t0); g.gain.linearRampToValueAtTime(0.012,t0+0.05); g.gain.exponentialRampToValueAtTime(0.0001,t0+0.5); o.connect(g); g.connect(MORN&&MORN.out||sound.out); o.start(t0); o.stop(t0+0.55); }
+
+function mornUpdate(dt){ const M=MORN; if(!M) return; M.t+=dt; const t=M.t, C=sound.C, G=M.g; STY.lines=[]; STY.busy=99;
   gfox.visible=false; coatFig.visible=false;
-  { const dx=player.x-LAKE.x, dz=player.z-LAKE.z, r=Math.hypot(dx,dz); if(r>6.6){ player.x=LAKE.x+dx/r*6.6; player.z=LAKE.z+dz/r*6.6; } }
-  // the sun comes up into the room; the longer you stay, the more of the day arrives
-  const k=Math.min(1,t/14), call=Math.min(1,Math.max(0,(t-18)/20))*(0.6+0.4*Math.sin(t*1.3)); M.sun.material.opacity=0.42*k+0.15*call; M.beam.material.opacity=0.12*k+0.18*call; if(M.wU){ M.wU.uT.value=t; M.wU.uK.value=k; M.wU.uCall.value=call; } M.sun.position.x=0.3+Math.sin(t*0.01)*0.6;
-  M.fox.scale.set(1,1+0.035*Math.sin(t*1.3),1); const k2=k;
-  M.steam.forEach(q=>{ q.t+=dt*(1+1.5*(M.kSt||0)); const u=(q.t%3)/3; q.s.position.set(-4.45+Math.sin(q.t*1.7)*0.06,1.3+u*(0.9+0.8*(M.kSt||0)),-3.85); q.s.material.opacity=(0.3+0.35*(M.kSt||0))*Math.sin(Math.PI*u); q.s.scale.setScalar(0.18+u*(0.4+0.4*(M.kSt||0))); });
-  if(C){ M.bird-=dt; if(M.bird<0){ M.bird=1.5+Math.random()*3.5; mornChirp(C.currentTime+0.05); }
-    if(!M.sea&&sound.play){ M.sea=1; } if(t>26&&!M.f.radio){ M.f.radio=1; const N=[0,4,7,9,7,4,2,0], t0=C.currentTime+0.2; N.forEach((x,i)=>{ const o=C.createOscillator(), g=C.createGain(), f=293.66*Math.pow(2,x/12), tt=t0+i*0.9; o.type='triangle'; o.frequency.value=f; const lp=C.createBiquadFilter(); lp.type='bandpass'; lp.frequency.value=900; lp.Q.value=1.2; g.gain.setValueAtTime(0,tt); g.gain.linearRampToValueAtTime(0.02,tt+0.05); g.gain.exponentialRampToValueAtTime(0.0001,tt+1.6); o.connect(lp); lp.connect(g); g.connect(sound.out); o.start(tt); o.stop(tt+1.7); }); } }
-  if(t>7&&!M.f.mum){ M.f.mum=1; say('fox',"...five more minutes... then we panic...",0.3); }
-  // dust turning in the sun; blossom blowing in off the orchard
-  { const P=M.dust.geometry.attributes.position.array; M.dP.forEach((q,i)=>{ q[3]+=dt; P[i*3]=q[0]+Math.sin(q[3]*0.3+i)*0.15; P[i*3+1]=q[1]+Math.sin(q[3]*0.21+i*1.3)*0.12; P[i*3+2]=q[2]+Math.cos(q[3]*0.25+i)*0.15; }); M.dust.geometry.attributes.position.needsUpdate=true; M.dust.material.opacity=0.85*k; }
-  M.bl.forEach((b,i)=>{ b.t+=dt; const u=b.t; if(u<0||t<12){ b.s.visible=false; return; } if(u>9){ b.t=-Math.random()*6; return; } b.s.visible=true; b.s.position.set(Math.sin(i*2.1)*0.7+Math.sin(u*1.3+i)*0.25,2.4-u*0.24+Math.sin(u*2+i)*0.08,-7.1+u*0.6); b.s.material.rotation=u*2+i; });
-  // the kettle: it starts to sing, louder, and then someone (nobody) takes it off
-  if(C&&t>13&&!M.kt){ M.kt={o:C.createOscillator(),g:C.createGain(),l:C.createOscillator(),lg:C.createGain()}; const K=M.kt; K.o.type='sine'; K.o.frequency.value=1650; K.l.frequency.value=6; K.lg.gain.value=22; K.l.connect(K.lg); K.lg.connect(K.o.frequency); K.g.gain.value=0; K.o.connect(K.g); K.g.connect(sound.out); K.o.start(); K.l.start(); K.g.gain.setTargetAtTime(0.022,C.currentTime,3.5); K.o.frequency.setTargetAtTime(1900,C.currentTime,4); }
-  if(M.kt&&t>22&&!M.f.koff){ M.f.koff=1; M.kt.g.gain.setTargetAtTime(0,C.currentTime,0.25); const K=M.kt; setTimeout(()=>{ try{ K.o.stop(); K.l.stop(); }catch(e){} },2500); }
-  M.kSt=t>13&&t<23?Math.min(1,(t-13)/6):Math.max(0,(M.kSt||0)-dt*0.3);
-  // the fox wakes, a little, at the kettle; looks at you; goes back to sleep
-  { const w=Math.min(1,Math.max(0,(t-23)/1.5))*Math.min(1,Math.max(0,(33-t)/1.8)), F=M.fox; F.rotation.z=Math.PI/2*0.92*(1-0.78*w); F.position.y=0.05+0.18*w; F.rotation.y=0.5+w*(Math.atan2(player.x-(LAKE.x-3.6),player.z-(LAKE.z-2.6))-0.5)*0.6;
-    if(t>24.5&&!M.f.wk){ M.f.wk=1; say('fox',"...Kettle. ...Oh. You're still here. It's morning. Go on. It doesn't keep. ...I'll catch up.",0.4); } }
-  { const n=M.note.getWorldPosition(new THREE.Vector3()); const nd=Math.hypot(player.x-n.x,player.z-n.z); if(M.card) M.card.style.opacity=nd<1.8?1:(nd>2.4?0:M.card.style.opacity); if(nd<1.8) M.f.note=1; }
-  if(Math.floor(t)!==M.ck){ M.ck=Math.floor(t); const D=new Date(); ROOM.clock(D.getHours(),D.getMinutes()); }
-  // the way out is the window: walk into the morning
-  { const wx=LAKE.x, wz=LAKE.z-6.4, d=Math.hypot(player.x-wx,player.z-wz); if(t>10&&d<1.6&&!M.f.out){ M.f.out=1; M.outT=0; blackEl.style.transition='opacity 2.5s ease'; blackEl.style.background='#fbf6ea'; blackEl.textContent=''; blackEl.style.opacity=1; if(C) mornChirp(C.currentTime+0.3); }
-    if(M.f.out){ M.outT+=dt; if(M.card) M.card.style.opacity=0; if(M.outT>3.2&&!M.f.title){ M.f.title=1; STY.lines=[]; STY.busy=99; try{ localStorage.removeItem('tv_morn'); }catch(e){} const e=document.createElement('div'); e.style.cssText='position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;background:#fbf6ea;opacity:0;transition:opacity 2.5s ease;font:400 28px Georgia,serif;letter-spacing:.32em;color:#3a2a1c'; e.textContent='THIN VEIL'; document.body.appendChild(e); requestAnimationFrame(()=>{ e.style.opacity=1; }); e.addEventListener('click',()=>{ try{ location.reload(); }catch(e2){} }); } } } }
+  // only the morning exists
+  scene.children.forEach(c=>{ if(c!==G&&c.visible&&!c.isCamera) c.visible=false; });
+  M.U.uT.value=t;
+  // the camera drifts along the shore by itself: out over the water, across to the jetty, round to the house, and back
+  const a=t*0.016, cx=2+Math.sin(a)*16, cz=-30+Math.cos(a*0.8)*7, cy=2.8+0.7*Math.sin(t*0.05);
+  const look=[ [4,1.4,-12], [-5,3.2,30], [-8,4,48], [60,5,-220] ], k=(t*0.012)%look.length, i0=Math.floor(k), f=k-i0, fs=f*f*(3-2*f), L0=look[i0], L1=look[(i0+1)%look.length];
+  M.camP=new THREE.Vector3(cx,2000+cy,cz); const tgt=new THREE.Vector3(L0[0]+(L1[0]-L0[0])*fs,2000+L0[1]+(L1[1]-L0[1])*fs,L0[2]+(L1[2]-L0[2])*fs);
+  const m4=new THREE.Matrix4().lookAt(M.camP,tgt,new THREE.Vector3(0,1,0)); M.camQ=new THREE.Quaternion().setFromRotationMatrix(m4); M.U.uCam.value.copy(M.camP); M.sky.position.set(M.camP.x,0,M.camP.z).sub(G.position).add(new THREE.Vector3(0,2000,0)).sub(new THREE.Vector3(0,2000,0));
+  M.sky.position.set(M.camP.x-G.position.x,0,M.camP.z-G.position.z);
+  // the boat breathes on the water; the fox breathes on the jetty
+  M.boat.position.y=0.05*Math.sin(t*0.9); M.boat.rotation.z=0.03*Math.sin(t*0.7); M.boat.rotation.x=0.015*Math.sin(t*0.55);
+  M.fox.scale.set(1.15,1.15*(1+0.035*Math.sin(t*1.3)),1.15);
+  M.smoke.forEach((q,i)=>{ q.t+=dt; const u=(q.t%8)/8; q.s.position.set(2+u*1.5+Math.sin(q.t*0.6)*0.3,7.2+u*5,0.6); q.s.material.opacity=0.35*Math.sin(Math.PI*u); q.s.scale.setScalar(0.8+u*2.4); });
+  M.pet.forEach((q,i)=>{ q.t+=dt; const u=(q.t%14)/14; q.s.position.set(q.ox+Math.sin(i*2.1)*2+u*14+Math.sin(q.t*1.3+i)*0.8,1+(9-u*8.5)+Math.sin(q.t*2+i)*0.2,q.oz+Math.cos(i*1.7)*2-u*6); q.s.material.rotation=q.t*2+i; });
+  M.mote.forEach(q=>{ q.p+=dt; q.s.position.set(q.x+Math.sin(q.p*0.21)*2,q.y+((q.p*0.15)%6),q.z+Math.cos(q.p*0.17)*2); q.s.material.opacity=0.55*Math.sin(Math.PI*(((q.p*0.15)%6)/6))*(0.6+0.4*Math.sin(q.p*2.3)); });
+  M.gulls.forEach(g=>{ g.a+=g.s*dt; g.m.position.set(10+Math.cos(g.a)*g.r,g.h+Math.sin(t*0.4+g.r)*0.6,-30+Math.sin(g.a)*g.r); g.m.rotation.y=-g.a+(g.s>0?0:Math.PI); g.m.scale.y=1.3*(0.85+0.3*Math.sin(t*3+g.r)); });
+  if(C){ M.chirp-=dt; if(M.chirp<0){ M.chirp=1.5+Math.random()*5; mornChirp(C.currentTime+0.05); } M.gull-=dt; if(M.gull<0){ M.gull=7+Math.random()*12; mornGull(C.currentTime+0.05); }
+    if(M.wave){ M.wave.wg.gain.setTargetAtTime(0.035+0.03*Math.max(0,Math.sin(t*0.9)),C.currentTime,0.3); M.wave.lp.frequency.setTargetAtTime(450+250*Math.max(0,Math.sin(t*0.9)),C.currentTime,0.3); } } }
 
 function roomLeave(){ gfox.visible=true; if(ROOM) ROOM.g.visible=false; STY.room=false; STY.fallY=undefined; }
 function roomUpdate(dt){ if(STY.stage==='morn'){ mornUpdate(dt); return; } if(!STY.room||!ROOM||STY.stage==='mem') return; const t=STY.t, done=STY.lines.length===0&&STY.busy<=0; if(STY.stage==='a1room'&&t>9&&done&&!STY.flags.rx1){ STY.flags.rx1=1; say('xt',"...Hello? Was that the door?",0.6); } ROOM.spin.rotation.y+=dt*0.5; coatFig.visible=false;
@@ -7778,6 +7775,7 @@ function frame(){
   { const wk=(A2?'2.'+A2.ph+'.'+(A2.P?A2.P.kind:'-')+'.'+(A2.holOn?1:0):'')+(A3?'3.'+(A3.room||0):'')+(A4?'4':'')+(ROOM?'r':'')+(STY.stage||'')+((A2||A3)?Math.floor(time/3):''); if(wk!==warmKey){ warmKey=wk; warmNew(); } }
   const _cp0x=camera.position.x, _cp0y=camera.position.y, _cp0z=camera.position.z; if(typeof A4!=='undefined'&&A4&&(A4.camX||0)>0.002){ const k=A4.camX*A4.camX*(3-2*A4.camX), v=A4.camXv||[0,1]; camera.position.x+=v[0]*30*k; camera.position.z+=v[1]*30*k; camera.position.y+=4*k; camera.updateMatrixWorld(); } if(typeof A4!=='undefined'&&A4){ if(A4.lookK>0.002){ const k=A4.lookK*A4.lookK*(3-2*A4.lookK); camera.rotation.y+=(A4.lookY||0)*k; camera.rotation.x+=(A4.lookP||0)*k; } if(A4.dutch) camera.rotation.z+=A4.dutch; if(A4.tiltB) camera.rotation.x+=A4.tiltB; if(A4.camLow) camera.position.y-=A4.camLow; if((A4.fovK||0)>0.001){ if(camera.userData.f0===undefined) camera.userData.f0=camera.fov; camera.fov=camera.userData.f0+A4.fovK*30; camera.updateProjectionMatrix(); } else if(camera.userData.f0!==undefined){ camera.fov=camera.userData.f0; delete camera.userData.f0; camera.updateProjectionMatrix(); } if(A4.hh){ camera.rotation.x+=A4.hh[0]; camera.rotation.y+=A4.hh[1]; camera.rotation.z+=A4.hh[2]; } camera.updateMatrixWorld(); } if(typeof A4!=='undefined'&&A4&&A4.camK>0.002){ const k=A4.camK*A4.camK*(3-2*A4.camK); camera.getWorldDirection(A2_v); camera.position.x-=A2_v.x*8.5*k; camera.position.z-=A2_v.z*8.5*k; camera.position.y+=3.2*k; camera.rotation.x-=0.2*k; camera.updateMatrixWorld(); }
   if(typeof A4!=='undefined'&&A4){ const ddx=camera.position.x-_cp0x, ddy=camera.position.y-_cp0y, ddz=camera.position.z-_cp0z; for(const o of [A4.rainL,A4.lens,A4.esnow]) if(o) o.position.set(ddx,ddy,ddz); }
+  if(STY.stage==='morn'&&MORN&&MORN.camP){ camera.position.copy(MORN.camP); camera.quaternion.copy(MORN.camQ); camera.updateMatrixWorld(); }
   gpu('scene',()=>{ renderer.setRenderTarget(rtScene); renderer.render(scene,camera); });
   slitUpdate(dt,gw[6]*0.75*(0.3+0.7*wild));
   if(!devF.ink){ postU.uLineAmt.value=0; postU.uHatch.value=0; } else postU.uLineAmt.value=(typeof A3!=='undefined'&&A3&&!A3.room)?0.3:1; if(typeof A4!=='undefined'&&A4&&A4.lk){ postU.uLineAmt.value*=A4.lk.a*0.62; postU.uLineC.value.copy(A4.lk.c); if(A4.lk.f){ postU.uFogC.value.copy(A4.lk.f); postU.uFogD.value=A4.lk.d; } }
