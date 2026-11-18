@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.25 -->
+<!-- Thin Veil · beta 0.26 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -132,7 +132,7 @@
 </head>
 <body>
 <div id="start" class="min tests">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.25</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.26</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -5950,7 +5950,9 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
     const mixc=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t];
     for(let i=0;i<5;i++){ const t=mixc(st.k[i],P.burn.k[i],fi).map(v=>v*(i>=3?0.84:1)), c=A.pal[i]; c.r+=(t[0]-c.r)*k; c.g+=(t[1]-c.g)*k; c.b+=(t[2]-c.b)*k; }
     const sky=mixc(st.sky,P.burn.sky,fi), hor=mixc(st.hor,P.burn.hor,fi).map(v=>v*0.78), fog=mixc(st.fog,P.burn.fog,fi).map(v=>v*0.85);
-    A2_atmoStep({day:st.day,stars:st.stars*(1-fi),sun:0,sky,hor,fog,sh:[1,1,1],hi:[1,1,1]},k); U4.uFogC.value.setRGB(WATMO.salt.fog[0],WATMO.salt.fog[1],WATMO.salt.fog[2]);
+    // the calm: a deep blue-black night so the northern lights and the web carry all the light
+    const au=Math.min(1,(A.aur||0)*1.2); if(au>0){ const cs=mixc(sky,[0.004,0.006,0.022],au), ch=mixc(hor,[0.018,0.026,0.07],au), cf=mixc(fog,[0.012,0.018,0.05],au); sky.splice(0,3,...cs); hor.splice(0,3,...ch); fog.splice(0,3,...cf); }
+    A2_atmoStep({day:st.day*(1-0.8*au),stars:st.stars*(1-fi)+0.5*au,sun:0,sky,hor,fog,sh:[1,1,1],hi:[1,1,1]},k); const sf=WATMO.salt.fog; U4.uFogC.value.setRGB(sf[0]+(0.02-sf[0])*au,sf[1]+(0.028-sf[1])*au,sf[2]+(0.07-sf[2])*au);
     for(const [m,l] of A.mats){ const L=m.userData.l!==undefined?m.userData.l:l; A4_ramp(A.pal,L,m.color); }
     U4.uLines.value=1-(A.veil||0); if(!A.lk) A.lk={a:1,c:new THREE.Vector3()}; A.lk.a=1-(A.veil||0); A.lk.c.set(A.pal[0].r*0.5,A.pal[0].g*0.5,A.pal[0].b*0.5);
     // clouds drifting with the wind
@@ -6237,6 +6239,8 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
   { const B=A.brn||{st:'off'}; if(B.st==='on'&&!A.tube){ A.tBurn=(A.tBurn||0)+dt; const pm=0.33+0.27*Math.min(1,A.tBurn/120); A.D=Math.max(A.D,A4_D0*(1-pm)); } }
   // the Dark carries you a little: its beats are on its own script, so the sailing between them needn't drag
   if((A.pD||-1)>=0&&!A.tube&&A.phase==='sail') A.D-=Math.max(0,A.speed)*0.4*dt;
+  // the calm is watched, not sailed: hold the boat short of the end until the finale has played out
+  if(A.calT!==undefined&&!A.f.land&&!A.tube&&A.phase==='sail') A.D=Math.max(A.D,A4_D0*(1-0.8));
   // spray streaks: every flying drop leaves a short line along its path
   if(A.spP&&A.spray){ if(!A.sprL){ const N=A.spP.length, g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(N*6),3)); A.sprL=new THREE.LineSegments(g,new THREE.LineBasicMaterial({color:0xeaf3ff,transparent:true,opacity:0.55,depthWrite:false,fog:false})); A.sprL.frustumCulled=false; A.g.add(A.sprL); }
     const P=A.sprL.geometry.attributes.position, k=0.045; A.spP.forEach((q,i)=>{ if(q.l>0){ P.setXYZ(i*2,q.x,q.y,q.z); P.setXYZ(i*2+1,q.x-q.vx*k,q.y-q.vy*k,q.z-q.vz*k); } else { P.setXYZ(i*2,0,-50,0); P.setXYZ(i*2+1,0,-50,0); } }); P.needsUpdate=true; A.sprL.visible=false; }
@@ -6446,7 +6450,7 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
     // the northern lights, in Act III's hand: long rippling bands, rays, green into violet
     if(!A.aur3&&A.aur>0.01){ A.aur3U={uT:{value:0},uAur:{value:0},uW:{value:0}}; const mk=()=>{ const g=new THREE.PlaneGeometry(1500,260,120,1); return new THREE.Mesh(g,new THREE.ShaderMaterial({uniforms:A.aur3U,transparent:true,depthWrite:false,side:THREE.DoubleSide,blending:THREE.AdditiveBlending,fog:false,
         vertexShader:'uniform float uT; varying vec2 vUv; void main(){ vUv=uv; vec3 p=position; p.z+=sin(p.x*0.006+uT*0.13)*120.0+sin(p.x*0.017-uT*0.21)*40.0; p.y+=sin(p.x*0.004+uT*0.1)*30.0; gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.0); }',
-        fragmentShader:'uniform float uT; uniform float uAur; varying vec2 vUv; void main(){ float x=vUv.x*70.0+sin(vUv.x*11.0+uT*0.4)*3.0; float ray=0.55+0.45*sin(x)*sin(x*0.37+uT*0.6); float v=pow(1.0-vUv.y,1.6)*smoothstep(0.0,0.08,vUv.y); float e=smoothstep(0.0,0.12,vUv.x)*smoothstep(1.0,0.88,vUv.x); vec3 c=mix(vec3(0.15,1.0,0.55),vec3(0.7,0.3,1.0),smoothstep(0.1,0.8,vUv.y))*ray*v*e*0.85*uAur; c=mix(c,vec3(max(c.r,max(c.g,c.b)))*vec3(0.92,1.0,0.98),uW*0.55)*(1.0+1.3*uW); gl_FragColor=vec4(c,1.0); }'})); };
+        fragmentShader:'uniform float uT; uniform float uAur; uniform float uW; varying vec2 vUv; void main(){ float x=vUv.x*70.0+sin(vUv.x*11.0+uT*0.4)*3.0; float ray=0.55+0.45*sin(x)*sin(x*0.37+uT*0.6); float v=pow(1.0-vUv.y,1.6)*smoothstep(0.0,0.08,vUv.y); float e=smoothstep(0.0,0.12,vUv.x)*smoothstep(1.0,0.88,vUv.x); vec3 c=mix(vec3(0.15,1.0,0.55),vec3(0.7,0.3,1.0),smoothstep(0.1,0.8,vUv.y))*ray*v*e*0.72*uAur; c=mix(c,vec3(max(c.r,max(c.g,c.b)))*vec3(0.92,1.0,0.98),uW*0.45)*(1.0+0.8*uW); gl_FragColor=vec4(c,1.0); }'})); };
       A.aur3=(MOBILE?[[0,-620,170,0,1.35],[-0.9,-480,210,0.9,1.1]]:[[0,-620,170,0,1.25],[-0.9,-480,210,0.9,1.0],[0.95,-470,190,-0.95,1.05]]).map(([ox,oz,y,ry,sc])=>{ const m=mk(); m.userData={ox,oz,y,ry,sc}; m.frustumCulled=false; m.renderOrder=-1; A.g.add(m); return m; }); }
     if(A.aur3){ A.aur3U.uT.value=time; A.aur3U.uAur.value=A.aur; A.aur3U.uW.value=A.aurSw||0; A.aur3.forEach(m=>{ const u=m.userData; m.visible=A.aur>0.01; m.position.set(camera.position.x+u.ox*420,u.y,camera.position.z+u.oz); m.rotation.set(0,u.ry,0); m.scale.set(u.sc*1.3*(1+0.35*(A.aurSw||0)),u.sc*1.35*(1+0.6*(A.aurSw||0)),1); }); }
     if(U4.uAur) U4.uAur.value=A.aur*0.95;
