@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.64 -->
+<!-- Thin Veil · beta 0.65 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -146,7 +146,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.64</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.65</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -7775,7 +7775,7 @@ function devApply(){ grass.visible=devF.grass; scene.traverse(o=>{ if(o.isPoints
 { const bt=document.createElement('button'); bt.textContent='DEV'; Object.assign(bt.style,{position:'fixed',right:'8px',top:'8px',zIndex:100,font:'11px ui-monospace,monospace',color:'#cfe8ff',background:'rgba(0,0,0,0.45)',border:'1px solid rgba(207,232,255,0.4)',borderRadius:'6px',padding:'6px 9px',opacity:'0.7'});
   const tg=e=>{ e.preventDefault(); e.stopPropagation(); devToggle(); };
   bt.addEventListener('touchstart',e=>e.stopPropagation(),{passive:true}); bt.addEventListener('touchend',tg); bt.addEventListener('click',tg);
-  bt.id='tvDevBtn'; if(!TVDEV) bt.style.display='none'; document.body.appendChild(bt); }
+  bt.id='tvDevBtn'; if(!TVDEV) bt.style.display='none'; document.body.appendChild(bt); } setInterval(()=>{ const b=document.getElementById('tvDevBtn'), st=document.getElementById('start'); if(!b) return; const onStart=st&&st.offsetParent!==null&&getComputedStyle(st).display!=='none'&&getComputedStyle(st).opacity!=='0'; b.style.visibility=(TVDEV&&!onStart)?'visible':'hidden'; },400);
 dev.gl=renderer.getContext(); dev.ext=dev.gl.getExtension('EXT_disjoint_timer_query_webgl2'); try{ if(localStorage.getItem('tv_devOpen')){ localStorage.removeItem('tv_devOpen'); setTimeout(()=>{ if(!dev.on) devToggle(); },400); } }catch(e){}
 function devToggle(){ dev.on=!dev.on; try{ localStorage.setItem('veil.dev',dev.on?'1':'0'); }catch(e){} dev.el.style.display=dev.on?'block':'none'; dev.bar.style.display=dev.on?'flex':'none'; if(dev.on) devBtns(); }
 addEventListener('keydown',e=>{ if(e.key==='`') devToggle(); if(dev.on&&e.key==='[') realityStep(-1); if(dev.on&&e.key===']') realityStep(1); });
