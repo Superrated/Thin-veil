@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.58 -->
+<!-- Thin Veil · beta 0.59 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -120,6 +120,9 @@
   @keyframes tsBreath{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50.6%) scale(1.012)}}
   @media (max-height:520px){ #start.min .ts-fox{top:45%;width:66vh} #start.min .ts-foot{bottom:calc(2% + env(safe-area-inset-bottom))} #start.min .warn{display:none} }
   #start #goDes,#start .tbx{display:none}
+  #start #tvby{font:italic 12px "Iowan Old Style",Palatino,Georgia,serif;letter-spacing:.16em;color:#c9bfae;opacity:.5;margin:16px 0 0;padding:6px 14px;cursor:default;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;max-width:none}
+  #start #tvInst{margin:14px 0 0;background:none;border:none;color:#c9bfae;opacity:.55;font:11px system-ui,sans-serif;letter-spacing:.28em;text-transform:uppercase;padding:6px 12px;cursor:pointer}
+  #start #tvInstTip{font:12px system-ui,sans-serif;color:#c9bfae;opacity:.7;margin:6px 0 0;max-width:none}
   #start.tests .tbx{display:block;margin:6px auto 0;background:none;border:1px solid rgba(255,255,255,.18);color:#9aa0ac;font:11px system-ui,sans-serif;padding:5px 10px;border-radius:6px}
   #start.tests #goDes{display:block;margin:6px auto 0;background:none;border:1px solid rgba(255,255,255,.18);color:#9aa0ac;font:11px system-ui,sans-serif;padding:5px 10px;border-radius:6px}
   #start #goA2,#start #goA3,#start #goA4{display:none}
@@ -131,8 +134,8 @@
 </script>
 </head>
 <body>
-<div id="start" class="min tests">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.58</div>
+<div id="start" class="min">
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.59</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -151,7 +154,10 @@
   <div class="ts-foot">
     <button id="go" disabled>Loading…</button>
     <p class="ts-hint">tap to begin</p>
+    <button id="tvInst" style="display:none">install</button>
+    <p id="tvInstTip" style="display:none"></p>
     <p class="warn">Headphones recommended &nbsp;·&nbsp; Contains flashing lights</p>
+    <p id="tvby">by Wim Nel</p>
     <button id="goDes">test: Burnt wood</button>
     <button id="goMorn" class="tbx">test: The morning</button>
     <button id="goWave" class="tbx">test: The wave</button>
@@ -1629,10 +1635,16 @@ glowScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),new THREE.ShaderMateri
 const blitU = {tMap:{value:null}, tScene:{value:null}, uInset:{value:0}, uAspect:{value:1}, uFlipX:{value:0}};
 const blitScene = new THREE.Scene();
 const finalU=Object.assign({},postU,{tDream:{value:null},uInset:blitU.uInset,uFlipX:blitU.uFlipX,uDetail:{value:1},uMock:{value:0},uMk:{value:1},uFoldC:{value:new THREE.Vector2(0.5,0.5)},uFoldW:{value:0},uMP:{value:new THREE.Vector4()},uSunP:{value:new THREE.Vector4(0.7,0.8,0.13,1)},uWc2:{value:new THREE.Vector4()},uLampFX:{value:0},uFold:{value:0},uInkF:{value:0},uSplit:{value:0},uDist:{value:0},uDistP:{value:new THREE.Vector3(0.5,0.5,0)},uDesK:{value:0},uWhite:{value:0},uWhiteC:{value:new THREE.Vector3(0.9,0.92,0.95)},tInk:{value:null},uInkBox:{value:new THREE.Vector4()},uInvVP:{value:new THREE.Matrix4()},uLBoil:{value:1},uLT:{value:0},uWind:{value:new THREE.Vector2(0.9,0.4)},uGust:{value:0},uDusk:{value:0},uInk0:{value:new THREE.Vector3(0.03,0.035,0.11)},uInk1:{value:new THREE.Vector3(0.09,0.13,0.36)},uInk2:{value:new THREE.Vector3(0.2,0.36,0.68)},uInk3:{value:new THREE.Vector3(0.55,0.7,0.86)},uInk4:{value:new THREE.Vector3(0.97,0.93,0.82)},uAccent:{value:new THREE.Vector3(1.0,0.45,0.1)},uInkB0:{value:new THREE.Vector3(0.03,0.035,0.11)},uInkB1:{value:new THREE.Vector3(0.09,0.13,0.36)},uInkB2:{value:new THREE.Vector3(0.2,0.36,0.68)},uInkB3:{value:new THREE.Vector3(0.55,0.7,0.86)},uInkB4:{value:new THREE.Vector3(0.97,0.93,0.82)},uRollD:{value:1e5},uSkyC:{value:new THREE.Vector4(0.86,0.5,0.44,1)},uOutL:{value:0},uOutC:{value:new THREE.Vector3(0.02,0.03,0.05)},uShadT:{value:new THREE.Vector3(1,1,1)},uHighT:{value:new THREE.Vector3(1,1,1)},uTear:{value:0},uTearS:{value:0},uTearK:{value:0},uGrn:{value:0},uFlk:{value:0},uVig:{value:0}});
-let TV_BACK=false, TV_MORN=false, MORN=null; try{ const sp=JSON.parse(localStorage.getItem('tv_spent')||'null'); if(sp){ const d0=new Date(sp.t), m5=new Date(d0); m5.setHours(5,0,0,0); if(d0.getHours()>=5) m5.setDate(m5.getDate()+1);
-  if(Date.now()<m5.getTime()){ const L=["Tonight's spent. You can't buy more.","Still spent. It doesn't refill if you stare.","Go to bed. Or don't. But not here.",""], n=Math.min(L.length-1,sp.n||0); sp.n=(sp.n||0)+1; localStorage.setItem('tv_spent',JSON.stringify(sp));
-    const ov=document.createElement('div'); ov.style.cssText='position:fixed;inset:0;z-index:99999;background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column'; ov.innerHTML='<div style="width:12px;height:12px;border-radius:50%;background:#ffd9a0;box-shadow:0 0 30px 12px rgba(255,190,110,.35),0 0 90px 40px rgba(255,150,60,.12);animation:tvl 5s ease-in-out infinite"></div><div style="margin-top:46px;font:italic 18px Georgia,serif;color:#efe6d2;opacity:.85;text-align:center;padding:0 24px">'+L[n]+'</div><style>@keyframes tvl{0%,100%{opacity:.8}50%{opacity:1}}</style><button id="tvDevR" style="position:fixed;right:8px;top:8px;font:12px ui-monospace,monospace;color:#cfe8ff;background:rgba(0,0,0,.6);border:1px solid rgba(207,232,255,.5);border-radius:6px;padding:6px 10px">DEV</button>'; document.body.appendChild(ov); let tps=[]; ['pointerdown','touchstart','keydown','click'].forEach(e=>ov.addEventListener(e,ev=>{ if(ev.target&&ev.target.id==='tvDevR'){ ev.stopPropagation(); ev.preventDefault(); if(e==='pointerdown'){ ['tv_spent','tv_back','tv_morn'].forEach(k=>{ try{ localStorage.removeItem(k); }catch(e6){} }); try{ localStorage.setItem('tv_devOpen','1'); }catch(e7){} location.reload(); } return; } ev.stopPropagation(); ev.preventDefault(); if(e==='pointerdown'){ const n2=performance.now(); tps=tps.filter(x=>n2-x<1500); tps.push(n2); if(tps.length>=5){ try{ localStorage.removeItem('tv_spent'); }catch(e5){} location.reload(); } } },true)); }
-  else { localStorage.removeItem('tv_spent'); localStorage.setItem('tv_back','1'); localStorage.setItem('tv_morn','1'); } } if(localStorage.getItem('tv_back')) TV_BACK=true; if(localStorage.getItem('tv_morn')) TV_MORN=true; }catch(e){} { const fsGo=()=>{ const d=document.documentElement, f=d.requestFullscreen||d.webkitRequestFullscreen; if(f&&!(document.fullscreenElement||document.webkitFullscreenElement)){ try{ const r=f.call(d,{navigationUI:'hide'}); if(r&&r.then) r.then(()=>{ try{ screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape').catch(()=>{}); }catch(e){} }).catch(()=>{}); }catch(e){} } }; let fsOn=false; document.getElementById('go')&&document.getElementById('go').addEventListener('click',()=>{ fsOn=true; }); addEventListener('pointerup',()=>{ if(fsOn) fsGo(); },true); } { const gb=document.getElementById('go'); if(gb) gb.addEventListener('click',()=>{ const d=document.documentElement, f=d.requestFullscreen||d.webkitRequestFullscreen; if(f&&!(document.fullscreenElement||document.webkitFullscreenElement)){ try{ const r=f.call(d,{navigationUI:'hide'}); if(r&&r.catch) r.catch(()=>{}); }catch(e){} } },true); } [['goWave',0.05],['goBurn',0.31],['goDark',0.6]].forEach(([id,j])=>{ const b=document.getElementById(id); if(b) b.addEventListener('click',()=>{ window.__toA4=true; window.__a4jump=j; const g=document.getElementById('go'); if(g&&!g.disabled) g.click(); }); }); { const gm=document.getElementById('goMorn'); if(gm) gm.addEventListener('click',()=>{ TV_MORN=true; const g=document.getElementById('go'); if(g&&!g.disabled) g.click(); }); }
+let TVDEV=false; try{ TVDEV=localStorage.getItem('tv_dev')==='1'; }catch(e){}
+let TV_BACK=false, TV_MORN=false, MORN=null, TV_LOCK=false; try{ const sp=JSON.parse(localStorage.getItem('tv_spent')||'null'); if(sp){ const d0=new Date(sp.t), m5=new Date(d0); m5.setHours(5,0,0,0); if(d0.getHours()>=5) m5.setDate(m5.getDate()+1);
+  if(Date.now()<m5.getTime()){ TV_LOCK=true; const L=["Tonight's spent. You can't buy more.","Still spent. It doesn't refill if you stare.","Go to bed. Or don't. But not here.",""], n=Math.min(L.length-1,sp.n||0); sp.n=(sp.n||0)+1; localStorage.setItem('tv_spent',JSON.stringify(sp));
+    const ov=document.createElement('div'); ov.style.cssText='position:fixed;inset:0;z-index:99999;background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column'; ov.innerHTML='<div style="width:12px;height:12px;border-radius:50%;background:#ffd9a0;box-shadow:0 0 30px 12px rgba(255,190,110,.35),0 0 90px 40px rgba(255,150,60,.12);animation:tvl 5s ease-in-out infinite"></div><div style="margin-top:46px;font:italic 18px Georgia,serif;color:#efe6d2;opacity:.85;text-align:center;padding:0 24px">'+L[n]+'</div><style>@keyframes tvl{0%,100%{opacity:.8}50%{opacity:1}}</style><button id="tvDevR" style="position:fixed;right:8px;top:8px;font:12px ui-monospace,monospace;color:#cfe8ff;background:rgba(0,0,0,.6);border:1px solid rgba(207,232,255,.5);border-radius:6px;padding:6px 10px">DEV</button>'; document.body.appendChild(ov); if(!TVDEV){ const b=ov.querySelector('#tvDevR'); if(b) b.remove(); } let tps=[]; ['pointerdown','touchstart','keydown','click'].forEach(e=>ov.addEventListener(e,ev=>{ if(ev.target&&ev.target.id==='tvDevR'){ ev.stopPropagation(); ev.preventDefault(); if(e==='pointerdown'){ ['tv_spent','tv_back','tv_morn','tv_day'].forEach(k=>{ try{ localStorage.removeItem(k); }catch(e6){} }); try{ localStorage.setItem('tv_devOpen','1'); }catch(e7){} location.reload(); } return; } ev.stopPropagation(); ev.preventDefault(); if(e==='pointerdown'){ const n2=performance.now(); tps=tps.filter(x=>n2-x<1500); tps.push(n2); if(TVDEV&&tps.length>=5){ try{ localStorage.removeItem('tv_spent'); }catch(e5){} location.reload(); } } },true)); }
+  else { localStorage.removeItem('tv_spent'); localStorage.setItem('tv_back','1'); localStorage.setItem('tv_morn','1'); } } if(!TV_LOCK){ const dy=Number(localStorage.getItem('tv_day')||0); if(dy){ const m5=new Date(dy); m5.setHours(5,0,0,0); if(new Date(dy).getHours()>=5) m5.setDate(m5.getDate()+1);
+      if(Date.now()<m5.getTime()){ TV_LOCK=true; const L=["It's a day. Go and have it.","Still today. Go on.","Out. I mean it.",""], k=Number(localStorage.getItem('tv_dayn')||0); localStorage.setItem('tv_dayn',String(k+1));
+        const ov=document.createElement('div'); ov.style.cssText='position:fixed;inset:0;z-index:99999;background:#0b0a0c;display:flex;align-items:center;justify-content:center;flex-direction:column'; ov.innerHTML='<div style="width:12px;height:12px;border-radius:50%;background:#ffe6b8;box-shadow:0 0 30px 12px rgba(255,214,150,.3)"></div><div style="margin-top:46px;font:italic 18px Georgia,serif;color:#efe6d2;opacity:.85;text-align:center;padding:0 24px">'+L[Math.min(L.length-1,k)]+'</div>'+(TVDEV?'<button id="tvDevD" style="position:fixed;right:8px;top:8px;font:12px ui-monospace,monospace;color:#cfe8ff;background:rgba(0,0,0,.6);border:1px solid rgba(207,232,255,.5);border-radius:6px;padding:6px 10px">DEV</button>':''); document.body.appendChild(ov);
+        ['pointerdown','touchstart','keydown','click'].forEach(e=>ov.addEventListener(e,ev=>{ ev.stopPropagation(); ev.preventDefault(); if(e==='pointerdown'&&ev.target&&ev.target.id==='tvDevD'){ ['tv_day','tv_dayn'].forEach(k2=>{ try{ localStorage.removeItem(k2); }catch(e2){} }); location.reload(); } },true)); }
+      else { localStorage.removeItem('tv_day'); localStorage.removeItem('tv_dayn'); } } }
+  if(localStorage.getItem('tv_back')) TV_BACK=true; if(localStorage.getItem('tv_morn')) TV_MORN=true; }catch(e){} { const fsGo=()=>{ const d=document.documentElement, f=d.requestFullscreen||d.webkitRequestFullscreen; if(f&&!(document.fullscreenElement||document.webkitFullscreenElement)){ try{ const r=f.call(d,{navigationUI:'hide'}); if(r&&r.then) r.then(()=>{ try{ screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape').catch(()=>{}); }catch(e){} }).catch(()=>{}); }catch(e){} } }; let fsOn=false; document.getElementById('go')&&document.getElementById('go').addEventListener('click',()=>{ fsOn=true; }); addEventListener('pointerup',()=>{ if(fsOn) fsGo(); },true); } { const gb=document.getElementById('go'); if(gb) gb.addEventListener('click',()=>{ const d=document.documentElement, f=d.requestFullscreen||d.webkitRequestFullscreen; if(f&&!(document.fullscreenElement||document.webkitFullscreenElement)){ try{ const r=f.call(d,{navigationUI:'hide'}); if(r&&r.catch) r.catch(()=>{}); }catch(e){} } },true); } [['goWave',0.05],['goBurn',0.31],['goDark',0.6]].forEach(([id,j])=>{ const b=document.getElementById(id); if(b) b.addEventListener('click',()=>{ window.__toA4=true; window.__a4jump=j; const g=document.getElementById('go'); if(g&&!g.disabled) g.click(); }); }); { const gm=document.getElementById('goMorn'); if(gm) gm.addEventListener('click',()=>{ TV_MORN=true; const g=document.getElementById('go'); if(g&&!g.disabled) g.click(); }); }
 finalU.uThump={value:0}; finalU.uVeil={value:0}; window.__lino=finalU; blitScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2), new THREE.ShaderMaterial({uniforms:finalU, vertexShader:quadVS, depthTest:false, depthWrite:false,
   fragmentShader:`varying vec2 vUv;
 
@@ -2140,7 +2152,8 @@ cv.addEventListener('touchmove',e=>{ for(const t of e.changedTouches){
 const tend=e=>{ for(const t of e.changedTouches){ if(t.identifier===joyId){joyId=null; joyV={x:0,y:0}; joyEl.style.display='none'; knob.style.transform='';} if(t.identifier===lookId) lookId=null; } };
 cv.addEventListener('touchend',tend); cv.addEventListener('touchcancel',tend);
 let mDown=false, mP={x:0,y:0};
-cv.addEventListener('mousedown',e=>{mDown=true; mP={x:e.clientX,y:e.clientY};});
+cv.addEventListener('mousedown',e=>{mDown=true; mP={x:e.clientX,y:e.clientY}; if(STY.on&&document.pointerLockElement!==cv&&cv.requestPointerLock&&!(navigator.maxTouchPoints>0&&matchMedia('(pointer:coarse)').matches)){ try{ const r=cv.requestPointerLock(); if(r&&r.catch) r.catch(()=>{}); }catch(e2){} } });
+addEventListener('mousemove',e=>{ if(document.pointerLockElement!==cv) return; player.yaw-=(e.movementX||0)*0.0022; player.pitch=Math.max(-1.35,Math.min(1.35,player.pitch-(e.movementY||0)*0.0022)); });
 addEventListener('mouseup',()=>mDown=false);
 addEventListener('mousemove',e=>{ if(!mDown) return; player.yaw-=(e.clientX-mP.x)*0.004; player.pitch-=(e.clientY-mP.y)*0.004; mP={x:e.clientX,y:e.clientY}; });
 
@@ -5844,7 +5857,7 @@ function A4_door(A,dt){ A.doorT+=dt; if(A.doorT>2.4&&!A.f.road){ A.f.road=1;  } 
     if(A.f.qd5&&!STY.lines.length&&A4_done()) A.endWt=(A.endWt||0)+dt; if((A.endWt>7||A.qT>70)&&!A.f.blk){ A.f.blk=1; blackEl.style.transition='none'; blackEl.style.background='#000'; blackEl.style.opacity=1; noteEl.style.opacity=0; STY.lines=[]; STY.busy=99;
       const e=document.createElement('div'); e.style.cssText='position:fixed;inset:0;z-index:60;background:#000;pointer-events:none;opacity:0;transition:opacity 4s ease'; e.innerHTML='<div style="position:absolute;left:50%;top:64%;width:150px;height:60px;margin-left:-75px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(255,120,40,.55) 0%,rgba(190,50,10,.22) 40%,rgba(0,0,0,0) 72%)"></div><div style="position:absolute;left:66%;top:33%;width:5px;height:5px;border-radius:50%;background:#ffd9a0;box-shadow:0 0 10px 3px rgba(255,200,130,.35);opacity:.5"></div><div id="a4end" style="position:absolute;left:0;right:0;top:44%;text-align:center;font:italic 20px Georgia,serif;color:#f0a860;opacity:0;transition:opacity 2.5s ease"></div>'; document.body.appendChild(e); A.endEl=e; }
     if(A.f.blk){ const el=A.endEl, tx=el.querySelector('#a4end'), q=A.qT-13.2; if(q>1&&!A.f.ch7&&sound.C){ A.f.ch7=1; const C=sound.C, t0=C.currentTime+0.2; for(let k=0;k<7;k++){ for(const [f,v] of [[523.25,0.07],[1046.5,0.025],[784,0.018]]){ const o=C.createOscillator(), g=C.createGain(); o.type='sine'; o.frequency.value=f; const tt=t0+k*0.95; g.gain.setValueAtTime(0,tt); g.gain.linearRampToValueAtTime(v,tt+0.012); g.gain.exponentialRampToValueAtTime(0.0001,tt+1.7); o.connect(g); g.connect(C.destination); o.start(tt); o.stop(tt+1.8); } } } if(q>3.5) el.style.opacity=1; if(!A.endW){ const mn=Math.max(1,Math.round(performance.now()/60000)), h=Math.floor(mn/60), m=mn%60, cap=x=>x[0].toUpperCase()+x.slice(1); A.endW=(h===0?cap(numW(mn))+' minute'+(mn===1?'':'s'):(h===1?'An hour':cap(numW(h))+' hours')+(m?' and '+numW(m)+' minute'+(m===1?'':'s'):''))+', running from nothing.'+(h>=2?' Impressive. In a way.':''); tx.style.color='#efe6d2'; }
-      if(q>5&&!A.f.e1){ A.f.e1=1; tx.textContent=A.endW; tx.style.opacity=1; } if(q>10.5&&!A.f.e2){ A.f.e2=1; tx.style.opacity=0; } if(q>12.5&&!A.f.e8){ A.f.e8=1; try{ localStorage.setItem('tv_spent',JSON.stringify({t:Date.now(),n:0})); }catch(e3){} tx.style.cssText+=';font:400 28px Georgia,serif;font-style:normal;letter-spacing:.32em;color:#ffe2b0'; tx.innerHTML='THIN VEIL'; tx.style.opacity=1; } if(q>18&&!A.f.e9){ A.f.e9=1; tx.style.opacity=0; }
+      if(q>5&&!A.f.e1){ A.f.e1=1; tx.textContent=A.endW; tx.style.opacity=1; } if(q>10.5&&!A.f.e2){ A.f.e2=1; tx.style.opacity=0; } if(q>12.5&&!A.f.e8){ A.f.e8=1; try{ localStorage.setItem('tv_spent',JSON.stringify({t:Date.now(),n:0})); localStorage.setItem('tv_done','1'); }catch(e3){} tx.style.cssText+=';font:400 28px Georgia,serif;font-style:normal;letter-spacing:.32em;color:#ffe2b0'; tx.innerHTML='THIN VEIL'; tx.style.opacity=1; } if(q>18&&!A.f.e9){ A.f.e9=1; tx.style.opacity=0; }
       if(q>20.5&&!A.f.e6){ A.f.e6=1; tx.style.cssText+=';font:italic 24px Georgia,serif;letter-spacing:.02em;color:#f0a860'; tx.textContent='Come back in the morning.'; tx.style.opacity=1; el.style.pointerEvents='auto'; el.addEventListener('click',()=>{ try{ location.reload(); }catch(e4){} }); } } } }
 function A4_update(dt){ const A=A4; if(!A) return; if(typeof mists!=='undefined') mists.forEach(m=>{ m.visible=false; }); if(wG.salt&&wG.salt.userData.walker) wG.salt.userData.walker.visible=false; A.pt+=dt; ringArm=0; coatFig.visible=false; winG.visible=false; portal.on=false; portal.A.visible=portal.B.visible=false; torchUpdate(false); STY.stage='a4';
   const U4=A.U, done=A4_done(), p=1-A.D/A4_D0, S=A.surge, mp=finalU.uMP.value; A4_harbourUpdate(A,dt); A.storm=Math.max(smooth(0.08,0.7,p)*(1-0.6*smooth(0.86,0.97,p))*(A.hand>0.5?0.8:1),A.fire); A.st=(A.st||0)+dt*(1-(A.frz||0)); U4.uT.value=A.st; U4.uCamP.value.copy(camera.position);
@@ -6929,7 +6942,7 @@ function mornRock(s,seed){ const g=new THREE.DodecahedronGeometry(1,0).toNonInde
   g.setAttribute('color',new THREE.BufferAttribute(col,3)); const m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({vertexColors:true,fog:false})); m.scale.set(s,s*0.8,s); return m; }
 function mornEnter(){ STY.stage='morn'; STY.t=0; STY.lines=[]; STY.busy=99; const M=MORN={t:0,f:{},chirp:2,gull:5,px:-1,pz:mornShore(-1)+9,step:0,bob:0,fp:[],fpI:0,ffp:[],ffI:0,fstep:0};
   window.__mornP=()=>({M:MORN,player,u:mornUpdate,cam:camera,r:renderer});
-  try{ localStorage.removeItem('tv_morn'); }catch(e){}
+  try{ localStorage.removeItem('tv_morn'); localStorage.setItem('tv_day',String(Date.now())); localStorage.setItem('tv_dayn','0'); localStorage.setItem('tv_done','1'); }catch(e){}
   blackEl.style.transition='opacity 5s ease'; blackEl.style.opacity=0; hush(false); if(sound.C&&sound.mus) sound.mus.gain.setTargetAtTime(0,sound.C.currentTime,0.5);
   const G=M.g=new THREE.Group(); G.position.set(0,2000,0); scene.add(G); const B=(c)=>new THREE.MeshBasicMaterial({color:c,fog:false}); M.U={uT:{value:0},uCam:{value:new THREE.Vector3()},uSun:{value:0}};
   // the sky, all round
@@ -7695,7 +7708,7 @@ function setFps30(on){ if(FPS30===on) return; FPS30=on; try{ localStorage.setIte
 const off=new THREE.Vector3(); const tmpV=new THREE.Vector3();
 /* ----- hidden dev overlay: hold the top-left corner ~1 s (or press ` on a keyboard) ----- */
 const dev={on:false,el:null,gl:null,ext:null,q:[],ms:{},cpu:0,last:0,hold:0};
-try{ dev.on=localStorage.getItem('veil.dev')==='1'; }catch(e){}
+try{ dev.on=TVDEV&&localStorage.getItem('veil.dev')==='1'; }catch(e){}
 dev.el=document.createElement('div'); Object.assign(dev.el.style,{position:'fixed',left:'6px',top:'6px',zIndex:99,font:'11px/1.35 ui-monospace,monospace',color:'#cfe8ff',background:'rgba(0,0,0,0.55)',padding:'6px 8px',borderRadius:'6px',pointerEvents:'none',whiteSpace:'pre',display:'none'});
 document.body.appendChild(dev.el);
 const devF={refl:true,ink:true,dream:true,grass:true,parts:true,lock:0,out:0};
@@ -7726,7 +7739,7 @@ function devApply(){ grass.visible=devF.grass; scene.traverse(o=>{ if(o.isPoints
 { const bt=document.createElement('button'); bt.textContent='DEV'; Object.assign(bt.style,{position:'fixed',right:'8px',top:'8px',zIndex:100,font:'11px ui-monospace,monospace',color:'#cfe8ff',background:'rgba(0,0,0,0.45)',border:'1px solid rgba(207,232,255,0.4)',borderRadius:'6px',padding:'6px 9px',opacity:'0.7'});
   const tg=e=>{ e.preventDefault(); e.stopPropagation(); devToggle(); };
   bt.addEventListener('touchstart',e=>e.stopPropagation(),{passive:true}); bt.addEventListener('touchend',tg); bt.addEventListener('click',tg);
-  document.body.appendChild(bt); }
+  bt.id='tvDevBtn'; if(!TVDEV) bt.style.display='none'; document.body.appendChild(bt); }
 dev.gl=renderer.getContext(); dev.ext=dev.gl.getExtension('EXT_disjoint_timer_query_webgl2'); try{ if(localStorage.getItem('tv_devOpen')){ localStorage.removeItem('tv_devOpen'); setTimeout(()=>{ if(!dev.on) devToggle(); },400); } }catch(e){}
 function devToggle(){ dev.on=!dev.on; try{ localStorage.setItem('veil.dev',dev.on?'1':'0'); }catch(e){} dev.el.style.display=dev.on?'block':'none'; dev.bar.style.display=dev.on?'flex':'none'; if(dev.on) devBtns(); }
 addEventListener('keydown',e=>{ if(e.key==='`') devToggle(); if(dev.on&&e.key==='[') realityStep(-1); if(dev.on&&e.key===']') realityStep(1); });
@@ -8045,7 +8058,7 @@ function frame(){
 addEventListener('resize',()=>{ renderer.setSize(innerWidth,innerHeight); makeTargets(); });
 
 /* ================= start ================= */
-{ let n=0, t0=0; const h=document.querySelector('#start h1'); if(h){ h.style.pointerEvents='auto'; h.addEventListener('click',()=>{ const t=performance.now(); n=t-t0<700?n+1:1; t0=t; if(n>=3) document.getElementById('start').classList.toggle('tests'); }); } }
+{ let n=0, t0=0; const h=null; if(h){ h.style.pointerEvents='auto'; h.addEventListener('click',()=>{ const t=performance.now(); n=t-t0<700?n+1:1; t0=t; if(n>=3) document.getElementById('start').classList.toggle('tests'); }); } }
 { // the start screen: one storm lantern, hanging in the dark. It catches when the game is ready
   const st=document.getElementById('start'), cv=st&&st.querySelector('.ts-lantern');
   if(cv){ try{ const R=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true,powerPreference:'low-power'}); R.setPixelRatio(Math.min(devicePixelRatio||1,2)); R.toneMapping=THREE.NoToneMapping;
@@ -8093,11 +8106,20 @@ addEventListener('resize',()=>{ renderer.setSize(innerWidth,innerHeight); makeTa
       pl.intensity=40*lit*fk*(1-0.4*gust); key.intensity=1.2*lit; halo.material.opacity=0.85*lit*fk; halo2.material.opacity=0.5*lit*fk; glass.material.emissiveIntensity=0.5*lit*fk; glass.material.opacity=0.07+0.13*lit*fk; sheen.material.opacity=0.05+0.05*lit; dust.material.opacity=0.55*lit;
       const P=dust.geometry.attributes.position; for(let q=0;q<N;q++){ const v=dv[q]; v[0]+=dt*v[2]; P.setXYZ(q,Math.cos(v[0])*v[1],((P.getY(q)+dt*(0.05+0.04*Math.sin(t+v[3]))+0.4)%4.6)-0.4,Math.sin(v[0])*v[1]); } P.needsUpdate=true;
       R.render(S,C); }; frame(); }catch(e){ console.warn('lantern',e); cv.style.display='none'; } } }
+{ const by=document.getElementById('tvby'), st=document.getElementById('start'); let tp=[]; if(TVDEV) st.classList.add('tests');
+  if(by){ by.addEventListener('pointerdown',e=>{ e.stopPropagation(); const n=performance.now(); tp=tp.filter(x=>n-x<2000); tp.push(n); if(tp.length>=5){ tp=[]; TVDEV=!TVDEV; try{ localStorage.setItem('tv_dev',TVDEV?'1':'0'); }catch(e2){} st.classList.toggle('tests',TVDEV); const b=document.getElementById('tvDevBtn'); if(b) b.style.display=TVDEV?'':'none'; by.textContent=TVDEV?'dev on':'dev off'; setTimeout(()=>{ by.textContent='by Wim Nel'; },1200); } }); }
+  const ib=document.getElementById('tvInst'), tip=document.getElementById('tvInstTip'); let bip=null, inFrame=true; try{ inFrame=window.top!==window; }catch(e){}
+  const alone=matchMedia('(display-mode: fullscreen)').matches||matchMedia('(display-mode: standalone)').matches||navigator.standalone===true, ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  const show=()=>{ if(ib&&!alone&&!inFrame) ib.style.display='inline-block'; };
+  addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); bip=e; show(); }); if(ios) show();
+  if(ib) ib.addEventListener('click',e=>{ e.stopPropagation(); if(bip){ bip.prompt(); const d=()=>{ bip=null; ib.style.display='none'; }; if(bip.userChoice) bip.userChoice.then(d,d); } else if(ios&&tip){ tip.textContent='Tap Share, then Add to Home Screen.'; tip.style.display='block'; } });
+  if(!inFrame&&'serviceWorker' in navigator&&location.protocol==='https:') navigator.serviceWorker.register('sw.js').catch(()=>{}); }
+let TV_LBL='You’re early.'; try{ if(TV_MORN) TV_LBL='Good morning.'; else if(localStorage.getItem('tv_done')) TV_LBL='Again.'; }catch(e){}
 const go=document.getElementById('go');
 go.textContent='the veil is thinning…';
 sound.prepare(p=>{go.textContent='the veil is thinning… '+Math.round(p*100)+'%';})
-  .then(()=>{ warmAll(); [0,1,2,3,4,5,6].forEach(warmLayer); go.disabled=false; go.textContent='You’re early.';})
-  .catch(e=>{console.warn(e); sound.failed=true; try{ warmAll(); }catch(_){} go.disabled=false; go.textContent='You’re early. (no sound)';});
+  .then(()=>{ warmAll(); [0,1,2,3,4,5,6].forEach(warmLayer); go.disabled=false; go.textContent=TV_LBL;})
+  .catch(e=>{console.warn(e); sound.failed=true; try{ warmAll(); }catch(_){} go.disabled=false; go.textContent=TV_LBL+' (no sound)';});
 if(returns>0){ document.getElementById('mem').style.display='block'; }
 document.getElementById('forget').onclick=()=>{ returns=0; diaryLog=[]; try{localStorage.removeItem('veil.diary');}catch(e){} missing=new Set(); ent=new Set(); entNext=new Set(); measured.clear(); SEED=((Math.random()*999983)|0)+1; setSeed(); sound.setSeed(SEED); worldVer=0; clearChunks(); saveMem(); document.getElementById('mem').style.display='none'; };
 document.getElementById('goA2').addEventListener('click',()=>{ window.__toA2=true; }); document.getElementById('goDes').addEventListener('click',()=>{ window.__toDes=true; });
