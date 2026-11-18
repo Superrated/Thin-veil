@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.67 -->
+<!-- Thin Veil · beta 0.68 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -146,7 +146,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.67</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.68</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -5878,7 +5878,7 @@ function A4_update(dt){ const A=A4; if(!A) return; if(typeof mists!=='undefined'
   // ----- fire: the same print, inked again in red -----
   A4_fireUpdate(A,p,dt); finalU.uInkF.value=A.fire; U4.uFire.value=A.fire; finalU.uSunP.value.w=smooth(0.25,0.7,A.fire); finalU.uSunP.value.x=0.5+0.22*Math.sin(time*0.05); finalU.uSunP.value.y=0.74; finalU.uSunP.value.z=0.1+0.05*A.fire;
   A.eU.uA.value=A.fire; A.up+=dt*(2+3*A.fire); A.eU.uUp.value=A.up; A.amp+=(((A.phase==='door')?0.25:(1.1+0.45*p+1.0*A.storm+0.5*A.fire)*(0.35+0.65*smooth(-150,-230,A.bz))*(A.calmT>0?0.2:1))-A.amp)*Math.min(1,dt*(A.calmT>0?(A.hideW?20:0.9):0.3)); U4.uAmp.value=A.amp;
-  if(A.phase==='door'&&A.f.bye){ STY.lines=STY.lines.filter(l=>l[0]!=='fox'); } if(A.phase==='door'){ A.sea.position.set(Math.round(player.x/10)*10,-0.6,Math.round(player.z/10)*10); A4_door(A,dt); A.gw.material.uniforms.uH.value=170; return; }
+  if(A.phase==='door'&&A.f.bye){ STY.lines=STY.lines.filter(l=>l[0]!=='fox'); } if(A.phase==='door'){ A.sea.position.set(Math.round(player.x/10)*10,-0.6,Math.round(player.z/10)*10); A4_door(A,dt); A.gw.material.uniforms.uH.value=170; A.gw.visible=false; return; }
   { if(!A.hint){ const e=A.hint=document.createElement('div'); e.style.cssText='position:fixed;left:0;right:0;top:15%;text-align:center;font:italic 15px Georgia,serif;letter-spacing:.08em;color:#f2ecd8;text-shadow:0 0 6px #000,0 0 2px #000;opacity:0;transition:opacity 1.2s;pointer-events:none;z-index:6'; document.body.appendChild(e); } }
   if(A.nav&&!A.navF){ A.navF=1; const keep=A.nav.filter(n=>n.name!=='jaw'&&n.name!=='narrows'); A.nav.length=0; keep.forEach(n=>A.nav.push(n)); }
   // ----- the boat: real sailing, made easy. The wind blows from wherever the story wants; when it is ahead you zig-zag -----
