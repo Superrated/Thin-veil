@@ -7845,10 +7845,10 @@ function frame(){
   slitUpdate(dt,gw[6]*0.75*(0.3+0.7*wild));
   if(!devF.ink){ postU.uLineAmt.value=0; postU.uHatch.value=0; } else postU.uLineAmt.value=(typeof A3!=='undefined'&&A3&&!A3.room)?0.3:1; if(typeof A4!=='undefined'&&A4&&A4.lk){ postU.uLineAmt.value*=A4.lk.a*0.62; postU.uLineC.value.copy(A4.lk.c); if(A4.lk.f){ postU.uFogC.value.copy(A4.lk.f); postU.uFogD.value=A4.lk.d; } }
   if((devF.dream&&!(typeof A4!=='undefined'&&A4&&(A4.fire||0)>0.5))) gpu('glow',()=>{ glowU.tMap.value=rtScene.texture; glowU.tDepth.value=rtScene.depthTexture; glowU.uMode.value=2; glowU.uTexel.value.set(1/rtG1.width,1/rtG1.height); renderer.setRenderTarget(rtG1); renderer.render(glowScene,orthoCam); });
-  postU.tBloom.value=rtG1.texture; postU.uBloom.value=0.55-0.25*(1-gw[0])-0.15*gw[4];
+  postU.tBloom.value=rtG1.texture; postU.uBloom.value=0.55-0.25*(1-gw[0])-0.15*gw[4]; if(!(devF.dream&&!(typeof A4!=='undefined'&&A4&&(A4.fire||0)>0.5))&&devF.dream) postU.uBloom.value=0;
   postU.tScene.value=rtScene.texture; postU.tPrev.value=rtA.texture; postU.tDepth.value=rtScene.depthTexture; postU.uTexS.value.set(1/rtScene.width,1/rtScene.height); postU.uNF.value.set(camera.near,camera.far);
-  if((devF.dream&&!(typeof A4!=='undefined'&&A4&&(A4.fire||0)>0.5))) gpu('dream',()=>{ renderer.setRenderTarget(rtB); renderer.render(postScene,orthoCam); });
-  finalU.tDream.value=(devF.dream&&!(typeof A4!=='undefined'&&A4&&(A4.fire||0)>0.5))?rtB.texture:rtScene.texture;
+  if(devF.dream) gpu('dream',()=>{ renderer.setRenderTarget(rtB); renderer.render(postScene,orthoCam); });
+  finalU.tDream.value=devF.dream?rtB.texture:rtScene.texture;
   { // split-tone grade: shadows / highlights per reality, nudged by the story's mood
     const SH=[[0.86,0.95,1.14],[1.1,0.85,1.15],[0.85,1.08,0.95],[0.9,0.9,1.2],[1.12,0.9,0.85],[0.97,0.98,1.02],[1.05,0.97,0.85]], HI=[[1.08,1.0,0.9],[0.92,1.05,1.12],[1.1,1.05,0.8],[1.0,1.06,1.1],[1.08,0.95,0.82],[1.02,1.0,0.97],[1.1,1.0,0.85]];
     const md=tripMood==='unease'?[0.97,1.04,0.98]:(tripMood==='letting go'?[1.04,1.0,0.96]:[1,1,1.02]); const sv=finalU.uShadT.value, hv=finalU.uHighT.value; sv.set(0,0,0); hv.set(0,0,0);
