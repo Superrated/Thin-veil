@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.42 -->
+<!-- Thin Veil · beta 0.43 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -132,7 +132,7 @@
 </head>
 <body>
 <div id="start" class="min tests">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.42</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.43</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -6558,7 +6558,7 @@ function A4_update(dt){ const A=A4; if(!A) return; if(typeof mists!=='undefined'
   A.heel+=((A.lean*0.15-A.side*0.1*(A.speed/9)*(1+0.7*A.grv)-Math.max(-1.2,Math.min(1.2,A.hv))*0.2)-A.heel)*Math.min(1,dt*2); A.by=A4_wave(A.bx,A.bz,A.st,A.amp)+(A.breathY||0);
   const B=A.boat, pitchB=(A4_wave(A.bx-Math.sin(A.h)*2,A.bz-Math.cos(A.h)*2,A.st,A.amp)-A4_wave(A.bx+Math.sin(A.h)*2,A.bz+Math.cos(A.h)*2,A.st,A.amp))/4; B.position.set(A.bx,A.by-0.25,A.bz); B.rotation.set(0,0,0); B.rotation.order='YXZ'; B.rotation.y=A.h; A.pitchS=(A.pitchS||0)+(pitchB*0.65-(A.pitchS||0))*Math.min(1,dt*2.5); B.rotation.x=A.pitchS; B.rotation.z=-A.heel;
   A.tiller.rotation.y=-A.hv*0.6+(A.yankD>0?A.yank*1.4*Math.sin(time*28):0); if(A.seat===undefined) A.seat=-A.side*0.5; A.seat+=((-A.side*0.5)-A.seat)*Math.min(1,dt*2.2); A.px=A.bx+Math.sin(A.h)*0.95+Math.cos(A.h)*A.seat; A.pz=A.bz+Math.cos(A.h)*0.95-Math.sin(A.h)*A.seat; player.x=A.px; player.z=A.pz; vel.x=vel.z=0; STY.fallY=A.by-0.62; camera.rotation.z+=A.heel*0.4; camera.rotation.x+=(A.pitchS||0)*0.55;
-  { const fw=[-Math.sin(A.h),-Math.cos(A.h)]; const sc=A.fs0*0.78*(1-0.42*smooth(0.8,0.95,p)); const F=A.fox; gfox.visible=false; F.scale.setScalar(sc*(A.small2||1)*(window.__foxS||1)); F.position.set(A.bx-fw[0]*2.1+fw[1]*0.1,A.by+0.4,A.bz-fw[1]*2.1-fw[0]*0.1); F.rotation.y=A.h+Math.PI+A.hv*0.5+(window.__foxRY||0); if(window.__foxF){ F.position.x+=fw[0]*window.__foxF; F.position.z+=fw[1]*window.__foxF; F.position.y+=window.__foxUp||0; F.position.x+=-fw[1]*(window.__foxL||0); F.position.z+=fw[0]*(window.__foxL||0); } F.rotation.z=A.heel+A.flinch*0.25*Math.sin(time*37); F.position.y+=A.flinch*0.12*Math.abs(Math.sin(time*23)); }
+  { const fw=[-Math.sin(A.h),-Math.cos(A.h)]; const sc=A.fs0*0.78*(1-0.42*smooth(0.8,0.95,p)); const F=A.fox; gfox.visible=false; F.scale.setScalar(sc*(A.small2||1)*(window.__foxS||1)); if(F.parent!==A.boat) A.boat.add(F); const bsc=A.boat.scale.x||1; F.scale.multiplyScalar(1/bsc); F.position.set(0.0,0.62/bsc,1.5/bsc); F.rotation.set(0,Math.PI+A.hv*0.5+(window.__foxRY||0),0); F.position.y+=A.flinch*0.04*Math.abs(Math.sin(time*9))/bsc; }
   A.sea.position.set(A.bx,0,A.bz);
   { const fw=[-Math.sin(A.h),-Math.cos(A.h)], rt=[Math.cos(A.h),-Math.sin(A.h)], dy=A.by-(A.byP===undefined?A.by:A.byP); A.byP=A.by;
     // the bow meets a swell: the print jolts, and spray goes up
