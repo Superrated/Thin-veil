@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.31 -->
+<!-- Thin Veil · beta 0.32 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -132,7 +132,7 @@
 </head>
 <body>
 <div id="start" class="min tests">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.31</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.32</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -1854,8 +1854,8 @@ finalU.uThump={value:0}; finalU.uVeil={value:0}; window.__lino=finalU; blitScene
      float ad=abs(d); col*=1.0-0.75*span*smoothstep(w+0.05,w,ad);                                  // the picture chars back from the rip
      if(ad<w){ vec2 q=vec2(0.5+(p.x-lx)*1.1,y)+vec2(sin(t*0.4+sd)*0.03,0.0); col=tvWorld(uTearK,q,t)*(0.85+0.15*smoothstep(0.0,w,w-ad)); }  // the other side, quite still
      float rim=smoothstep(w+0.008,w,ad)*smoothstep(max(w-0.006,0.0),w,ad)*step(0.001,span); col=mix(col,mix(vec3(1.0,0.35,0.06),vec3(1.0,0.95,0.8),tvN(vec2(y*40.0,t*6.0))),rim); }   // and its edge burns
-   if(uThump>0.001){ float vr0=length((oUv-0.5)*vec2(uAspect,1.0)); col*=1.0+uThump*0.6*(1.0-smoothstep(0.15,0.6,vr0)); }
-   if(uVig>0.001){ float vr=length((oUv-0.5)*vec2(uAspect,1.0)); float vk=uVig*smoothstep(0.02,0.62,vr); col*=1.0-min(0.97,vk*1.15); col+=vec3(1.0,0.06,0.03)*uThump*smoothstep(0.3,0.62,vr)*smoothstep(0.95,0.62,vr)*0.55; }
+   if(uThump>0.001){ float vr0=length((oUv-0.5)*2.0)*0.62; col*=1.0+uThump*1.3*(1.0-smoothstep(0.1,0.55,vr0)); col+=vec3(0.22,0.07,0.03)*uThump; }
+   if(uVig>0.001){ float vr=length((oUv-0.5)*vec2(uAspect,1.0)); float ve=length((oUv-0.5)*2.0)*0.62; float vk=uVig*smoothstep(0.22,0.8,ve); col*=1.0-min(0.97,vk*1.15); col+=vec3(1.0,0.06,0.03)*uThump*smoothstep(0.36,0.62,ve)*smoothstep(1.0,0.66,ve)*0.6; }
    if(uGrn>0.001){ col+=(tvH(gl_FragCoord.xy*0.37+vec2(fract(t*7.13)*91.0,fract(t*3.7)*57.0))-0.5)*uGrn*(1.0-uVeil); col*=1.0-uFlk*tvH(vec2(floor(t*24.0),3.0)); }
    gl_FragColor=vec4(clamp(col,0.0,1.0),1.0); }`})));
 
@@ -6250,7 +6250,7 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
   // test-button runs only: a small readout in the corner so a phone playtest can show what the Burning is doing
   if(window.__toA4){ A.dbT=(A.dbT||0)-dt; if(A.dbT<0){ A.dbT=0.5; let e=document.getElementById('a4dbg'); if(!e){ e=document.createElement('div'); e.id='a4dbg'; e.style.cssText='position:fixed;left:6px;bottom:6px;z-index:99;font:11px monospace;color:#9f9;background:rgba(0,0,0,.5);padding:2px 5px;pointer-events:none'; document.body.appendChild(e); }
     const B=A.brn||{st:'-'}; if(A.cm){ A.cmN=A.cmN||0; A.cmA=A.cmA||0; A.cm.forEach(c=>{ if(c.on&&!c.cnt){ c.cnt=1; A.cmN++; if(c.aim) A.cmA++; } if(!c.on) c.cnt=0; }); }
-    e.textContent='beta '+(window.__ver||'')+' · fire '+B.st+' '+Math.round(A.tBurn||0)+'s · p '+p.toFixed(2)+' · pB '+(A.pB||0).toFixed(2)+' · comets '+(A.cmN||0)+' · rings '+(A.cmA||0)+' · slomo '+(A.nmc?'ON':'-')+(A.cmDbg?' · wd':'')+' · fps '+Math.round(1/Math.max(dt,0.001)); } }
+    e.textContent='bpm '+Math.round((52+(A.dz||0)*95)*(1-(A.hbX||0))+180*(A.hbX||0))+' · fire '+B.st+' '+Math.round(A.tBurn||0)+'s · p '+p.toFixed(2)+' · pB '+(A.pB||0).toFixed(2)+' · comets '+(A.cmN||0)+' · rings '+(A.cmA||0)+' · slomo '+(A.nmc?'ON':'-')+(A.cmDbg?' · wd':'')+' · fps '+Math.round(1/Math.max(dt,0.001)); } }
   // spray streaks: every flying drop leaves a short line along its path
   if(A.spP&&A.spray){ if(!A.sprL){ const N=A.spP.length, g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(N*6),3)); A.sprL=new THREE.LineSegments(g,new THREE.LineBasicMaterial({color:0xeaf3ff,transparent:true,opacity:0.55,depthWrite:false,fog:false})); A.sprL.frustumCulled=false; A.g.add(A.sprL); }
     const P=A.sprL.geometry.attributes.position, k=0.045; A.spP.forEach((q,i)=>{ if(q.l>0){ P.setXYZ(i*2,q.x,q.y,q.z); P.setXYZ(i*2+1,q.x-q.vx*k,q.y-q.vy*k,q.z-q.vz*k); } else { P.setXYZ(i*2,0,-50,0); P.setXYZ(i*2+1,0,-50,0); } }); P.needsUpdate=true; A.sprL.visible=false; }
@@ -6264,7 +6264,7 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
     A.hBeam.visible=A.hFar.visible&&!A.darkOut; if(A.hGlow&&A.phase==='sail') A.hGlow.visible=false; { const I=Math.max(A.wd||0,(A.fire||0)*0.8,(A.surge&&(A.surge.st==='rush'||A.surge.st==='hang'))?0.7:0); A.hFk=(A.hFk||0)-dt; if(A.hFk<0){ A.hFk=0.04+Math.random()*(0.25-0.2*I); A.hFv=Math.random()<I*0.75?(Math.random()<0.5?0:0.25+Math.random()*0.4):1; } const v=1-(1-(A.hFv===undefined?1:A.hFv))*Math.min(1,I*1.4); A.hBeam.children.forEach(m=>{ m.material.uniforms.uA&&(m.material.uniforms.uA.value=v*(A.hBmK||1)); }); A.hFlk=v; }
     { A.hFl.material.opacity=0; } }
   // the outlines, like the other acts: tinted with the night's own darkest colour, softer, and fading into the haze with distance
-  if(A.lk){ const W=WATMO.salt; if(!A.lk.f) A.lk.f=new THREE.Vector3(); A.lk.f.set(W.fog[0],W.fog[1],W.fog[2]); A.lk.d=0.011+0.01*(A.storm||0); }
+  if(A.lk){ const W=WATMO.salt; if(!A.lk.f) A.lk.f=new THREE.Vector3(); const fcU=A.U.uFogC.value; A.lk.f.set(fcU.r,fcU.g,fcU.b); A.lk.d=0.011+0.01*(A.storm||0); }
   // the fire pool: the burning's many flames drawn as one batch
   if(A.fp) A4_fpDraw(A);
   // preload: compile every shader in the act up front (twice: once now, once after the late-built pieces exist), so nothing stutters the first time it appears
