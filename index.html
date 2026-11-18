@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.38 -->
+<!-- Thin Veil · beta 0.39 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -132,7 +132,7 @@
 </head>
 <body>
 <div id="start" class="min tests">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.38</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.39</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -6652,7 +6652,7 @@ function A4_update(dt){ const A=A4; if(!A) return; if(typeof mists!=='undefined'
     if(A.bus){ const q=hang||A.f.q?0.04:((A.f.hand&&A.handT<12)?0.25:1); if(q!==A.busQ){ A.busQ=q; A.bus.gain.setTargetAtTime(q,sound.C.currentTime,hang?0.25:1.2); } }
     if(!A.dr&&sound.out){ const C=sound.C, lp=C.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=200; const g=C.createGain(); g.gain.value=0; lp.connect(g); g.connect(A.bus||sound.out); A.dr={g,lp,o:[55,55.4,27.5].map((f,i)=>{ const o=C.createOscillator(); o.type=i<2?'sawtooth':'sine'; o.frequency.value=f; o.connect(lp); o.start(); return o; })}; }
     if(A.dr){ const lv=0.03+0.07*A.close+0.04*A.fire; if(Math.abs(lv-(A.drL||0))>0.008){ A.drL=lv; A.dr.g.gain.setTargetAtTime(lv,sound.C.currentTime,0.8); A.dr.o[0].frequency.setTargetAtTime(55-9*A.fire,sound.C.currentTime,2); A.dr.o[1].frequency.setTargetAtTime(55.4-8.6*A.fire+3*A.close,sound.C.currentTime,2); } }
-    const TH=[[0.04,0,0.05],[0.27,1,0.06],[0.7,0,0.06],[0.8,1,0.08],[0.9,2,0.09]]; if(A.thN<TH.length&&p>TH[A.thN][0]&&S.st!=='hang'){ A4_theme(A,TH[A.thN][1],TH[A.thN][2]); A.thN++; } }
+    const TH=[[0.04,0,0.05],[0.27,1,0.06],[0.7,0,0.06],[0.8,1,0.08],[0.9,2,0.09]];  }
   // ----- the fox, coming apart -----
   if(A.pt>4) A4_once('a',"His boat. His flask, his knots, his lamp at the bow. Don't touch anything. I've got the tiller. Somebody has to.");
   if(A.f.a&&done) A4_once('b',"Left and right: that's all the steering there is. Point her at the light and she'll hold it. I'll be shouting. Ignore me.");
