@@ -1665,7 +1665,7 @@ finalU.uThump={value:0}; window.__lino=finalU; blitScene.add(new THREE.Mesh(new 
    if(uGlitch>0.001){ float row=floor(uv.y*38.0); float on=step(0.72,hash(vec3(row,floor(t*15.0),2.0)));
      uv.x+=(hash(vec3(row,floor(t*20.0),1.0))-0.5)*0.12*uGlitch*on; }
    if(uRewind>0.001){ float bnd=step(0.9,fract(uv.y*2.5+t*3.0)); uv.x+=bnd*0.035*uRewind+sin(uv.y*200.0+t*50.0)*0.002*uRewind; }
-   vec2 c=(uv-0.5)*vec2(uAspect,1.0); c*=1.0-uThump*0.07;
+   vec2 c=(uv-0.5)*vec2(uAspect,1.0); c*=1.0-uThump*0.12;
    c*=1.0+(0.06*trip*uWild+0.12*uTrans)*sin(t*1.1)*dot(c,c);
    c.y+=(0.02*trip*uWild+0.03*uTrans)*sin(c.x*8.0+t*1.5)*smoothstep(0.0,0.5,length(c));
    c+=b.y*0.006*uWild*vec2(sin(c.y*40.0+t*9.0),cos(c.x*35.0+t*7.0));
@@ -1854,7 +1854,7 @@ finalU.uThump={value:0}; window.__lino=finalU; blitScene.add(new THREE.Mesh(new 
      float ad=abs(d); col*=1.0-0.75*span*smoothstep(w+0.05,w,ad);                                  // the picture chars back from the rip
      if(ad<w){ vec2 q=vec2(0.5+(p.x-lx)*1.1,y)+vec2(sin(t*0.4+sd)*0.03,0.0); col=tvWorld(uTearK,q,t)*(0.85+0.15*smoothstep(0.0,w,w-ad)); }  // the other side, quite still
      float rim=smoothstep(w+0.008,w,ad)*smoothstep(max(w-0.006,0.0),w,ad)*step(0.001,span); col=mix(col,mix(vec3(1.0,0.35,0.06),vec3(1.0,0.95,0.8),tvN(vec2(y*40.0,t*6.0))),rim); }   // and its edge burns
-   if(uThump>0.001) col*=1.0+uThump*0.4;
+   if(uThump>0.001) col*=1.0+uThump*0.55;
    if(uVig>0.001){ float vr=length((oUv-0.5)*vec2(uAspect,1.0)); col*=1.0-uVig*0.6*smoothstep(0.25,0.85,vr); }
    if(uGrn>0.001){ col+=(tvH(gl_FragCoord.xy*0.37+vec2(fract(t*7.13)*91.0,fract(t*3.7)*57.0))-0.5)*uGrn; col*=1.0-uFlk*tvH(vec2(floor(t*24.0),3.0)); }
    gl_FragColor=vec4(clamp(col,0.0,1.0),1.0); }`})));
@@ -2068,7 +2068,7 @@ class Sound{
     g.cancelScheduledValues(t); g.setTargetAtTime(v*2,t,.03); g.setTargetAtTime(0,t+len,.12); }
   reese(t,f,len){ this.rsS.playbackRate.setValueAtTime(f/55.25*this.key,t); const g=this.rsG.gain;
     g.cancelScheduledValues(t); g.setValueAtTime(0.0001,t); g.linearRampToValueAtTime(.5,t+.01); g.setTargetAtTime(.3,t+.02,.08); g.setTargetAtTime(0,t+len,.03); }
-  step(i,t){
+  step(i,t){ if(typeof A4!=='undefined'&&A4) return;
     const st=this.st, sp=60/st.bpm/4;
     if(st.gam){ const a=GAM[i%32], b=GAM2[i%32];
       if(a!==null) this.bell(t,deg(PELOG,587.3,a),.045,'gong');
@@ -6083,7 +6083,7 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
     A.fall.forEach((g,i)=>{ const u=g.userData; if(live&&!u.on&&!u.done&&A.pB>=u.cue&&(u.ty==='plank'||u.ty==='mast')){ u.done=1; } if(live&&!u.on&&!u.done&&A.pB>=u.cue){ u.done=1;
         const al=u.near?22+Math.random()*10:(u.big?220+Math.random()*120:70+Math.random()*90), la=u.near?(i%2?-1:1)*(9+Math.random()*6):(Math.random()-0.5)*(u.big?300:140);
         u.x=A.bx+fw[0]*al+rt[0]*la; u.z=A.bz+fw[1]*al+rt[1]*la; u.y=u.big?190+Math.random()*40:(u.near?60:85+Math.random()*40); u.v=u.big?9:(u.ty==='boat'?9:7); u.rx=(Math.random()-0.5)*0.6; u.rz=(Math.random()-0.5)*0.6; u.r0=Math.random()*6; u.on=1;
-        if(i===0&&done) A4_once('fall1',"Up. Look up. ...Boats. Boats are falling out of the sky. Burning. Like ours.",0.6); if(u.big) A4_setpiece(A,u.x,u.y*0.55,u.z,2.4); if(u.big&&done) A4_once('fall3',"That's not a boat. That's a SHIP. ...Who's sailing ships in the sky?",0.5); if(false) A4_once('fall2',"That's his chair. That's HIS chair. Why is his chair—",0.4); }
+        if(i===0&&done) A4_once('fall1',"Up. Look up. ...Boats. Boats are falling out of the sky. Burning. Like ours.",0.6);  if(u.big&&done) A4_once('fall3',"That's not a boat. That's a SHIP. ...Who's sailing ships in the sky?",0.5); if(false) A4_once('fall2',"That's his chair. That's HIS chair. Why is his chair—",0.4); }
       if(u.on){ u.y-=u.v*dt; const sea=A4_wave(u.x,u.z,A.st,A.amp)+(A.breathY||0); g.visible=true; g.position.set(u.x,u.y,u.z); g.rotation.set((u.ty==='plank'||u.ty==='mast')?time*1.5+u.r0:Math.PI*0.9+u.rx*u.y*0.02,u.r0+time*0.1,u.rz*u.y*0.02); const kk=(u.big?26:(u.ty==='boat'?7:(u.ty==='plank'||u.ty==='mast'?3:4)))*(0.85+0.3*Math.random()); u.fl.scale.set(kk*0.7,kk,1);
         if(u.y<sea+0.5||!live){ if(live){ A4_snd('hiss',0.5+Math.random()*0.3,u.near||u.big?0.8:0.35,[u.x,1,u.z]); let m=0; for(const q of A.spP){ if(q.l<=0&&m<(u.near||u.big?40:16)){ m++; q.l=0.9+Math.random()*0.9; q.x=u.x+(Math.random()-0.5)*(u.big?10:3); q.y=sea+0.5; q.z=u.z+(Math.random()-0.5)*(u.big?10:3); q.vx=(Math.random()-0.5)*6; q.vy=5+Math.random()*(u.big?14:7); q.vz=(Math.random()-0.5)*6; } }
             if(u.near){ A.gK=1; A.heel+=(Math.random()<0.5?-1:1)*0.2; A.press=1; A.wet=1; haptic(160); A4_snd('tom',0.5,0.9); if(done) A4_once('fall4',"That one nearly— ...That one was for us.",0.3); } }
@@ -6249,7 +6249,7 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
     if(window.__a4jump!==undefined&&A.pt>0.3&&!A.jumped){ A.jumped=1; const j=window.__a4jump; delete window.__a4jump; A.moor=0; A.hbCast=1; A.f.a=A.f.b=A.f.tt0=A.f.v1=1; if(j<0.1){ A.bz=Math.min(A.bz,-292); A.bx=0; A.D=A4_D0*(1-0.068); } else { A.bz-=700; A.f.wl=1; if(A.nav) A.nav.forEach(n=>{ n.done=1; n.out=1; n.on=0; n.g.visible=false; }); A.D=A4_D0*(1-j); } if(j>=0.6){ A.brn={st:'out',t:4}; A.fire=0; A.f.cal=0; } }
     // --- breathing: a slow inhale (the fire sinks, the air pulls in), then the exhale (it surges, roars) ---
     A.brPh=(A.brPh||0)+dt/5.5; const ph=A.brPh%1, ex=ph>0.62?Math.sin((ph-0.62)/0.38*Math.PI):0, inh=ph<0.62?Math.sin(ph/0.62*Math.PI):0;
-    const ki=burning?smooth(0,0.35,pB):0; A.brth=burning?0.5+(ex-0.5)*(0.3+0.7*ki):0.5; A.fpK=burning?1+(0.5*ex-0.28*inh)*(0.25+0.75*ki):1;
+    const ki=burning?smooth(0,0.35,pB):0; A.brth=burning?0.5+(ex-0.5)*(0.3+0.7*ki):0.5; A.fpK=(burning?1+(0.5*ex-0.28*inh)*(0.25+0.75*ki):1)*(1+0.35*((finalU.uThump&&finalU.uThump.value)||0));
     if(burning&&C&&A.bus){ if(ph>0.62&&!A.brEx){ A.brEx=1; A4_breath(A,1); haptic(25); A.jolt=Math.max(A.jolt||0,0.25); } if(ph<0.62&&A.brEx){ A.brEx=0; A4_breath(A,0); } }
     // --- the world goes dark red under the smoke ---
     if(A.fire>0.2){ const W=WATMO.salt, k=Math.min(1,A.fire)*(0.55+0.45*smooth(0.05,0.6,pB)), e=burning?ex:0, L=(a,b)=>{ for(let i=0;i<3;i++) a[i]+=(b[i]-a[i])*k; };
@@ -6361,14 +6361,14 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
       else if(A.cspr) A.cspr.visible=false; } }
   // the fox at the stern: crouched, braced against the heel, never still. Ears flatten and the tail tucks as it gets worse
   { const F=A.fox, U=F&&F.userData; if(U) U.skipAnim=A.phase==='sail'; if(U&&U.legs&&U.torso&&A.phase==='sail'){ const S5=A.surge, fear=Math.min(1,(A.fire||0)*0.55+((S5&&(S5.st==='rush'||S5.st==='hang'))?0.5:0)+(A.flinch||0)*0.6+(A.wvc?0.6:0)), c=0.55+0.35*fear, o=U.rig||{hip:0.4};
-      U.torso.position.y=o.hip*(1-0.38*c); U.torso.rotation.x=-0.12*c+0.03*Math.sin(time*1.1); U.torso.rotation.z=-(A.heel||0)*0.7;
+      const FP=window.__foxPose||{fl:-0.75,fk:1.35,bl:-0.95,bk:1.9,ty:0.5,tl:-0.55}, c2=0.8+0.2*fear; U.torso.position.y=o.hip*(1-FP.ty*c2); U.torso.rotation.x=-0.12*c+0.03*Math.sin(time*1.1); U.torso.rotation.z=-(A.heel||0)*0.7;
       U.torso.scale.set(1,1+0.025*Math.sin(time*(2.6+5*fear)),1);
-      U.legs.forEach((l,i)=>{ const back=i>=2; l.rotation.x=back?-0.85*c:0.3*c; }); U.knees.forEach((k,i)=>{ const back=i>=2; k.rotation.x=back?1.5*c:-0.25*c; });
+      U.legs.forEach((l,i)=>{ l.rotation.x=(i>=2?FP.bl:FP.fl)*c2; }); U.knees.forEach((k,i)=>{ k.rotation.x=(i>=2?FP.bk:FP.fk)*c2; });
       const sp=!STY.lines.length&&STY.busy>0; A.foxLk=(A.foxLk===undefined?0:A.foxLk)-dt; if(A.foxLk<0){ A.foxLk=1.2+Math.random()*2.5*(1-fear); A.foxLy=(Math.random()-0.5)*1.4*(1-0.5*fear); A.foxLp=-0.1-0.25*fear+(Math.random()-0.5)*0.2; }
       if(U.neck){ U.neck.rotation.y+=(((A.foxLy||0)*0.4)-U.neck.rotation.y)*Math.min(1,dt*(4+6*fear)); U.neck.rotation.x+=(((A.foxLp||0)*0.5)-U.neck.rotation.x)*Math.min(1,dt*4); }
       if(U.head){ U.head.rotation.y+=(((A.foxLy||0)*0.6)-U.head.rotation.y)*Math.min(1,dt*(5+8*fear)); U.head.rotation.x+=(((A.foxLp||0)*0.6+(sp?0.08*Math.sin(time*9):0))-U.head.rotation.x)*Math.min(1,dt*5); }
       (U.ears||[]).forEach((e,i)=>{ e.rotation.x+=((-0.7*fear+0.08*Math.sin(time*3+i))-e.rotation.x)*Math.min(1,dt*6); });
-      (U.tail||[]).forEach((t2,i)=>{ t2.rotation.y=Math.sin(time*(1.6+2*fear)+i*0.7)*0.28*(1-0.6*fear); t2.rotation.x=0.35*fear+0.08*i*fear; }); } }
+      (U.tail||[]).forEach((t2,i)=>{ t2.rotation.y=Math.sin(time*(1.6+2*fear)+i*0.7)*0.28*(1-0.6*fear); t2.rotation.x=(i===0?FP.tl:-0.12)*(0.7+0.5*fear); }); } }
   // his light is out before the three appear: no tower, no beam, no glow
   if(A.lhOut&&A.phase==='sail'){ if(A.house) A.house.visible=false; if(A.hGlow) A.hGlow.visible=false; if(A.hBeam) A.hBeam.visible=false; if(A.hFar) A.hFar.visible=false; }
   // the stars come back as figures: rings and nested polygons, the same hand that drew Act II's sky. One by one they draw in
@@ -6404,7 +6404,7 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
   A.heel+=((A.lean*0.15-A.side*0.1*(A.speed/9)*(1+0.7*A.grv)-Math.max(-1.2,Math.min(1.2,A.hv))*0.2)-A.heel)*Math.min(1,dt*2); A.by=A4_wave(A.bx,A.bz,A.st,A.amp)+(A.breathY||0);
   const B=A.boat, pitchB=(A4_wave(A.bx-Math.sin(A.h)*2,A.bz-Math.cos(A.h)*2,A.st,A.amp)-A4_wave(A.bx+Math.sin(A.h)*2,A.bz+Math.cos(A.h)*2,A.st,A.amp))/4; B.position.set(A.bx,A.by-0.25,A.bz); B.rotation.set(0,0,0); B.rotation.order='YXZ'; B.rotation.y=A.h; A.pitchS=(A.pitchS||0)+(pitchB*0.65-(A.pitchS||0))*Math.min(1,dt*2.5); B.rotation.x=A.pitchS; B.rotation.z=-A.heel;
   A.tiller.rotation.y=-A.hv*0.6+(A.yankD>0?A.yank*1.4*Math.sin(time*28):0); if(A.seat===undefined) A.seat=-A.side*0.5; A.seat+=((-A.side*0.5)-A.seat)*Math.min(1,dt*2.2); A.px=A.bx+Math.sin(A.h)*0.95+Math.cos(A.h)*A.seat; A.pz=A.bz+Math.cos(A.h)*0.95-Math.sin(A.h)*A.seat; player.x=A.px; player.z=A.pz; vel.x=vel.z=0; STY.fallY=A.by-0.62; camera.rotation.z+=A.heel*0.4; camera.rotation.x+=(A.pitchS||0)*0.55;
-  { const fw=[-Math.sin(A.h),-Math.cos(A.h)]; const sc=A.fs0*0.78*(1-0.42*smooth(0.8,0.95,p)); const F=A.fox; gfox.visible=false; F.scale.setScalar(sc*(A.small2||1)); F.position.set(A.bx-fw[0]*2.1+fw[1]*0.1,A.by+0.4,A.bz-fw[1]*2.1-fw[0]*0.1); F.rotation.y=A.h+Math.PI+A.hv*0.5; F.rotation.z=A.heel+A.flinch*0.25*Math.sin(time*37); F.position.y+=A.flinch*0.12*Math.abs(Math.sin(time*23)); }
+  { const fw=[-Math.sin(A.h),-Math.cos(A.h)]; const sc=A.fs0*0.78*(1-0.42*smooth(0.8,0.95,p)); const F=A.fox; gfox.visible=false; F.scale.setScalar(sc*(A.small2||1)*(window.__foxS||1)); F.position.set(A.bx-fw[0]*2.1+fw[1]*0.1,A.by+0.4,A.bz-fw[1]*2.1-fw[0]*0.1); F.rotation.y=A.h+Math.PI+A.hv*0.5+(window.__foxRY||0); if(window.__foxF){ F.position.x+=fw[0]*window.__foxF; F.position.z+=fw[1]*window.__foxF; F.position.y+=window.__foxUp||0; F.position.x+=-fw[1]*(window.__foxL||0); F.position.z+=fw[0]*(window.__foxL||0); } F.rotation.z=A.heel+A.flinch*0.25*Math.sin(time*37); F.position.y+=A.flinch*0.12*Math.abs(Math.sin(time*23)); }
   A.sea.position.set(A.bx,0,A.bz);
   { const fw=[-Math.sin(A.h),-Math.cos(A.h)], rt=[Math.cos(A.h),-Math.sin(A.h)], dy=A.by-(A.byP===undefined?A.by:A.byP); A.byP=A.by;
     // the bow meets a swell: the print jolts, and spray goes up
@@ -7638,7 +7638,7 @@ function frame(){
     if(typeof A4!=='undefined'&&A4&&A4.dz!==undefined) dz=Math.max(dz,A4.dz); danger+=(dz-danger)*Math.min(1,dt*1.5);
     hbPh+=dt*(52+danger*95)/60; if(hbPh>=1){ hbPh-=1; if(started&&danger>0.12){ sound.heart(danger); haptic(danger>0.5?[25,70,18]:14); } }
     const pulse=Math.max(Math.exp(-hbPh*14),0.7*Math.exp(-Math.abs(hbPh-0.17)*14));
-    U.uPulse.value=pulse*(0.12+danger*0.9); postU.uPulse.value=pulse*danger; if(finalU.uVig) finalU.uVig.value=(typeof A4!=='undefined'&&A4)?danger*(0.25+0.75*pulse):0; if(finalU.uThump){ let tk=0; if(typeof A4!=='undefined'&&A4){ const Bh=A4.brn||{}; tk=Bh.st==='on'?0.35+0.65*smooth(0.6,0.97,A4.pB||0):0.22; } const env=Math.max(Math.exp(-hbPh*6),0.7*Math.exp(-Math.abs(hbPh-0.17)*6)); finalU.uThump.value=danger>0.12?env*tk*Math.min(1,danger*1.4):0; } sound.setDanger(started?danger:0); }
+    U.uPulse.value=pulse*(0.12+danger*0.9); postU.uPulse.value=pulse*danger; if(finalU.uVig) finalU.uVig.value=(typeof A4!=='undefined'&&A4)?danger*(0.25+0.75*pulse):0; if(finalU.uThump){ let tk=0; if(typeof A4!=='undefined'&&A4){ const Bh=A4.brn||{}; tk=Bh.st==='on'?0.6+0.4*smooth(0.6,0.97,A4.pB||0):0.35; } const env=Math.max(Math.exp(-hbPh*4),0.75*Math.exp(-Math.abs(hbPh-0.17)*4.5)); finalU.uThump.value=danger>0.12?env*tk*Math.min(1,danger*2):0; } sound.setDanger(started?danger:0); }
   // faces in the burning clouds: they come apart when you look straight at them
   { const fx=-Math.sin(player.yaw)*Math.cos(player.pitch), fy=Math.sin(player.pitch), fz=-Math.cos(player.yaw)*Math.cos(player.pitch);
     FACE_DIRS.forEach((d,k)=>{ const look=fx*d.x+fy*d.y+fz*d.z>0.988; faceVis[k]=Math.min(1,Math.max(0,faceVis[k]+(look?-dt*2.5:dt*0.2))); });
