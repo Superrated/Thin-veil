@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.50 -->
+<!-- Thin Veil · beta 0.51 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -132,7 +132,7 @@
 </head>
 <body>
 <div id="start" class="min tests">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.50</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.51</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -6498,13 +6498,19 @@ function A4_update(dt){ const A=A4; if(!A) return; if(typeof mists!=='undefined'
         if(T>40&&!Wb.dT){ Wb.dT=1; Wb.em.material.depthTest=false; Wb.sm.material.depthTest=false; Wb.em.material.needsUpdate=Wb.sm.material.needsUpdate=true; }
         // ...and it starts to turn on three axes, ringed like an armillary sphere
         const gy=smooth(43,49,T); G2.rotation.set(gy*0.55*Math.sin(time*0.21),0,gy*0.45*Math.sin(time*0.16+1.1));
+        // the view turns a little with it
+        if(!A.f.land) A.dutch=gy*(1-smooth(54,57,T))*0.07*Math.sin(time*0.17+0.6);
+        // the phone feels it: one deep pulse as the sphere closes, a rising buzz as it splits, a long fading one into the white
+        if(T>44.5&&!Wb.hp1){ Wb.hp1=1; haptic([220]); }
+        if(T>47.6&&!Wb.hp2){ Wb.hp2=1; haptic([15,110,20,90,28,70,36,55,45,40,60]); }
+        if(T>55.2&&!Wb.hp3){ Wb.hp3=1; haptic([420,60,260,90,150,130,70,170,30]); }
         if(T>42&&!Wb.arm){ Wb.arm=[[1,0.78,0.35],[0.35,0.95,1],[1,0.45,0.9]].map((c,i)=>{ const m=new THREE.Mesh(new THREE.TorusGeometry(1,0.0045,5,180),new THREE.MeshBasicMaterial({color:new THREE.Color(...c),transparent:true,opacity:0,depthWrite:false,depthTest:false,blending:THREE.AdditiveBlending,fog:false})); m.frustumCulled=false; G2.add(m); return m; }); }
         if(Wb.arm) Wb.arm.forEach((m,i)=>{ m.scale.setScalar(Wb.R0*sc*(1.04+0.03*i)); m.rotation.set(time*(0.13+0.05*i)+i*1.1,time*(0.09-0.04*i)+i*2.0,i*0.7); m.material.opacity=0.85*gy*(1-smooth(53,55,T)); });
         // 5. then every triangle splits into four, again and again, finer and brighter, until it is only light
         if(T>46&&!Wb.sub){ Wb.subU={uT:{value:0},uK:{value:0}}; Wb.sub=[5,11,23].map((n,i)=>{ const g=new THREE.WireframeGeometry(new THREE.IcosahedronGeometry(1,MOBILE&&n>17?17:n)); const m=new THREE.LineSegments(g,new THREE.ShaderMaterial({uniforms:Object.assign({uA:{value:0}},Wb.subU),transparent:true,depthWrite:false,depthTest:false,blending:THREE.AdditiveBlending,
             vertexShader:'varying vec3 vP; void main(){ vP=position; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
             fragmentShader:'uniform float uA; uniform float uT; uniform float uK; varying vec3 vP; void main(){ vec3 rb=0.5+0.5*cos(6.2832*(vP.y*0.6+atan(vP.z,vP.x)*0.16+uT*0.08+vec3(0.0,0.33,0.67))); vec3 c=mix(rb,vec3(1.0),uK); gl_FragColor=vec4(c*uA,1.0); }'})); m.frustumCulled=false; G2.add(m); return m; }); }
-        if(Wb.sub){ Wb.subU.uT.value=time; Wb.subU.uK.value=smooth(50,55.5,T); Wb.sub.forEach((m,i)=>{ const t0=47.5+i*2.3, k=smooth(t0,t0+1.2,T)*(i<2?1-0.6*smooth(t0+2.3,t0+3.5,T):1); m.scale.setScalar(Wb.R0*sc*(1+0.004*i)); m.rotation.y=rot; m.material.uniforms.uA.value=k*(0.55+0.25*i+0.6*smooth(51,55,T)); m.visible=k>0.01; }); } }
+        if(Wb.sub){ Wb.subU.uT.value=time; Wb.subU.uK.value=smooth(50,55.5,T); Wb.sub.forEach((m,i)=>{ const t0=47.5+i*2.3; if(T>t0&&!m.userData.nt&&sound.C){ m.userData.nt=1; const t1=sound.C.currentTime; [[880,1318.51,1760][i],[1108.73,1661.22,2217.46][i]].forEach((f,j)=>{ A4_tone(f,t1+j*0.12,9-i*1.5,0.016-0.003*i,'sine'); A4_tone(f*1.004,t1+j*0.12,9-i*1.5,0.008,'triangle'); }); haptic(25+20*i); } const k=smooth(t0,t0+1.2,T)*(i<2?1-0.6*smooth(t0+2.3,t0+3.5,T):1); m.scale.setScalar(Wb.R0*sc*(1+0.004*i)); m.rotation.y=rot; m.material.uniforms.uA.value=k*(0.55+0.25*i+0.6*smooth(51,55,T)); m.visible=k>0.01; }); } }
 
       if(T>36&&!Wb.spi){ const g=new THREE.PlaneGeometry(1000,1000,1,1); g.rotateX(Math.PI/2); Wb.spi=new THREE.Mesh(g,new THREE.ShaderMaterial({uniforms:{uT:{value:0},uA:{value:0},uE:{value:0},uW:{value:0}},transparent:true,depthWrite:false,side:THREE.DoubleSide,blending:THREE.AdditiveBlending,fog:false,
           vertexShader:'varying vec2 vU; void main(){ vU=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
