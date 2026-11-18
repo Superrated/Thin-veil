@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.20 -->
+<!-- Thin Veil · beta 0.21 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -132,7 +132,7 @@
 </head>
 <body>
 <div id="start" class="min tests">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.20</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.21</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -5813,6 +5813,7 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
   A.eU.uA.value=A.fire; A.up+=dt*(2+3*A.fire); A.eU.uUp.value=A.up; A.amp+=(((A.phase==='door')?0.25:(1.1+0.45*p+1.0*A.storm+0.5*A.fire)*(0.35+0.65*smooth(-150,-230,A.bz))*(A.calmT>0?0.2:1))-A.amp)*Math.min(1,dt*(A.calmT>0?(A.hideW?20:0.9):0.3)); U4.uAmp.value=A.amp;
   if(A.phase==='door'&&A.f.bye){ STY.lines=STY.lines.filter(l=>l[0]!=='fox'); } if(A.phase==='door'){ A.sea.position.set(Math.round(player.x/10)*10,-0.6,Math.round(player.z/10)*10); A4_door(A,dt); A.gw.material.uniforms.uH.value=170; return; }
   { if(!A.hint){ const e=A.hint=document.createElement('div'); e.style.cssText='position:fixed;left:0;right:0;top:15%;text-align:center;font:italic 15px Georgia,serif;letter-spacing:.08em;color:#f2ecd8;text-shadow:0 0 6px #000,0 0 2px #000;opacity:0;transition:opacity 1.2s;pointer-events:none;z-index:6'; document.body.appendChild(e); } }
+  if(A.nav&&!A.navF){ A.navF=1; const keep=A.nav.filter(n=>n.name!=='jaw'&&n.name!=='narrows'); A.nav.length=0; keep.forEach(n=>A.nav.push(n)); }
   // ----- the boat: real sailing, made easy. The wind blows from wherever the story wants; when it is ahead you zig-zag -----
   const wrapA=a=>Math.atan2(Math.sin(a),Math.cos(a));
   if(!A.musCut&&sound.C&&sound.musF){ A.musCut=1; try{ sound.musF.disconnect(); }catch(e){} try{ if(sound.ldG&&sound.dl) sound.ldG.disconnect(sound.dl); }catch(e){} }
@@ -5925,35 +5926,6 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
     if(!A.moor&&Math.random()<dt*(6+14*A.ws)){ const fx=-Math.sin(A.h), fz=-Math.cos(A.h), al=12+Math.random()*45, la=(Math.random()-0.5)*al*1.2, x=A.bx+fx*al+fz*la*-1, z=A.bz+fz*al+fx*la, h=A4_wave(x,z,A.st,A.amp)/Math.max(A.amp,0.01);
       if(h>1.15){ let m=0; const wx=Math.sin(wfE), wz=Math.cos(wfE); for(const q of A.spP){ if(q.l<=0&&m<5){ m++; q.l=0.7+Math.random()*0.6; q.x=x+(Math.random()-0.5); q.y=A4_wave(x,z,A.st,A.amp)+0.2; q.z=z+(Math.random()-0.5); q.vx=wx*(5+Math.random()*4); q.vy=1.5+Math.random()*2; q.vz=wz*(5+Math.random()*4); } } } }
   }
-  // ----- the undecided light: first his light goes out. Then three. You have to choose one: look at it, and keep looking -----
-  { if(!A.f.lhOut&&(A.pD||-1)>=0.36&&!A.f.hand&&!A.moor&&false){ A.f.lhOut=1; A.lhOut=1; A4_snd('hiss',0.5,0.35); A4_snd('tom',0.35,0.5); haptic(50); STY.lines=[]; STY.busy=0; say('fox',"...It went out. The light went out. Lights don't go out. That's the one thing they're for.",0.6); }
-    if(false&&!A.f.q1&&(A.pD||-1)>=0.42&&A.f.lhOut&&!A.f.hand&&!A.moor&&STY.busy<1){ A.f.q1=1; A.qOn={t:0,lk:[0,0,0],pick:-1,pt:0,ch:0,cur:-1,n:0}; A.qHide=1; A4_snd('hiss',0.6,0.25); STY.lines=[]; STY.busy=0; say('fox',"Three. Now there are three. ...There was one. I counted one.",0.5); }
-    const Q=A.qOn; if(Q){ Q.t+=dt; const vd=Math.max(34,Math.min(900,A.D*0.36+34)), sep=vd*0.55, C=sound.C; camera.getWorldDirection(_b);
-      if(!A.qg){ A.qg=[0,1,2].map(()=>{ const s=new THREE.Sprite(new THREE.SpriteMaterial({map:softTex(255,214,140),color:0xffffff,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})); A.g.add(s); return s; }); }
-      // which one are you looking at?
-      let cur=-1, bd=0.975; if(Q.pick<0) A.qg.forEach((g,k)=>{ const x=A.hx+(k-1)*sep, dx=x-camera.position.x, dy=15-camera.position.y, dz=(A.bz-vd)-camera.position.z, dl=Math.hypot(dx,dy,dz), d=(dx*_b.x+dy*_b.y+dz*_b.z)/dl; if(d>bd){ bd=d; cur=k; } });
-      if(Q.pick<0){ if(cur>=0&&cur===Q.cur) Q.ch=Math.min(1,Q.ch+dt/3.2); else { Q.ch=Math.max(0,Q.ch-dt*0.7); if(Q.ch<0.05&&cur>=0) Q.cur=cur; if(cur<0&&Q.ch<0.05) Q.cur=-1; }
-        STY.gz=Math.max(STY.gz||0,Q.ch);
-        // a held tone that climbs while you choose
-        if(C&&A.bus){ if(!Q.o){ Q.o=C.createOscillator(); Q.o.type='triangle'; Q.og=C.createGain(); Q.og.gain.value=0; Q.o.connect(Q.og); Q.og.connect(A.bus); Q.o.start(); } Q.o.frequency.setTargetAtTime(146.8*Math.pow(2,Q.ch*1.0+(Q.cur>=0?(Q.cur-1)*0.08:0)),C.currentTime,0.08); Q.og.gain.setTargetAtTime(0.05*Math.min(1,Q.ch*3),C.currentTime,0.1); }
-        const st=Math.floor(Q.ch*4); if(st>(Q.n||0)){ Q.n=st; haptic(12+st*8); A4_snd('tick',0.4+st*0.15,0.3); } if(Q.ch<0.1) Q.n=0;
-        if(Q.ch>0.35&&!A.f.qa){ A.f.qa=1; STY.lines=[]; STY.busy=0; say('fox',["That one? ...Keep looking. Don't blink.","That one. Maybe. Don't look away.","Fine. That one. ...Hold it."][Q.cur<0?1:Q.cur],0.2); }
-        if(Q.t>4&&!A.f.qi&&Q.ch<0.2){ A.f.qi=1; say('fox',"Pick one. Look at it. Properly. Like you mean it.",0.3); }
-        if(Q.t>15&&!A.f.qj&&Q.ch<0.2){ A.f.qj=1; say('fox',"I can't pick. I've never picked anything. That's your job. Always was.",0.3); }
-        if(Q.t>28&&!A.f.qk&&Q.ch<0.2){ A.f.qk=1; say('fox',"Any of them. It doesn't matter which. It matters that you do.",0.3); }
-        if(Q.ch>=1) Q.pick=Q.cur; if(Q.t>45&&Q.ch<0.2){ Q.pick=1; Q.forced=1; } }
-      A.qg.forEach((g,k)=>{ const x=A.hx+(k-1)*sep+Math.sin(time*(3.1+k)+k*2)*vd*0.008*(Q.pick<0?1-Q.ch*(k===Q.cur?1:0):0), y=15, z=A.bz-vd, ph=(time*0.85+k*0.37)%11;
-        const on=k===Q.cur&&Q.pick<0, sn=Q.pick>=0&&k!==Q.pick?Math.max(0,1-Math.max(0,Q.pt-0.25*(k===0?0:1)-0.15)*3):1;
-        let a=Q.pick<0?(on?1:1-0.6*Q.ch):(k===Q.pick?1:sn); if(Q.pick>=0&&k===Q.pick&&Q.pt>2.6) a=0;
-        g.visible=a>0.01; g.material.opacity=a*(0.75+0.25*Math.sin(time*(9+k*3.3)+k)*(on?1-Q.ch:1)); g.position.set(x,y,z);
-        const fl=Q.pick>=0&&k===Q.pick?1+2.2*Math.exp(-Q.pt*1.8)+0.6*Math.min(1,Q.pt):1;
-        g.scale.setScalar(Math.max(5,vd*0.12)*(1+(ph<7?0.8*Math.pow(Math.sin(Math.PI*(ph%1)),6):0)*(on?1-Q.ch:1))*(on?1+0.9*Q.ch:1-0.3*Q.ch*(Q.pick<0?1:0))*fl*(0.85+0.3*Math.random()*(Q.pick<0?1-Q.ch:0))); });
-      if(Q.pick>=0){ if(Q.pt===0){ A.hx+=(Q.pick-1)*sep; A4_snd('hiss',0.7,0.3); A4_snd('tom',0.6,0.5); A4_snd('tom',1,0.5); haptic(70); A.jolt=Math.max(A.jolt||0,0.5); if(Q.og&&C){ Q.og.gain.setTargetAtTime(0,C.currentTime,0.6); const o=Q.o; setTimeout(()=>{ try{ o.stop(); }catch(e){} },3000); }
-          STY.lines=[]; STY.busy=0; say('fox',Q.forced?"...Fine. I'll pick. I always pick the middle. Look where that got me.":"You picked. ...Lights don't let you pick. That one did.",0.5); }
-        if(Q.pt<0.6&&Q.pt+dt>=0.25&&!Q.s1){ Q.s1=1; A4_snd('hiss',1.3,0.25); } if(Q.pt+dt>=0.45&&!Q.s2){ Q.s2=1; A4_snd('hiss',1.1,0.25); }
-        Q.pt+=dt; if(Q.pt>2.6){ A.qHide=0; A.lhOut=0; A.hGlow.visible=true; if(A.house) A.house.visible=true; } if(Q.pt>3.2){ A.qg.forEach(g=>{ g.visible=false; }); A.qOn=null; } }
-    }
-    if(A.f.q1&&!A.qOn&&done&&p>0.72) A4_once('q2',"It's the one you looked at. It was always going to be the one you looked at.",2); }
   if(A.emb) A.emb.visible=A.fire>0.05;
   // ===== THE BURNING: the sea itself is fire. It breathes, it answers you, it takes the light =====
   { const B=A.brn||{st:'off',t:0}, F=A.fire, on=B.st==='ign'||B.st==='on', G=A.g; if(!A.ffr) A.ffr=A4_flameFrames(); const ft=A.ffr[0];
@@ -6383,38 +6355,7 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
       (U.tail||[]).forEach((t2,i)=>{ t2.rotation.y=Math.sin(time*(1.6+2*fear)+i*0.7)*0.28*(1-0.6*fear); t2.rotation.x=(i===0?FP.tl:-0.12)*(0.7+0.5*fear); }); } }
   // his light is out before the three appear: no tower, no beam, no glow
   if(A.lhOut&&A.phase==='sail'){ if(A.hGlow) A.hGlow.visible=false; if(A.hBeam) A.hBeam.visible=false; }
-  // the stars come back as clockwork: a great astrolabe ahead and four small ones, rings inside rings, turning against each other, drawn in, breathing, sparks riding them, and at the end joined into one sky
-  if(false&&A.skyG&&A.starL){ A.starL.visible=false;
-    if(!A.ork){ const VS='attribute float aU; varying float vU; void main(){ vU=aU; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }', FS='uniform float uRev; uniform float uA; uniform float uT; uniform float uPh; uniform vec3 uC; varying float vU; void main(){ if(vU>uRev) discard; float b=0.72+0.28*sin(uT*1.1+uPh)+0.18*sin(uT*2.3-vU*18.0+uPh); gl_FragColor=vec4(uC*uA*b,1.0); }';
-      const mat=(c,ph)=>new THREE.ShaderMaterial({uniforms:{uRev:{value:0},uA:{value:0},uT:{value:0},uPh:{value:ph},uC:{value:new THREE.Color(...c)}},vertexShader:VS,fragmentShader:FS,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,side:THREE.DoubleSide,fog:false});
-      const strip=(r,w,n)=>{ const P=[],U=[],I=[]; for(let q=0;q<=n;q++){ const a=q/n*6.2832, c=Math.cos(a), si=Math.sin(a); P.push(c*(r-w/2),si*(r-w/2),0, c*(r+w/2),si*(r+w/2),0); U.push(q/n,q/n); if(q<n){ const k=q*2; I.push(k,k+1,k+2,k+1,k+3,k+2); } } const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.Float32BufferAttribute(P,3)); g.setAttribute('aU',new THREE.Float32BufferAttribute(U,1)); g.setIndex(I); return g; };
-      const rays=(r0,r1,w,n,off)=>{ const P=[],U=[],I=[]; for(let q=0;q<n;q++){ const a=(q+(off||0))/n*6.2832, c=Math.cos(a), si=Math.sin(a), nx=-si*w/2, ny=c*w/2, b=q*4; P.push(c*r0+nx,si*r0+ny,0, c*r0-nx,si*r0-ny,0, c*r1+nx,si*r1+ny,0, c*r1-nx,si*r1-ny,0); U.push(q/n,q/n,q/n,q/n); I.push(b,b+1,b+2,b+1,b+3,b+2); } const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.Float32BufferAttribute(P,3)); g.setAttribute('aU',new THREE.Float32BufferAttribute(U,1)); g.setIndex(I); return g; };
-      const COL=[[0.4,1.0,0.68],[0.5,0.9,1.0],[0.78,0.55,1.0]], bT=softTex(235,255,245);
-      // layer spec: [radius, width, ellipse y, start angle, spin, ticks [n,len], spokes [n,r0], beads]
-      const BIG=[[1.0,0.014,1,0,0.018,[48,0.07],null,0],[0.84,0.009,1,0,-0.045,null,null,3],[0.66,0.008,0.36,0.4,0.11,null,null,1],[0.66,0.008,0.36,-0.9,-0.085,null,null,1],[0.32,0.011,1,0,0.19,null,[6,0.08],0],[0.07,0.012,1,0,0,null,null,0]];
-      const SMALL=[[1.0,0.022,1,0,0.03,[24,0.1],null,0],[0.7,0.016,0.45,0.6,-0.12,null,null,1],[0.36,0.018,1,0,0.22,null,[4,0.06],0]];
-      const SPOT=[[0,0.3,74,BIG],[-0.74,0.17,30,SMALL],[-0.42,0.5,26,SMALL],[0.43,0.48,27,SMALL],[0.78,0.19,31,SMALL]];
-      A.ork=SPOT.map(([az,el,sz,L],fi)=>{ const g=new THREE.Group(), r=388; g.position.set(Math.sin(az)*Math.cos(el)*r,Math.sin(el)*r,-Math.cos(az)*Math.cos(el)*r); g.lookAt(0,0,0); g.scale.setScalar(sz); A.skyG.add(g);
-        const layers=L.map((spec,li)=>{ const [R,W,SY,A0,SP,TK,SK,NB]=spec, lg=new THREE.Group(); lg.rotation.z=A0; const sg=new THREE.Group(); sg.scale.y=SY; lg.add(sg); g.add(lg); const ph=fi*1.7+li*0.9, c=COL[(fi+li)%3], ms=[];
-          const ring=new THREE.Mesh(strip(R,W,64),mat(c,ph)); sg.add(ring); ms.push(ring);
-          if(TK){ const t=new THREE.Mesh(rays(R-TK[1],R,W*0.8,TK[0],0),mat(c,ph+1)); sg.add(t); ms.push(t); }
-          if(SK){ const k=new THREE.Mesh(rays(SK[1],R,W*0.8,SK[0],0.5),mat(c,ph+2)); sg.add(k); ms.push(k); }
-          const beads=[]; for(let q=0;q<NB;q++){ const b=new THREE.Sprite(new THREE.SpriteMaterial({map:bT,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})); sg.add(b); beads.push({b,a:q/Math.max(1,NB)*6.2832,sp:(0.5+0.4*Math.random())*(q%2?1:-1)}); }
-          return {lg,sg,ms,R,SY,SP,beads,ph,done:0}; });
-        return {g,layers,t0:fi===0?0:4.5+fi*2.6,fi,az,el}; });
-      // the links: faint arcs from each small one to the great one, with a spark riding each
-      A.orkL=A.ork.slice(1).map((F,k)=>{ const a=A.ork[0].g.position.clone().normalize(), b=F.g.position.clone().normalize(), pts=[]; for(let q=0;q<=40;q++) pts.push(a.clone().lerp(b,q/40).normalize().multiplyScalar(386)); const geo=new THREE.BufferGeometry().setFromPoints(pts); const ln=new THREE.Line(geo,new THREE.LineBasicMaterial({color:new THREE.Color(...[[0.45,1,0.75],[0.55,0.9,1],[0.75,0.6,1],[0.5,1,0.85]][k]),transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})); A.skyG.add(ln);
-        const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:bT,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})); sp.scale.setScalar(4); A.skyG.add(sp); return {ln,pts,sp,u:Math.random()}; });
-      A.orkT=0; }
-    const k=(A.calT!==undefined&&A.calT>4)?1:0; if(k) A.orkT+=dt; const T=A.orkT, NT=[392,440,523.25,587.33,659.25,783.99,880];
-    A.ork.forEach(F=>{ const t=T-F.t0, on=t>0; F.g.visible=on; if(!on) return; const per=F.fi===0?1.2:1.0;
-      F.layers.forEach((Ly,li)=>{ const lt=t-li*per, rev=Math.max(0,Math.min(1,lt/(F.fi===0?1.6:1.2))); Ly.lg.rotation.z+=Ly.SP*dt; const al=Math.min(1,Math.max(0,lt)*1.5);
-        Ly.ms.forEach(m=>{ const u=m.material.uniforms; u.uRev.value=rev*1.0001; u.uA.value=0.75*al; u.uT.value=time; });
-        if(rev>=1&&!Ly.done){ Ly.done=1; if(sound.C) A4_tone(NT[(li+F.fi*2)%NT.length]*(F.fi===0?0.5:1),sound.C.currentTime+0.01,2.4,0.024,'sine'); }
-        Ly.beads.forEach(B=>{ B.a+=B.sp*dt*0.8; B.b.position.set(Math.cos(B.a)*Ly.R,Math.sin(B.a)*Ly.R,0.01); B.b.scale.set(0.07,0.07/Ly.SY,1); B.b.material.opacity=Ly.done?0.95:0; }); }); });
-    // once all of them are drawn, they join
-    const lk=Math.max(0,Math.min(1,(T-(A.ork[A.ork.length-1].t0+A.ork[A.ork.length-1].layers.length*1.0+2))/3));
-    A.orkL.forEach((L,i)=>{ L.ln.material.opacity=0.32*lk*(0.75+0.25*Math.sin(time*0.9+i)); L.u=(L.u+dt*0.08)%1; const q=L.u*(L.pts.length-1), a=Math.floor(q), f=q-a, P0=L.pts[a], P1=L.pts[Math.min(L.pts.length-1,a+1)]; L.sp.position.lerpVectors(P0,P1,f); L.sp.material.opacity=lk*0.9; }); }
+
   // the quiet clock: how long since the fox last finished talking. Events wait for it, so the lines land
   A.qt=(STY.lines.length||STY.busy>0)?0:(A.qt||0)+dt;
   // the white wash: the act opens on white while every shader compiles, then the harbour fades in out of it
@@ -6439,27 +6380,7 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
         if(hit){ A.speed*=0.35; A.jolt=1; A.flinch=1; A.press=1; A4_snd('hiss',0.6,0.9); A4_snd('tom',0.4,0.9); haptic([80,40,120]); STY.lines=[]; STY.busy=0; say('fox',"That one. You picked THAT one. ...We're on fire. More on fire.",0.2); }
         else { A.gB=Math.max(A.gB||0,0.7); A4_snd('gust',1.3,0.5); haptic(30); STY.lines=[]; STY.busy=0; say('fox',"...Through. You picked. I'd still be picking.",0.3); } }
       if(al>45||G.t>45){ G.w.forEach(o=>A.g.remove(o.g)); A.gapC=null; } } }
-  // FOLLOW THE GLOW: his light is out. The threads under the sea fork; one branch carries a pulse toward home. Three forks, then his light comes back
-  { const ok=A.phase==='sail'&&!A.moor&&!A.f.hand;
-    if(ok&&A.f.lhOut&&!A.f.glw&&(A.pD||-1)>=0.42&&STY.busy<1){ A.f.glw=1; A.glw={n:0,f:null,miss:0,D:A.D}; STY.lines=[]; STY.busy=0; say('fox',"It's gone. ...No. Look down. The threads. They're lit. ...One of them knows the way.",0.4); }
-    const Gw=A.glw; if(Gw){ A.D=Math.max(A.D,Gw.D);
-      if(!A.glU){ A.glU={uT:{value:0}}; A.glMat=(good)=>new THREE.ShaderMaterial({uniforms:{uT:A.glU.uT,uG:{value:good?1:0},uA:{value:0},uC:{value:new THREE.Color(0.55,1.0,0.82)}},transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,fog:false,
-          vertexShader:'varying vec2 vU; void main(){ vU=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
-          fragmentShader:'uniform float uT; uniform float uG; uniform float uA; uniform vec3 uC; varying vec2 vU; void main(){ float e=1.0-abs(vU.y-0.5)*2.0; float core=smoothstep(0.0,0.6,e); float p=uG*smoothstep(0.82,1.0,fract(vU.x*3.0-uT*0.9)); float a=(0.28+0.5*p)*core*smoothstep(0.0,0.06,vU.x)*smoothstep(1.0,0.75,vU.x); gl_FragColor=vec4(uC*(0.7+1.3*p),a*uA); }'}); }
-      A.glU.uT.value=time;
-      const mkB=(x,z,a,L,good)=>{ const g=new THREE.PlaneGeometry(L,2.2,24,1); g.rotateX(-Math.PI/2); g.translate(L/2,0,0); const m=new THREE.Mesh(g,A.glMat(good)); m.position.set(x,0.3,z); m.rotation.y=a+Math.PI/2; m.frustumCulled=false; A.g.add(m); return m; };
-      if(!Gw.f&&STY.busy<1.5){ const dx=A.hx-A.bx, hd=Math.atan2(-dx,1000), fw=[-Math.sin(hd),-Math.cos(hd)], ox=A.bx+fw[0]*70, oz=A.bz+fw[1]*70, good=Math.random()<0.5?-1:1, sp=0.68;
-        const tr=mkB(A.bx,A.bz,hd,70,true); const br=[-1,1].map(sd=>{ const a=hd-sd*sp; return {sd,a,m:mkB(ox,oz,a,110,sd===good)}; });
-        Gw.f={ox,oz,hd,good,tr,br,t:0,res:0,rt:0}; if(Gw.n===0&&Gw.miss===0) say('fox',"There. It splits. ...Follow the one that's moving.",0.6); }
-      const F=Gw.f; if(F){ F.t+=dt; const fa=Math.min(1,F.t/1.2); F.tr.material.uniforms.uA.value=fa*(F.res?Math.max(0,1-F.rt):1);
-        const rx=A.bx-F.ox, rz=A.bz-F.oz, fw=[-Math.sin(F.hd),-Math.cos(F.hd)], rt=[Math.cos(F.hd),-Math.sin(F.hd)], al=rx*fw[0]+rz*fw[1], lt=rx*rt[0]+rz*rt[1];
-        F.br.forEach(b=>{ b.m.material.uniforms.uA.value=fa*(F.res?(b.sd===F.good&&F.res===1?Math.max(0.4,1-F.rt*0.3):Math.max(0,1-F.rt*1.2)):1); });
-        if(!F.res&&al>14){ const side=lt>0?1:-1; F.res=side===F.good?1:-1;
-          if(F.res===1){ Gw.n++; if(sound.C) A4_tone([440,523.25,659.25][Math.min(2,Gw.n-1)],sound.C.currentTime,2.2,0.045,'sine'); haptic(25); A.gB=Math.max(A.gB||0,0.5);
-            if(Gw.n<3){ STY.lines=[]; STY.busy=0; say('fox',Gw.n===1?"...Yes. That one. Again.":"Again. It's thinning. Keep on it.",0.2); } }
-          else { Gw.miss++; A4_snd('hiss',0.5,0.3); haptic(60); STY.lines=[]; STY.busy=0; say('fox',["Not that one. That one's just going out. ...Back on the moving one.","That's dark. You went into the dark one. It's fine. It's FINE. There'll be another."][(Gw.miss-1)%2],0.2); } }
-        if(F.res){ F.rt+=dt; if(F.rt>2.2){ [F.tr,...F.br.map(b=>b.m)].forEach(m=>{ A.g.remove(m); m.geometry.dispose(); }); Gw.f=null;
-            if(Gw.n>=3){ A.glw=null; A.lhOut=0; if(A.hGlow) A.hGlow.visible=true; if(A.house) A.house.visible=true; A4_snd('tom',1,0.5); haptic([40,40,80]); STY.lines=[]; STY.busy=0; say('fox',"...There. His light. It came back on. ...It was always going to come back on. I just didn't know that.",0.6); } } } } } }
+
   // ===== THE DARK, MADE BEAUTIFUL: northern lights, a mirror sea, plankton in the wake, a falling star now and then, the threads alight, a chord =====
   { const dark=A.calT!==undefined&&A.calT>3&&p<0.86&&A.phase==='sail'; A.aur=(A.aur||0)+(((dark?1:0))-(A.aur||0))*Math.min(1,dt/5);
     if(U4.uAur) U4.uAur.value=A.aur*0.92; if(A.aur>0.05) A.calmT=Math.max(A.calmT||0,0.6);
@@ -6493,7 +6414,7 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
     if(!A.aur3&&A.aur>0.01){ A.aur3U={uT:{value:0},uAur:{value:0},uW:{value:0}}; const mk=()=>{ const g=new THREE.PlaneGeometry(1500,260,120,1); return new THREE.Mesh(g,new THREE.ShaderMaterial({uniforms:A.aur3U,transparent:true,depthWrite:false,side:THREE.DoubleSide,blending:THREE.AdditiveBlending,fog:false,
         vertexShader:'uniform float uT; varying vec2 vUv; void main(){ vUv=uv; vec3 p=position; p.z+=sin(p.x*0.006+uT*0.13)*120.0+sin(p.x*0.017-uT*0.21)*40.0; p.y+=sin(p.x*0.004+uT*0.1)*30.0; gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.0); }',
         fragmentShader:'uniform float uT; uniform float uAur; varying vec2 vUv; void main(){ float x=vUv.x*70.0+sin(vUv.x*11.0+uT*0.4)*3.0; float ray=0.55+0.45*sin(x)*sin(x*0.37+uT*0.6); float v=pow(1.0-vUv.y,1.6)*smoothstep(0.0,0.08,vUv.y); float e=smoothstep(0.0,0.12,vUv.x)*smoothstep(1.0,0.88,vUv.x); vec3 c=mix(vec3(0.15,1.0,0.55),vec3(0.7,0.3,1.0),smoothstep(0.1,0.8,vUv.y))*ray*v*e*0.85*uAur; c=mix(c,vec3(max(c.r,max(c.g,c.b)))*vec3(0.92,1.0,0.98),uW*0.55)*(1.0+1.3*uW); gl_FragColor=vec4(c,1.0); }'})); };
-      A.aur3=[[0,-620,170,0,1.25],[-0.9,-480,210,0.9,1.0],[0.95,-470,190,-0.95,1.05]].map(([ox,oz,y,ry,sc])=>{ const m=mk(); m.userData={ox,oz,y,ry,sc}; m.frustumCulled=false; m.renderOrder=-1; A.g.add(m); return m; }); }
+      A.aur3=(MOBILE?[[0,-620,170,0,1.35],[-0.9,-480,210,0.9,1.1]]:[[0,-620,170,0,1.25],[-0.9,-480,210,0.9,1.0],[0.95,-470,190,-0.95,1.05]]).map(([ox,oz,y,ry,sc])=>{ const m=mk(); m.userData={ox,oz,y,ry,sc}; m.frustumCulled=false; m.renderOrder=-1; A.g.add(m); return m; }); }
     if(A.aur3){ A.aur3U.uT.value=time; A.aur3U.uAur.value=A.aur; A.aur3U.uW.value=A.aurSw||0; A.aur3.forEach(m=>{ const u=m.userData; m.visible=A.aur>0.01; m.position.set(camera.position.x+u.ox*420,u.y,camera.position.z+u.oz); m.rotation.set(0,u.ry,0); m.scale.set(u.sc*1.3*(1+0.35*(A.aurSw||0)),u.sc*1.35*(1+0.6*(A.aurSw||0)),1); }); }
     if(U4.uAur) U4.uAur.value=A.aur*0.95;
     // the web: stars in the sky, each joined to its nearest by a drawn line
@@ -6525,7 +6446,7 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
       if(T>41&&!Wb.s3&&quiet){ Wb.s3=1; say('fox',"They're coming down. Even the sky doesn't keep anything. ...That's why you look while it's there.",0.4); } 
       if(T>42){ Wb.mT=(Wb.mT||0)-dt; if(Wb.mT<0){ Wb.mT=0.09; const k=Wb.order.find(q=>Wb.lit[q]>=0&&!Wb.fall[q]); if(k!==undefined){ Wb.fall[k]=1; const from=Wb.V[k].clone().multiplyScalar(Wb.R0).applyAxisAngle(new THREE.Vector3(0,1,0),rot).add(A.skyG.getWorldPosition(new THREE.Vector3())), a=Math.random()*6.2832, r=12+Math.random()*60, to=new THREE.Vector3(A.bx+Math.cos(a)*r,0,A.bz+Math.sin(a)*r);
             if(!Wb.mtx) Wb.mtx=softTex(235,255,250); const m=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({map:Wb.mtx,color:0xddfff4,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})); m.frustumCulled=false; A.g.add(m); Wb.met.push({m,from,to,t:0,L:1.6+Math.random()*0.7,k}); } } }
-      if(!Wb.tr){ const N=900, g=new THREE.BufferGeometry(), P=new Float32Array(N*3), Cc=new Float32Array(N*3); g.setAttribute('position',new THREE.BufferAttribute(P,3)); g.setAttribute('color',new THREE.BufferAttribute(Cc,3)); Wb.tr={m:new THREE.Points(g,new THREE.PointsMaterial({size:1.1,map:softTex(255,255,255),vertexColors:true,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})),q:[...Array(N)].map(()=>({l:0})),i:0}; Wb.tr.m.frustumCulled=false; A.g.add(Wb.tr.m); }
+      if(!Wb.tr){ const N=MOBILE?500:900, g=new THREE.BufferGeometry(), P=new Float32Array(N*3), Cc=new Float32Array(N*3); g.setAttribute('position',new THREE.BufferAttribute(P,3)); g.setAttribute('color',new THREE.BufferAttribute(Cc,3)); Wb.tr={m:new THREE.Points(g,new THREE.PointsMaterial({size:1.1,map:softTex(255,255,255),vertexColors:true,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})),q:[...Array(N)].map(()=>({l:0})),i:0}; Wb.tr.m.frustumCulled=false; A.g.add(Wb.tr.m); }
       Wb.met.forEach(M=>{ M.t+=dt; const u=Math.min(1,M.t/M.L), e=u*u, pos=M.from.clone().lerp(M.to,e), ahead=M.from.clone().lerp(M.to,Math.min(1,e+0.04)); M.m.position.copy(pos); { const skW=A.skyG.getWorldPosition(new THREE.Vector3()); if(!Wb.mp) Wb.mp=[]; Wb.mp[M.k]=pos.clone().sub(skW).applyAxisAngle(new THREE.Vector3(0,1,0),-Wb.em.rotation.y); } M.m.lookAt(camera.position); const dir=ahead.sub(pos).project(camera), ang=Math.atan2(dir.y,dir.x); M.m.rotation.z=ang; M.m.scale.set(18*(0.4+u),1.6,1); M.m.material.opacity=1; for(let z=0;z<3;z++){ const q=Wb.tr.q[Wb.tr.i=(Wb.tr.i+1)%Wb.tr.q.length]; q.l=0.5+Math.random()*0.7; q.L=q.l; q.x=pos.x+(Math.random()-0.5)*2; q.y=pos.y+(Math.random()-0.5)*2; q.z=pos.z+(Math.random()-0.5)*2; q.h=Math.random(); }
         if(u>=1&&!M.done){ M.done=1; A.g.remove(M.m); Wb.fall[M.k]=2; if(U4.uBlF) U4.uBlF.value.set(M.to.x,M.to.z,0,1); haptic(8); if(sound.C&&Math.random()<0.5) A4_tone([1318.5,1567.98,1760,1975.5][(Math.random()*4)|0],sound.C.currentTime,1.2,0.012,'sine'); } }); Wb.met=Wb.met.filter(M=>!M.done);
       { const P=Wb.tr.m.geometry.attributes.position, Cc=Wb.tr.m.geometry.attributes.color; Wb.tr.q.forEach((q,i)=>{ if(q.l>0){ q.l-=dt; q.y-=dt*2; const k=Math.max(0,q.l/q.L); P.setXYZ(i,q.x,q.y,q.z); const rb=[0.5+0.5*Math.cos(6.283*(q.h)),0.5+0.5*Math.cos(6.283*(q.h+0.33)),0.5+0.5*Math.cos(6.283*(q.h+0.67))]; Cc.setXYZ(i,(0.6+0.4*rb[0])*k,(0.7+0.3*rb[1])*k,(0.7+0.3*rb[2])*k); } else Cc.setXYZ(i,0,0,0); }); P.needsUpdate=true; Cc.needsUpdate=true; }
@@ -6549,7 +6470,7 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
       const F=U4.uBlF&&U4.uBlF.value; if(F&&F.w>0){ F.z+=dt*32; F.w=Math.max(0,F.w-dt*0.8); }
       // motes rise from the sea; the aurora swells and whitens; then everything goes white, and when it clears you're at his house
       A.aurSw=smooth(42,57,T);
-      if(T>49&&!Wb.mo){ const N=320, g=new THREE.BufferGeometry(), P=new Float32Array(N*3); g.setAttribute('position',new THREE.BufferAttribute(P,3)); Wb.mo={m:new THREE.Points(g,new THREE.PointsMaterial({size:0.5,map:softTex(255,255,255),color:0xd8fff2,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})),q:[...Array(N)].map(()=>{ const a=Math.random()*6.2832, r=4+Math.pow(Math.random(),0.6)*90; return {x:Math.cos(a)*r,z:Math.sin(a)*r,y:-Math.random()*8,v:1.5+Math.random()*4}; })}; Wb.mo.m.frustumCulled=false; A.g.add(Wb.mo.m); }
+      if(T>49&&!Wb.mo){ const N=MOBILE?180:320, g=new THREE.BufferGeometry(), P=new Float32Array(N*3); g.setAttribute('position',new THREE.BufferAttribute(P,3)); Wb.mo={m:new THREE.Points(g,new THREE.PointsMaterial({size:0.5,map:softTex(255,255,255),color:0xd8fff2,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})),q:[...Array(N)].map(()=>{ const a=Math.random()*6.2832, r=4+Math.pow(Math.random(),0.6)*90; return {x:Math.cos(a)*r,z:Math.sin(a)*r,y:-Math.random()*8,v:1.5+Math.random()*4}; })}; Wb.mo.m.frustumCulled=false; A.g.add(Wb.mo.m); }
       if(Wb.mo){ const P=Wb.mo.m.geometry.attributes.position; Wb.mo.q.forEach((q,i)=>{ q.y+=q.v*dt; P.setXYZ(i,A.bx+q.x+Math.sin(time*0.7+i)*0.5,q.y,A.bz+q.z); }); P.needsUpdate=true; Wb.mo.m.material.opacity=Math.min(1,(T-49)/2); }
       if(T>50.5&&!Wb.s4&&quiet){ Wb.s4=1; say('fox',"...Right. That was the most important thing we did all night. Don't tell anyone. They'll think we were lazy.",0.3); }
       if(T>55&&!Wb.wh){ Wb.wh=1; blackEl.textContent=''; blackEl.style.background='#ffffff'; blackEl.style.transition='opacity 4s ease'; blackEl.style.opacity=1; if(sound.C){ const t0=sound.C.currentTime; [220,329.63,440,554.37,659.25,880,1108.7,1318.5].forEach((f,i)=>A4_tone(f,t0+i*0.15,6,0.022,'sine')); } }
@@ -6691,7 +6612,7 @@ function A4_update(dt){ const A=A4; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
       if(tt>13.5&&A4_done()) A4_once('tb4',"...He's humming. Can you hear? In the water. He's humming it.",0.6); if(tt>18){ A.f.land=1; if(sound.C){ if(A.bus) A.bus.gain.setTargetAtTime(0,sound.C.currentTime,0.05); } A.landT=0; blackEl.style.background='#ffffff'; blackEl.style.transition='opacity 1.4s ease'; blackEl.style.opacity=1; A4_snd('hiss',0.4,0.9); A4_snd('tom',0.5,0.7); haptic(250); } } }
   if(A.f.land){ A.landT+=dt; if(A.landT>1.6&&A.phase==='sail'){ A.phase='door'; A.doorT=0; A.tun.visible=false; A.tube=0; A.sea.visible=true; A.gw.visible=true; A.gw.material.uniforms.uFall.value=0; A.gw.material.uniforms.uBrk.value=0; A.house.visible=true; A.hPil.visible=false; if(A.bus) A.bus.gain.setTargetAtTime(1,sound.C.currentTime+1.4,2.2); A.hornWake=1; const H=A.house; H.position.set(A.bx,0.4,A.bz-30); A.hFar.visible=false; A.hNear.visible=true; A.hNear.scale.setScalar(1); A.hGlow.scale.setScalar(4); A.hGlow.position.set(1.9,2.6,3.4); A.hGlow.material.opacity=0.5;
       B.position.set(H.position.x+6,-0.3,H.position.z+16); B.rotation.set(0.12,-0.9,1.05); A.rig.rotation.y=0.2; A.arm.visible=false; A.bowW.visible=false; player.x=H.position.x+0.5; player.z=H.position.z+15; player.yaw=0.12; player.pitch=0.03; STY.fallY=H.position.y+0.1; A.gw.position.set(H.position.x,-2,H.position.z+150); A.fleet.forEach(b=>{ b.visible=false; }); A.eyeM.forEach(e=>{ e.visible=false; }); A.eU.uA.value=0; finalU.uDist.value=0; finalU.uSplit.value=0; finalU.uWc2.value.set(0,0,0,0); mp.z=0; STY.lines=[]; STY.busy=0;
-      blackEl.style.transition='opacity 3.5s ease'; blackEl.style.opacity=0; say('fox',"...We're here. I don't remember the last bit. I think I was looking up.",1.8); say('fox',"His boat's on the rocks. ...He won't mind. He always said a boat's for getting somewhere.",1.2); } } }
+      blackEl.style.transition='opacity 3.5s ease'; blackEl.style.opacity=0; say('fox',"...We're here. I don't remember the last bit. I think I was looking up.",1.8); say('fox',"His boat's on the rocks. ...He won't mind. He always said a boat's for getting somewhere.",1.2); say('fox',"...And it isn't a tower. It never was. It's a house. With the lamp in the window.",1.4); } } }
 ACTS.a4={build:A4_build,update:A4_update,stop:A4_stop};
 function stToA4(){ blackEl.style.transition='none'; blackEl.style.opacity=0; blackEl.textContent=''; act1Stop(); worldGo('salt'); actStart('a4'); }
 window.__a4={info:()=>{ const A=A4; if(!A) return null; return {pt:+A.pt.toFixed(1),D:+A.D.toFixed(0),p:+(1-A.D/A4_D0).toFixed(3),h:+A.h.toFixed(2),speed:+A.speed.toFixed(1),steady:+A.steadyT.toFixed(1),fire:+A.fire.toFixed(2),surge:A.surge.st,sd:+A.surge.d.toFixed(0),sn:A.surge.n,hand:+A.hand.toFixed(2),phase:A.phase,f:Object.keys(A.f).filter(k=>A.f[k]).join(','),door:A.phase==='door'?[A.house.position.x-1.3,A.house.position.z+3]:null,p2:[player.x,player.z]}; },
