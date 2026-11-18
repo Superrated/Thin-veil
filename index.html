@@ -7392,9 +7392,9 @@ function frame(){
   fpsAcc+=dt; fpsN++; rc.cool-=dt; rc.ceilT-=dt; if(trans&&prog<0.08) rc.cool=Math.max(rc.cool,3);
   if(fpsAcc>1.5){ fpsLast=fpsN/fpsAcc; fpsAcc=0; fpsN=0; const mr=rc.n?rc.miss/rc.n:0; rc.n=rc.miss=0; rc.lastMr=mr;
     let np=PR; if(time>6&&!document.hidden&&rc.cool<=0&&!devF.lock){
-      if(fpsLast<tgtFps*0.67) rc.bad++; else rc.bad=0;
-      if(rc.bad>=((A2||A3||A4||STY.on)?2:4)){ const fast=!!(A2||A3||A4||STY.on); rc.bad=0; rc.ceil=PR; rc.ceilT=25; np=fast?Math.max(0.62,PR*0.9):Math.max(MOBILE?0.85:0.8,PR*0.96); rc.good=0; rc.cool=fast?1.5:2.5; }
-      else if(fpsLast>tgtFps*0.8){ rc.good++; const cap=rc.ceilT>0?rc.ceil-0.02:PR_MAX; if(rc.good>=2&&PR<cap){ np=Math.min(cap,PR+0.06); rc.good=0; } }
+      if(fpsLast<tgtFps*0.86) rc.bad++; else rc.bad=0;
+      if(rc.bad>=((A2||A3||A4||STY.on)?2:4)){ const fast=!!(A2||A3||A4||STY.on); rc.bad=0; rc.ceil=PR; rc.ceilT=25; np=fast?Math.max(0.62,PR*(fpsLast<tgtFps*0.67?0.88:0.94)):Math.max(MOBILE?0.85:0.8,PR*0.96); rc.good=0; rc.cool=fast?1.5:2.5; }
+      else if(fpsLast>tgtFps*0.93){ rc.good++; const cap=rc.ceilT>0?rc.ceil-0.02:PR_MAX; if(rc.good>=2&&PR<cap){ np=Math.min(cap,PR+0.06); rc.good=0; } }
       else rc.good=0; }
     if(Math.abs(np-PR)>0.01){ PR=np; makeTargets(); } }
   // stage progression
