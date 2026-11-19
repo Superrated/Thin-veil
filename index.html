@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.72 -->
+<!-- Thin Veil · beta 0.73 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -146,7 +146,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.72</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.73</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -1646,7 +1646,7 @@ glowScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),new THREE.ShaderMateri
 const blitU = {tMap:{value:null}, tScene:{value:null}, uInset:{value:0}, uAspect:{value:1}, uFlipX:{value:0}};
 const blitScene = new THREE.Scene();
 const finalU=Object.assign({},postU,{tDream:{value:null},uInset:blitU.uInset,uFlipX:blitU.uFlipX,uDetail:{value:1},uMock:{value:0},uMk:{value:1},uFoldC:{value:new THREE.Vector2(0.5,0.5)},uFoldW:{value:0},uMP:{value:new THREE.Vector4()},uSunP:{value:new THREE.Vector4(0.7,0.8,0.13,1)},uWc2:{value:new THREE.Vector4()},uLampFX:{value:0},uFold:{value:0},uInkF:{value:0},uSplit:{value:0},uDist:{value:0},uDistP:{value:new THREE.Vector3(0.5,0.5,0)},uDesK:{value:0},uWhite:{value:0},uWhiteC:{value:new THREE.Vector3(0.9,0.92,0.95)},tInk:{value:null},uInkBox:{value:new THREE.Vector4()},uInvVP:{value:new THREE.Matrix4()},uLBoil:{value:1},uLT:{value:0},uWind:{value:new THREE.Vector2(0.9,0.4)},uGust:{value:0},uDusk:{value:0},uInk0:{value:new THREE.Vector3(0.03,0.035,0.11)},uInk1:{value:new THREE.Vector3(0.09,0.13,0.36)},uInk2:{value:new THREE.Vector3(0.2,0.36,0.68)},uInk3:{value:new THREE.Vector3(0.55,0.7,0.86)},uInk4:{value:new THREE.Vector3(0.97,0.93,0.82)},uAccent:{value:new THREE.Vector3(1.0,0.45,0.1)},uInkB0:{value:new THREE.Vector3(0.03,0.035,0.11)},uInkB1:{value:new THREE.Vector3(0.09,0.13,0.36)},uInkB2:{value:new THREE.Vector3(0.2,0.36,0.68)},uInkB3:{value:new THREE.Vector3(0.55,0.7,0.86)},uInkB4:{value:new THREE.Vector3(0.97,0.93,0.82)},uRollD:{value:1e5},uSkyC:{value:new THREE.Vector4(0.86,0.5,0.44,1)},uOutL:{value:0},uOutC:{value:new THREE.Vector3(0.02,0.03,0.05)},uShadT:{value:new THREE.Vector3(1,1,1)},uHighT:{value:new THREE.Vector3(1,1,1)},uTear:{value:0},uTearS:{value:0},uTearK:{value:0},uGrn:{value:0},uFlk:{value:0},uVig:{value:0}});
-let TVDEV=false; try{ TVDEV=localStorage.getItem('tv_dev')==='1'; }catch(e){}
+let TVDEV=false; try{ localStorage.removeItem('tv_dev'); TVDEV=sessionStorage.getItem('tv_dev')==='1'; }catch(e){}
 let TV_BACK=false, TV_MORN=false, MORN=null, TV_LOCK=false; try{ const sp=JSON.parse(localStorage.getItem('tv_spent')||'null'); if(sp){ const d0=new Date(sp.t), m5=new Date(d0); m5.setHours(5,0,0,0); if(d0.getHours()>=5) m5.setDate(m5.getDate()+1);
   if(Date.now()<m5.getTime()){ TV_LOCK=true; const L=["Tonight's spent. You can't buy more.","Still spent. It doesn't refill if you stare.","Go to bed. Or don't. But not here.",""], n=Math.min(L.length-1,sp.n||0); sp.n=(sp.n||0)+1; localStorage.setItem('tv_spent',JSON.stringify(sp));
     const ov=document.createElement('div'); ov.style.cssText='position:fixed;inset:0;z-index:99999;background:#000;display:flex;align-items:center;justify-content:center;flex-direction:column'; ov.innerHTML='<div style="width:12px;height:12px;border-radius:50%;background:#ffd9a0;box-shadow:0 0 30px 12px rgba(255,190,110,.35),0 0 90px 40px rgba(255,150,60,.12);animation:tvl 5s ease-in-out infinite"></div><div style="margin-top:46px;font:italic 18px Georgia,serif;color:#efe6d2;opacity:.85;text-align:center;padding:0 24px">'+L[n]+'</div><style>@keyframes tvl{0%,100%{opacity:.8}50%{opacity:1}}</style><button id="tvDevR" style="position:fixed;right:8px;top:8px;font:12px ui-monospace,monospace;color:#cfe8ff;background:rgba(0,0,0,.6);border:1px solid rgba(207,232,255,.5);border-radius:6px;padding:6px 10px">DEV</button>'; document.body.appendChild(ov); { const b=ov.querySelector('#tvDevR'); if(b) b.remove(); } let tps=[]; ['pointerdown','touchstart','keydown','click'].forEach(e=>ov.addEventListener(e,ev=>{ if(ev.target&&ev.target.id==='tvDevR'){ ev.stopPropagation(); ev.preventDefault(); if(e==='pointerdown'){ ['tv_spent','tv_back','tv_morn','tv_day'].forEach(k=>{ try{ localStorage.removeItem(k); }catch(e6){} }); try{ localStorage.setItem('tv_devOpen','1'); }catch(e7){} location.reload(); } return; } ev.stopPropagation(); ev.preventDefault(); if(e==='pointerdown'){ const n2=performance.now(); tps=tps.filter(x=>n2-x<1500); tps.push(n2); if(TVDEV&&tps.length>=5){ try{ localStorage.removeItem('tv_spent'); }catch(e5){} location.reload(); } } },true)); }
@@ -8151,7 +8151,7 @@ addEventListener('resize',()=>{ renderer.setSize(innerWidth,innerHeight); makeTa
       const P=dust.geometry.attributes.position; for(let q=0;q<N;q++){ const v=dv[q]; v[0]+=dt*v[2]; P.setXYZ(q,Math.cos(v[0])*v[1],((P.getY(q)+dt*(0.05+0.04*Math.sin(t+v[3]))+0.4)%4.6)-0.4,Math.sin(v[0])*v[1]); } P.needsUpdate=true;
       R.render(S,C); }; frame(); }catch(e){ console.warn('lantern',e); cv.style.display='none'; } } }
 { const by=document.getElementById('tvby'), st=document.getElementById('start'); let tp=[]; if(TVDEV) st.classList.add('tests');
-  if(by){ by.addEventListener('pointerdown',e=>{ e.stopPropagation(); const n=performance.now(); tp=tp.filter(x=>n-x<2000); tp.push(n); if(tp.length>=5){ tp=[]; TVDEV=!TVDEV; try{ localStorage.setItem('tv_dev',TVDEV?'1':'0'); }catch(e2){} st.classList.toggle('tests',TVDEV); const b=document.getElementById('tvDevBtn'); if(b) b.style.display=TVDEV?'':'none'; by.textContent=TVDEV?'dev on':'dev off'; setTimeout(()=>{ by.textContent='by Wim'; },1200); } }); }
+  if(by){ by.addEventListener('pointerdown',e=>{ e.stopPropagation(); const n=performance.now(); tp=tp.filter(x=>n-x<2000); tp.push(n); if(tp.length>=5){ tp=[]; TVDEV=!TVDEV; try{ sessionStorage.setItem('tv_dev',TVDEV?'1':'0'); }catch(e2){} st.classList.toggle('tests',TVDEV); const b=document.getElementById('tvDevBtn'); if(b) b.style.display=TVDEV?'':'none'; by.textContent=TVDEV?'dev on':'dev off'; setTimeout(()=>{ by.textContent='by Wim'; },1200); } }); }
   const ib=document.getElementById('tvInst'), tip=document.getElementById('tvInstTip'); let bip=null, inFrame=true; try{ inFrame=window.top!==window; }catch(e){}
   const alone=matchMedia('(display-mode: fullscreen)').matches||matchMedia('(display-mode: standalone)').matches||navigator.standalone===true, ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
   const show=()=>{ if(ib&&!alone&&!inFrame) ib.style.display='inline-block'; };
