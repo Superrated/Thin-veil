@@ -1,22 +1,13 @@
-# Thin Veil
+# Thin Veil — the short night
 
-A small psychedelic horror game about a fox, an old man, a kitchen, and a sea that's on fire. Made with three.js, in one HTML file.
+A ten-minute reinterpretation of [Thin Veil](https://github.com/Superrated/Thin-veil) (the full game lives on `main`).
 
-**Version:** beta 0.789
+One night, one walk, one verb: **look**.
+You wake by a fire. A fox. A lamp in a window across the water.
+The lake is water or ice until you look at the light properly. Under the ice, another night is still burning.
+An orchard in frost and in flower, his spoons ticking like a clock, a deer made of roots.
+His house. Soup. And a fox who, for once, stops minding the dark.
 
-## Play
+Play: open `index.html` in a browser. Phone: left thumb walks, right thumb looks. Computer: WASD + mouse.
 
-- **Download:** [thin-veil-beta-0.789.zip](https://github.com/Superrated/Thin-veil/raw/main/download/thin-veil-beta-0.789.zip). Unzip it and open `index.html` in a browser (Chrome, Safari, Firefox). Nothing to install.
-- Or save just the game file: [index.html](https://github.com/Superrated/Thin-veil/raw/main/index.html) (right-click → Save link as).
-- Best with headphones. Works on phones and desktop; on a phone, play in landscape.
-
-It needs an internet connection the first time it loads (it fetches three.js from a CDN).
-
-## Controls
-
-- **Phone:** drag to look, the on-screen stick to move or steer.
-- **Desktop:** mouse to look, WASD / arrow keys. A gamepad works too.
-
-## Status
-
-Beta. Things will change, things may break. Feedback welcome in Issues.
+A reinterpretation by Claude of Wim's game.
