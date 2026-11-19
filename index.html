@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.785 -->
+<!-- Thin Veil · beta 0.786 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="description" content="A small, strange night walk with a worried fox. Plays in your browser; best on a phone, with headphones.">
@@ -154,7 +154,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.785</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.786</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -3068,7 +3068,7 @@ function tvStoryWx(dt){ try{ const s=STY&&STY.on?(STY.stage||''):''; if(s.starts
     else if(s==='a1des'){ if(STY.foldUp||F.des){ c=1; if(!W.str){ W.str=1; try{ lightningStrike(STORMS[0]); }catch(e){} } }
       else if(F.thin){ W.th+=dt; c=W.th<15?0.08:0.08+0.77*Math.min(1,(W.th-15)/40); W.fl-=dt; if(W.fl<0&&W.th>15){ W.fl=6+Math.random()*7; storm.flick=Math.max(storm.flick,0.11); } } else c=0.08; }
     window.__tvWxC=c; return {storm:st}; }catch(e){ window.__tvWxC=undefined; return null; } }
-window.__wxDbg=()=>({STY,storm,U});
+window.__wxDbg=()=>({STY,storm,U}); window.__a3my=()=>A3?{f:!!A3.f.my,act:!!A3.my,td:!!A3.f.td,s:+A3.s.toFixed(0)}:null;
 function stormUpdate(dt,gw){
   const oc=WORLDS_ON&&WORLD==='ocean'&&cur===0&&started, cfg=oc?OCEAN_STORM:STORMS[cur], fit=!!cfg&&!trans&&started;
   const ok=fit&&(cur===0?((SEED%3===0)||returns>=3):storm.allowed[cur]);
@@ -5209,7 +5209,7 @@ function A3_update(dt){ const A=A3; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
   const done=A3_done(), U3=A.U, pt=A.pt; A3_prog(A); const s=A.s, F=A.F, dF=Math.hypot(player.x-F[0],player.z-F[1]), dEnd=Math.hypot(player.x-A.end[0],player.z-A.end[1]); STY.stage='a3'; STY.fallY=A3_GY-0.42*smooth(0,1,A.sit);
   if(finalU.uWhite.value>0&&!A.blk0) finalU.uWhite.value=Math.max(0,finalU.uWhite.value-dt*0.2); finalU.uFold.value=Math.max(0,finalU.uFold.value-dt*0.45);
   // ----- the Serpent King: early, and once again under the lights -----
-  if(!A.f.my&&s>128&&s<215&&done&&!A.tdT&&!A.thawT){ A.f.my=1; A3_myStart(A); } if(A.myAfter>0&&done){ A.myAfter-=dt; if(A.myAfter<=0) say('fox',"...So he'd still be here. In a way. Under all of it. ...I hate that it helps."); }
+  if(!A.f.my&&s>128&&!A.f.td&&!A.f.thaw&&(done||s>235)&&!A.tdT&&!A.thawT){ A.f.my=1; A3_myStart(A); } if(A.myAfter>0&&done){ A.myAfter-=dt; if(A.myAfter<=0) say('fox',"...So he'd still be here. In a way. Under all of it. ...I hate that it helps."); }
   if(0){ } if(0&&!A.f.sp2&&A.f.aur&&s>565&&done&&!A.thawT){ A.f.sp2=1; A.serpT=0.001; A.serpN=1; }
   if(A.serpT>0){ A.serpT+=dt; if(A.serpT>70){ A.serpT=0; STY.lines=[]; STY.busy=0; say('fox',A.serpN===0?"You went white. It didn't say a word. It never has to. ...Nothing's there. I was watching the whole time.":"You looked up. I saw you look. ...It's later than you think. I say that kindly.",0.6); } }
   A.serp=Math.max(0,Math.min(1,A.serp+(A.serpT>0&&A.serpT<50?dt/24:-dt/20)));
