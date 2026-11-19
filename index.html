@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.765 -->
+<!-- Thin Veil · beta 0.766 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="description" content="A small, strange night walk with a worried fox. Plays in your browser; best on a phone, with headphones.">
@@ -154,7 +154,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.765</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.766</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -8410,6 +8410,9 @@ addEventListener('resize',()=>{ renderer.setSize(innerWidth,innerHeight); makeTa
       pl.intensity=40*lit*fk*(1-0.4*gust); key.intensity=1.2*lit; halo.material.opacity=0.85*lit*fk; halo2.material.opacity=0.5*lit*fk; glass.material.emissiveIntensity=0.5*lit*fk; glass.material.opacity=0.07+0.13*lit*fk; sheen.material.opacity=0.05+0.05*lit; dust.material.opacity=0.55*lit;
       const P=dust.geometry.attributes.position; for(let q=0;q<N;q++){ const v=dv[q]; v[0]+=dt*v[2]; P.setXYZ(q,Math.cos(v[0])*v[1],((P.getY(q)+dt*(0.05+0.04*Math.sin(t+v[3]))+0.4)%4.6)-0.4,Math.sin(v[0])*v[1]); } P.needsUpdate=true;
       R.render(S,C); }; frame(); }catch(e){ console.warn('lantern',e); cv.style.display='none'; } } }
+{ try{ const G=[['goDes','I · Burnt wood'],null,['goA2','II · Salt Mirror (start)'],['goA2b','II · 2nd walk'],['goA2c','II · 3rd walk'],['goA2d','II · the Figures'],null,['goA3','III · Frozen Orchard (start)'],['goA3b','III · the Mycelium'],['goA3c','III · Time Dilation'],['goA3d','III · the Thaw'],['goA3e','III · last walk'],null,['goA4','IV · His Boat (start)'],['goWave','IV · the wave'],['goBurn','IV · the Burning'],['goDark','IV · after the fire'],null,['goMorn','V · the morning'],null,['goReset','reset night & day locks']];
+    { const st=document.createElement('style'); st.textContent='#start .tvGrp{display:none}#start.tests .tvGrp{display:block;margin:2px 0}'; document.head.appendChild(st); } const first=document.getElementById('goDes'); if(first&&first.parentNode){ const par=first.parentNode, anchor=document.createElement('div'); par.insertBefore(anchor,first); let grp=null; const mk=()=>{ grp=document.createElement('div'); grp.className='tvGrp'; par.insertBefore(grp,anchor); };
+      mk(); G.forEach(e=>{ if(!e){ mk(); return; } const b=document.getElementById(e[0]); if(!b) return; b.textContent=e[1]; grp.appendChild(b); }); anchor.remove(); } }catch(e){} }
 { let cd=null; try{ cd=JSON.parse(localStorage.getItem('tv_cont')||'null'); }catch(e){}
   if(cd&&/^a[234]$/.test(cd.a)&&Date.now()-cd.t<7*864e5&&!TV_MORN&&!TV_LOCK){ const b=document.createElement('button'); b.id='tvCont'; b.textContent='You were somewhere. Go back?'; b.style.cssText='display:block;margin:14px auto 0;background:none;border:none;color:#d9cfbd;font:italic 15px Georgia,"Iowan Old Style",serif;letter-spacing:.05em;opacity:.8;padding:10px 18px;cursor:pointer;-webkit-tap-highlight-color:transparent';
     const g=document.getElementById('go'); if(g&&g.parentNode) g.parentNode.insertBefore(b,g.nextSibling);
