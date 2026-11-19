@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.761 -->
+<!-- Thin Veil · beta 0.762 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="description" content="A small, strange night walk with a worried fox. Plays in your browser; best on a phone, with headphones.">
@@ -152,7 +152,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.761</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.762</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -175,7 +175,6 @@
     <p id="tvInstTip" style="display:none"></p>
     <p class="warn">Headphones recommended &nbsp;·&nbsp; Contains flashing lights</p>
     <p id="tvby">by Wim</p>
-    <p id="tvFlash" style="font:11px system-ui,sans-serif;color:#c9bfae;opacity:.45;margin:4px 0 0;letter-spacing:.04em;max-width:none">Contains flashing lights.</p>
     <button id="goDes">test: Burnt wood</button>
     <button id="goMorn" class="tbx">test: The morning</button><button id="goReset" class="tbx" onclick="event.stopPropagation();['tv_spent','tv_back','tv_morn','tv_day','tv_dayn','tv_cont','tv_done'].forEach(k=>{try{localStorage.removeItem(k)}catch(e){}});location.reload()">test: reset night &amp; day locks</button>
     <button id="goWave" class="tbx">test: The wave</button>
