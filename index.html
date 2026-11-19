@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.776 -->
+<!-- Thin Veil · beta 0.777 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="description" content="A small, strange night walk with a worried fox. Plays in your browser; best on a phone, with headphones.">
@@ -154,7 +154,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.776</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.777</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -8356,6 +8356,18 @@ function frame(){
   [rtA,rtB]=[rtB,rtA];
 }
 addEventListener('resize',()=>{ renderer.setSize(innerWidth,innerHeight); makeTargets(); });
+{ const css=document.createElement('style'); css.textContent='#frags{display:none!important}#tvLeave{position:fixed;left:calc(10px + env(safe-area-inset-left));top:calc(8px + env(safe-area-inset-top));z-index:31;background:none;border:none;color:#d9cfbd;opacity:.32;font:11px system-ui,sans-serif;letter-spacing:.24em;text-transform:uppercase;padding:10px 12px;display:none;-webkit-tap-highlight-color:transparent}#tvLeaveBox{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(6,6,10,.94);color:#efe6d2;font:italic 20px Georgia,serif;text-align:center}#tvLeaveBox button{margin:14px 10px 0;background:none;border:1px solid rgba(239,230,210,.35);border-radius:18px;color:#efe6d2;font:14px Georgia,serif;letter-spacing:.06em;padding:9px 20px}';
+  document.head.appendChild(css);
+  const b=document.createElement('button'); b.id='tvLeave'; b.textContent='leave'; document.body.appendChild(b);
+  const box=document.createElement('div'); box.id='tvLeaveBox'; box.innerHTML='<div>Leave for now?</div><div><button id="tvStay">Stay</button><button id="tvGo">Leave</button></div>'; document.body.appendChild(box);
+  const stop=e=>{ e.stopPropagation(); }; ['pointerdown','touchstart','mousedown','click'].forEach(ev=>{ b.addEventListener(ev,stop); box.addEventListener(ev,stop); });
+  const open=()=>{ box.style.display='flex'; }, close=()=>{ box.style.display='none'; };
+  b.addEventListener('click',open); box.querySelector('#tvStay').addEventListener('click',close);
+  box.querySelector('#tvGo').addEventListener('click',()=>{ close(); b.style.display='none'; let a=''; try{ const sg=STY.stage||''; a=sg.slice(0,2); if(!TVDEV&&/^a[234]$/.test(a)&&!localStorage.getItem('tv_spent')) localStorage.setItem('tv_cont',JSON.stringify({a,ms:(window.__tvPrevMs||0)+performance.now(),t:Date.now()})); }catch(e){}
+    try{ if(sound.C&&sound.out){ sound.out.gain.setTargetAtTime(0,sound.C.currentTime,0.4); } }catch(e){}
+    blackEl.style.transition='opacity 1.6s ease'; blackEl.textContent=/^a[234]$/.test(a)?'The fox will keep your place.':'Come back when you like.'; blackEl.style.opacity=1; setTimeout(()=>location.reload(),2600); });
+  addEventListener('keydown',e=>{ if(e.key==='Escape'&&started&&STY.on){ box.style.display==='flex'?close():open(); } });
+  setInterval(()=>{ try{ const st=document.getElementById('start'); const on=started&&STY.on&&!(st&&st.style.display!=='none'&&getComputedStyle(st).display!=='none'); b.style.display=on?'block':'none'; }catch(e){} },500); }
 { let wl=null; const req=async()=>{ try{ if('wakeLock' in navigator&&document.visibilityState==='visible'&&started&&(!wl||wl.released)) wl=await navigator.wakeLock.request('screen'); }catch(e){} };
   let wasOn=false; document.addEventListener('visibilitychange',()=>{ try{ const C=sound&&sound.C; if(document.visibilityState==='hidden'){ if(C&&C.state==='running'){ wasOn=true; C.suspend(); } } else { if(C&&wasOn){ wasOn=false; C.resume(); } req(); } }catch(e){} });
   setInterval(req,5000); }
