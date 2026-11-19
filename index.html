@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.786 -->
+<!-- Thin Veil · beta 0.787 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="description" content="A small, strange night walk with a worried fox. Plays in your browser; best on a phone, with headphones.">
@@ -154,7 +154,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.786</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.787</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -5201,20 +5201,29 @@ function A3_roomUpdate(A,dt){ const t=A.pt, done=A3_done(); if(!(A.outT>0)&&fina
     if(done||A.outT>0){ if(A.outT===0){ blackEl.style.transition='none'; blackEl.style.background='#f5f3ee'; blackEl.style.opacity=0; blackEl.textContent=''; A.outT=0.001; }
       A.outT+=dt; finalU.uWhiteC.value.set(0.96,0.95,0.93); finalU.uWhite.value=Math.min(1,finalU.uWhite.value+dt*0.4); if(A.outT>1.2&&!A.f.wh){ A.f.wh=1; blackEl.style.transition='opacity 3s ease'; blackEl.style.opacity=1; }
       if(A.outT>5.2) A3_handOver(); } } }
-function A3_handOver(){ if(!A3||A3.f.over) return; A3.f.over=1; actEnd('a3'); worldGo('salt'); finalU.uWhite.value=1; finalU.uWhiteC.value.set(0.96,0.95,0.93); actStart('a4'); }
+function A3_handOver(){ if(!A3||A3.f.over) return; if(A3.tvRing&&A3.tvRing.g) scene.remove(A3.tvRing.g); A3.f.over=1; actEnd('a3'); worldGo('salt'); finalU.uWhite.value=1; finalU.uWhiteC.value.set(0.96,0.95,0.93); actStart('a4'); }
 // ---- the act ----
+function tvA3Ring(A,s){ let R=A.tvRing; if(!R){ const geos=[], C=new THREE.Color(); for(let i=0;i<9;i++){ const a=i/9*6.283+Math.random()*0.25, rr=1.25+Math.random()*0.15, sz=0.75+Math.random()*0.5;
+      const st=new THREE.CylinderGeometry(0.035*sz,0.05*sz,0.22*sz,6); st.translate(0,0.11*sz,0); const cp=new THREE.SphereGeometry(0.11*sz,8,5,0,6.283,0,Math.PI/2); cp.scale(1,0.7,1); cp.translate(0,0.21*sz,0);
+      [[st,0xe8e2d0],[cp,[0xbfe8ff,0xd8c8ff,0xc8ffe0][i%3]]].forEach(([g,c])=>{ g=g.toNonIndexed(); g.deleteAttribute('uv'); g.deleteAttribute('normal'); g.rotateY(Math.random()*6); g.translate(Math.cos(a)*rr,0,Math.sin(a)*rr); const n=g.attributes.position.count, cl=new Float32Array(n*3); C.set(c); for(let k=0;k<n;k++) cl.set([C.r,C.g,C.b],k*3); g.setAttribute('color',new THREE.BufferAttribute(cl,3)); geos.push(g); }); }
+    const g=new THREE.Group(); g.add(new THREE.Mesh(mergeGeometries(geos),new THREE.MeshBasicMaterial({vertexColors:true,fog:false})));
+    const gl=new THREE.Sprite(new THREE.SpriteMaterial({map:mornTex(200,235,255),transparent:true,opacity:0.5,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})); gl.scale.set(4.2,1.4,1); gl.position.y=0.25; g.add(gl);
+    scene.add(g); R=A.tvRing={g,gl,s:-1}; }
+  if(R.s<0||s>R.s+10){ R.s=s+12; const p=A3_pt(A,R.s); R.x=p[0]-p[3]*1.2; R.z=p[1]+p[2]*1.2; R.g.position.set(R.x,A3_GY,R.z); }
+  R.g.visible=true; R.gl.material.opacity=0.4+0.15*Math.sin(time*2.1);
+  if(Math.hypot(player.x-R.x,player.z-R.z)<2.3){ R.g.visible=false; scene.remove(R.g); A.tvRing={done:1,g:R.g,gl:R.gl,s:1e9,x:1e9,z:1e9}; return true; } return false; }
 function A3_update(dt){ const A=A3; if(!A) return; A.pt+=dt; ringArm=0; coatFig.visible=false; winG.visible=false; portal.on=false; portal.A.visible=portal.B.visible=false; torchUpdate(false);
   if(A.room){ window.__spd=1; A3_roomUpdate(A,dt); return; }
   if(!A.f.pw&&A.pt>1.2&&dt>0&&!A.my){ A.f.pw=1; try{ A3_myStart(A); warmNew(); A3_myEnd(A); }catch(e){ console.warn(e); A.my=null; A.ground.visible=true; } }   // the Mycelium's shaders, compiled while the act fades in
   const done=A3_done(), U3=A.U, pt=A.pt; A3_prog(A); const s=A.s, F=A.F, dF=Math.hypot(player.x-F[0],player.z-F[1]), dEnd=Math.hypot(player.x-A.end[0],player.z-A.end[1]); STY.stage='a3'; STY.fallY=A3_GY-0.42*smooth(0,1,A.sit);
   if(finalU.uWhite.value>0&&!A.blk0) finalU.uWhite.value=Math.max(0,finalU.uWhite.value-dt*0.2); finalU.uFold.value=Math.max(0,finalU.uFold.value-dt*0.45);
   // ----- the Serpent King: early, and once again under the lights -----
-  if(!A.f.my&&s>128&&!A.f.td&&!A.f.thaw&&(done||s>235)&&!A.tdT&&!A.thawT){ A.f.my=1; A3_myStart(A); } if(A.myAfter>0&&done){ A.myAfter-=dt; if(A.myAfter<=0) say('fox',"...So he'd still be here. In a way. Under all of it. ...I hate that it helps."); }
+  if(!A.f.my&&s>128&&!A.f.td&&!A.f.thaw&&!A.tdT&&!A.thawT&&tvA3Ring(A,s)){ STY.lines=[]; STY.busy=0; A.f.my=1; A3_myStart(A); } if(A.myAfter>0&&done){ A.myAfter-=dt; if(A.myAfter<=0) say('fox',"...So he'd still be here. In a way. Under all of it. ...I hate that it helps."); }
   if(0){ } if(0&&!A.f.sp2&&A.f.aur&&s>565&&done&&!A.thawT){ A.f.sp2=1; A.serpT=0.001; A.serpN=1; }
   if(A.serpT>0){ A.serpT+=dt; if(A.serpT>70){ A.serpT=0; STY.lines=[]; STY.busy=0; say('fox',A.serpN===0?"You went white. It didn't say a word. It never has to. ...Nothing's there. I was watching the whole time.":"You looked up. I saw you look. ...It's later than you think. I say that kindly.",0.6); } }
   A.serp=Math.max(0,Math.min(1,A.serp+(A.serpT>0&&A.serpT<50?dt/24:-dt/20)));
   // ----- Time Dilation: once on the walk, and at the peak -----
-  if(!A.f.td&&s>272&&done&&!A.serpT&&!A.my){ A.f.td=1; A.tdT=0.001; } if(A.tdT>12&&done) A3_once('td1',"Feel that? It's stopping. Even the petals have given up.",0.3);
+  if(!A.f.td&&s>272&&done&&!A.serpT&&!A.my&&A.f.my){ A.f.td=1; A.tdT=0.001; } if(A.tdT>12&&done) A3_once('td1',"Feel that? It's stopping. Even the petals have given up.",0.3);
   if(A.tdT>0){ A.tdB=(A.tdB||0)-dt; if(A.tdB<0&&A.tdT<30&&sound.C&&sound.out){ A.tdB=1.1+A.tdT*0.16; if(!A.tdPl) A.tdPl=A2_osc('sine',52,0,null); if(A.tdPl){ const t0=sound.C.currentTime, g=A.tdPl.g.gain; g.setTargetAtTime(0.08,t0,0.02); g.setTargetAtTime(0,t0+0.1,0.3); } } if(A.tdT>27&&done) A3_once('td3',"Clocks do that here. Sit it out. It starts again. It always has, so far.",0.5,'xt'); }
   if(A.tdT>0){ A.tdT+=dt; if(A.tdT<40){ if(A.tdT>18) A3_once('td2','Too late is a place. This is it. I only say so you can stop hurrying.'); } else { A.tdT=0; A3_layer(A,0); } }
   A.td=Math.max(0,Math.min(1,A.td+((A.tdT>0&&A.tdT<26)||A.peakT>0?dt/(A.peakT>0?1.5:14):-dt/12)));
