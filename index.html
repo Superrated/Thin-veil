@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.780 -->
+<!-- Thin Veil · beta 0.781 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="description" content="A small, strange night walk with a worried fox. Plays in your browser; best on a phone, with headphones.">
@@ -154,7 +154,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.780</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.781</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -4699,7 +4699,7 @@ function A2_update(dt){ const A=A2; if(!A) return; A.pt+=dt;
   if(A.ph<4&&A.ltPh!==A.ph&&A.pt>5&&A.flip<=0&&!A.quiet){ A.ltPh=A.ph; lampTone(); if(A.ph===0&&A2_done()) A2_once('cb1',"Flat. Nothing burnt, nothing to trip over. After that wood I could kiss it. I won't."); }
   const flipping=A2_flipUpdate(A,dt), ph=A.ph, pt=A.pt, dist=Math.hypot(A.lx-player.x,A.lz-player.z);
   if(A.figT&&A.ph===3&&A.pt>6&&!flipping&&A2_done()){ A.figT=0; A2_once('fg1',"...The red one. I think that was mine. I don't mean to draw them. I just look, and there they are."); }
-  if(!flipping&&ph<4){ if(A.pt<1e8&&finalU.uWhite.value>0&&(A.f.pw===3||A.pt>10)){ A.whK=(A.whK||0)+dt/5.5; const e=Math.min(1,A.whK); finalU.uWhite.value=Math.min(finalU.uWhite.value,1-e*e*(3-2*e)); } }
+  if(!flipping&&ph<4){ if(A.pt<1e8&&finalU.uWhite.value>0&&(A.f.pw===3||A.pt>10)){ if(!A.whK) tvWhite(0,4.5); A.whK=(A.whK||0)+dt/5.5; const e=Math.min(1,A.whK); finalU.uWhite.value=Math.min(finalU.uWhite.value,1-e*e*(3-2*e)); } }
   // light
   let T=A2_ATMO.dusk; if(A.P&&A.P.kind===2) T=A2_ATMO.between; else if(A.P&&A.P.kind===0) T=A2_ATMO.void; else if(ph===1) T=A.real>0.5?A2_ATMO.under:(A.holOn?A2_ATMO.hollow:A2_ATMO.under); else if(ph===2) T=A2_ATMO.many; else if(ph===3) T=A2_ATMO.last;
   A2_atmoStep(T,Math.min(1,dt*(flipping?1.6:0.7))); A2_fx(A,dt,flipping);
@@ -7465,23 +7465,24 @@ function mornExtras4Update(dt,t){ const M=MORN; if(!M||!M.deco) return; let near
   const C=sound.C; M.decoN-=dt; if(C&&M.mus&&near<10&&gsN>0.4&&M.decoN<0){ M.decoN=0.35+Math.random()*0.9; const f=[2349.3,2637,3136,3520][Math.floor(Math.random()*4)]; mornTone(f,C.currentTime+0.01,1.6,0.016*(1-near/10),'sine',M.mus); mornTone(f*2.76,C.currentTime+0.01,0.4,0.004*(1-near/10),'sine',M.mus); } }
 
 function roomLeave(){ gfox.visible=true; if(ROOM) ROOM.g.visible=false; STY.room=false; STY.fallY=undefined; }
+function tvWhite(on,sec){ let e=document.getElementById('tvWhite'); if(!e){ e=document.createElement('div'); e.id='tvWhite'; e.style.cssText='position:fixed;inset:0;background:#f5f2ed;opacity:0;pointer-events:none;z-index:4;will-change:opacity'; document.body.appendChild(e); } const v=on?'1':'0'; if(e.dataset.v===v) return; e.dataset.v=v; e.style.transition='opacity '+sec+'s ease-in-out'; e.style.opacity=v; }
 function roomUpdate(dt){ if(STY.stage==='morn') return; if(!STY.room||!ROOM||STY.stage==='mem') return; const t=STY.t, done=STY.lines.length===0&&STY.busy<=0; if(STY.stage==='a1room'&&t>9&&done&&!STY.flags.rx1){ STY.flags.rx1=1; say('xt',"...Hello? Was that the door?",0.6); } ROOM.spin.rotation.y+=dt*0.5; coatFig.visible=false;
   gfox.visible=false; gfox.position.set(LAKE.x+1.5,ROOM_Y,LAKE.z+4.8); ROOM.fox.rotation.y=Math.atan2(player.x-gfox.position.x,player.z-gfox.position.z);
-  if(t>2.5) sayOnce('r1','fox',"A kitchen. At the top of a light. ...Bigger than it looked. Things usually are."); if(t>14&&done) sayOnce('rck','fox',"The clock says twenty to seven. Clocks run slow. Everybody knows that. It's later.");
-  if(inBeam([LAKE.x,ROOM_Y+1.64,LAKE.z-7.1],14)){ STY.lampHold=(STY.lampHold||0)+dt; if(STY.lampHold>1.5) sayOnce('r4','fox',"A lamp in the window. Don't stare at it. Lights are how things find you."); } else STY.lampHold=0;
+  if(t>2.5) sayOnce('r1','fox',"A kitchen. At the top of a light. ...Bigger than it looked. Things usually are."); 
+  if(!STY.flags.r4&&inBeam([LAKE.x,ROOM_Y+1.64,LAKE.z-7.1],14)){ STY.lampHold=(STY.lampHold||0)+dt; if(STY.lampHold>1.0) sayOnce('r4','fox',"A lamp in the window. Don't stare at it. Lights are how things find you."); } else STY.lampHold=0;
   if(!STY.flags.sup){ const near=Math.hypot(player.x-ROOM.table[0],player.z-ROOM.table[1])<3.6, on=near&&done&&inBeam([ROOM.table[0],ROOM_Y+0.85,ROOM.table[1]],7);
-    STY.supHold=on?(STY.supHold||0)+dt:0; if(STY.supHold>1.2){ STY.supHold=0; const SL=["Two plates. One's been eaten from. Hours ago.","The cup. Stone cold. See? Late already.","A chair pulled out. For you, I suppose. Presumptuous."]; say('fox',SL[STY.supI||0]); STY.supI=(STY.supI||0)+1; if(STY.supI>=3) STY.flags.sup=1; } }
-  if(!STY.flags.sup&&t>28) sayOnce('r3','fox','The table. Someone laid it. Go and look. Properly.');
+    STY.supHold=on?(STY.supHold||0)+dt:0; if(STY.supHold>1.2){ STY.supHold=0; const SL=["Two plates. One's been eaten from. Hours ago.","The cup. Stone cold. See? Late already.","A chair pulled out. For you, I suppose. Presumptuous."]; say('fox',SL[STY.supI||0]); STY.supI=(STY.supI||0)+1; if(STY.supI>=2) STY.flags.sup=1; } }
+  if(!STY.flags.sup&&t>45) sayOnce('r3','fox','The table. Someone laid it. Go and look. Properly.');
   if(STY.flags.sup&&done&&!STY.flags.win){ STY.winT+=dt; if(STY.winT>3){ STY.flags.win=1; say('fox','Plenty of time. Keep moving.'); } }
   if(STY.flags.win){ ROOM.win.material.opacity=Math.min(1,ROOM.win.material.opacity+dt*0.5);
-    if(done){ STY.outT+=dt; STY.fog=1; finalU.uWhiteC.value.set(0.96,0.95,0.93);
+    if(done){ STY.outT+=dt; STY.fog=1; finalU.uWhiteC.value.set(0.96,0.95,0.93); tvWhite(1,3.2);
       if(STY.outT>4&&!STY.flags.a2){ STY.flags.a2=1; roomLeave(); act1Stop(); worldGo('salt'); finalU.uWhite.value=1; finalU.uWhiteC.value.set(0.96,0.95,0.93); actStart('a2'); } } } }
 function act1Stop(){ roomLeave(); stG.visible=false; torchUpdate(false); if(DES) DES.g.visible=false; if(TEAR) TEAR.visible=false; lamp.visible=false; finalU.uLampFX.value=0; finalU.uWhite.value=0; coatFig.visible=false; keeperWin.visible=false; otherKeeper.visible=false; if(cabinGhost) cabinGhost.visible=false; U.uLean.value=0; }
 function storyPost(){ cabinCueUpdate(1/60); STY.hideChunks=false; if(!STY.on) return; if(STY.stage==='a1des'&&STY.flags.des&&DES&&!DES.peak){ STY.hideChunks=true; const H=STY.chHid||(STY.chHid=new Map()); for(const m of [cabinG,windowMesh,stG,cabinGhost]) if(m){ if(!H.has(m)) H.set(m,m.visible); m.visible=false; } chunks.forEach(c=>{ for(const m of c.meshes){ if(!H.has(m)) H.set(m,m.visible); m.visible=false; } }); for(const m of [qSolid,qOut,qGhost]) if(m){ if(!H.has(m)) H.set(m,m.visible); m.visible=false; } } else if(STY.chHid){ STY.chHid.forEach((v,m)=>{ m.visible=v; }); STY.chHid=null; } if(A2||A3||A4){ groundMesh.visible=false; chunks.forEach(c=>{ for(const m of c.meshes) m.visible=false; }); } if(STY.cabinHide){ cabinG.visible=false; windowMesh.visible=false; }
   const st=STY.stage, hid=st.startsWith('pro')||st==='a1'||st==='a1des';
   if(st.startsWith('a1')){ let gz=0; const mx=v=>{ if(v>gz) gz=v; };
     if(STY.flags.cabOK&&!STY.flags.cab) mx((STY.cabHold||0)/1.4); if(lanterns&&lanterns.state==='dark') mx(lanterns.hold/1.6); if(jetty&&jetty.state==='shut'&&st==='a1b') mx(jetty.hold/1.6);
-    if(STY.door&&STY.door.state==='shut'&&st==='a1c') mx(STY.door.hold/1.8); if(!STY.flags.note) mx((STY.noteHold||0)/1.5); if(coatFig.visible) mx((coatFig.userData.st||0)/1.5); if(STY.room){ mx((STY.lampHold||0)/1.5); mx((STY.supHold||0)/1.2); }
+    if(STY.door&&STY.door.state==='shut'&&st==='a1c') mx(STY.door.hold/1.8); if(!STY.flags.note) mx((STY.noteHold||0)/1.5); if(coatFig.visible) mx((coatFig.userData.st||0)/1.5); if(STY.room){ if(!STY.flags.r4) mx((STY.lampHold||0)/1.0); mx((STY.supHold||0)/1.2); }
     gz=Math.min(1,gz); gazeEl.style.opacity=gz>0.02?0.9:0.28; gazeArc.style.strokeDashoffset=(1-gz)*100; } else if(/^a\d/.test(st)){ const gz=Math.min(1,STY.gz||0); gazeEl.style.opacity=gz>0.02?0.9:(/^a3/.test(st)?0:0.28); gazeArc.style.strokeDashoffset=(1-gz)*100; STY.gz=0; } else gazeEl.style.opacity=0;
   if(hid){ lake.visible=false; lhG.visible=false; lhSpin.visible=false; STY.lsShown=false;
     stG.children.forEach(c=>{ if(c.userData.ls===undefined){ c.userData.ls=Math.hypot(c.position.x-LAKE.x,c.position.z-LAKE.z)<LAKE.r+6; c.userData.v0=c.visible; } if(c.userData.ls) c.visible=false; }); }
