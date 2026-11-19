@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.770 -->
+<!-- Thin Veil · beta 0.771 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="description" content="A small, strange night walk with a worried fox. Plays in your browser; best on a phone, with headphones.">
@@ -154,7 +154,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.770</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.771</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -3821,7 +3821,7 @@ function storyUpdate(dt){ if(!STY.on||!started) return; STY.t+=dt; stLinesUpdate
     if(!STY.flags.arr){ if(t>22) sayOnce('nudge','fox','Up. The fire is over here. It will not walk to you.'); return; }
     STY.arrT+=dt; if(STY.arrT>1&&!STY.flags.p2){ STY.flags.p2=1; }
     U.uLean.value=Math.min(1,STY.arrT*0.4);
-    if(STY.arrT>5){ STY.stage='a1'; STY.t=0; stBuildAct1(); STY.fog=0.85; } return; }
+    if(STY.arrT>5){ STY.stage='a1'; STY.t=0; stBuildAct1(); STY.fog=0.55; say('fox',"Mist. Stay close.",4); } return; }
   if(s.startsWith('a1')){ act1Update(dt); return; }
   const A=ACTS[s.slice(0,2)]; if(A&&A.update) A.update(dt); else finalU.uWhite.value=Math.max(0,finalU.uWhite.value-dt*0.3); }
 // scanned text: its own line near the top of the screen, never in the dialogue queue
@@ -3847,7 +3847,7 @@ function act1Update(dt){ const s=STY.stage, t=STY.t; noteUpdate(dt); torchUpdate
   if(STY.foldUp) finalU.uFold.value=Math.min(1,finalU.uFold.value+dt/6); else finalU.uFold.value=Math.max(0,finalU.uFold.value-dt*(STY.stage==='a1b'&&STY.t<8?0.06:0.25));
   lamp.material.uniforms.uA.value=Math.min(1,lamp.material.uniforms.uA.value+dt*0.5); finalU.uLampFX.value=Math.min(0.85,finalU.uLampFX.value+dt*0.4);
   // fog until the lanterns are pulled through
-  finalU.uWhite.value+=((STY.fog)-finalU.uWhite.value)*Math.min(1,dt*0.8); const after=s==='a1b'||s==='a1c'||s==='a1d'; if(after) finalU.uWhiteC.value.set(0.2,0.11,0.11); else finalU.uWhiteC.value.set(0.16,0.18,0.24);
+  finalU.uWhite.value+=((STY.fog)-finalU.uWhite.value)*Math.min(1,dt*((s==='a1'&&STY.fog>finalU.uWhite.value)?0.12:0.8)); const after=s==='a1b'||s==='a1c'||s==='a1d'; if(after) finalU.uWhiteC.value.set(0.2,0.11,0.11); else finalU.uWhiteC.value.set(0.16,0.18,0.24);
   // after the Desolate the waking world is not right any more: it glitches, and the way to the lake is the lantern line
   if(after){ const dl=Math.hypot(player.x-LAKE.x,player.z-LAKE.z), pg=Math.max(0,Math.min(1,1-(dl-LAKE.r)/180)), shore=dl<LAKE.r+15;
     if(shore){ STY.fog+=(0.06-STY.fog)*Math.min(1,dt*0.6); if(!STY.flags.calm){ STY.flags.calm=1; glitch=0; if(sound.C) sound.chime(false); } }   // at the water everything stops; it is just a lake at night
