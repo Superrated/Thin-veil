@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.766 -->
+<!-- Thin Veil · beta 0.767 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="description" content="A small, strange night walk with a worried fox. Plays in your browser; best on a phone, with headphones.">
@@ -154,7 +154,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.766</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.767</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -3061,10 +3061,18 @@ function makeBolt(x,z){
   const path=new THREE.CurvePath(); for(let i=0;i<pts.length-1;i++) path.add(new THREE.LineCurve3(pts[i],pts[i+1]));
   boltMesh=new THREE.Mesh(new THREE.TubeGeometry(path,64,0.22,4,false),boltMat); boltMesh.frustumCulled=false; scene.add(boltMesh); foldify(boltMat);
 }
+function tvStoryWx(dt){ try{ const s=STY&&STY.on?(STY.stage||''):''; if(!s.startsWith('a1')||STY.room||(typeof WORLD!=='undefined'&&WORLD!=='lake')){ window.__tvWxC=undefined; return null; }
+    const F=STY.flags, W=window.__tvW||(window.__tvW={fl:8,str:0,th:0}); let c=0, st=false;
+    if(F.des2||s==='a1b'||s==='a1c'||s==='a1d'){ window.__tvWxC=undefined; return null; }
+    if(s==='a1'){ if(F.cab){ st=true; c=1; } else if(F.k1) c=0.25; else c=0; }
+    else if(s==='a1des'){ if(STY.foldUp||F.des){ c=1; if(!W.str){ W.str=1; try{ lightningStrike(STORMS[0]); }catch(e){} } }
+      else if(F.thin){ W.th+=dt; c=W.th<15?0.08:0.08+0.77*Math.min(1,(W.th-15)/40); W.fl-=dt; if(W.fl<0&&W.th>15){ W.fl=6+Math.random()*7; storm.flick=Math.max(storm.flick,0.11); } } else c=0.08; }
+    window.__tvWxC=c; return {storm:st}; }catch(e){ window.__tvWxC=undefined; return null; } }
+window.__wxDbg=()=>({STY,storm,U});
 function stormUpdate(dt,gw){
   const oc=WORLDS_ON&&WORLD==='ocean'&&cur===0&&started, cfg=oc?OCEAN_STORM:STORMS[cur], fit=!!cfg&&!trans&&started;
   const ok=fit&&(cur===0?((SEED%3===0)||returns>=3):storm.allowed[cur]);
-  if(oc){ if(!storm.on){ storm.on=true; storm.next=3; } } else if(ok){ storm.t-=dt; if(storm.t<0){ storm.on=!storm.on; storm.t=storm.on?35+Math.random()*20:(cur===0?50:25)+Math.random()*30; if(storm.on){ storm.next=2.5; note(cur===0?'a storm is coming':'the air is changing'); } } } else storm.on=false;
+  const sw=(!oc&&cur===0&&typeof tvStoryWx==='function')?tvStoryWx(dt):null; if(sw){ if(sw.storm&&!storm.on){ storm.on=true; storm.next=2.5; } else if(!sw.storm&&storm.on) storm.on=false; } else if(oc){ if(!storm.on){ storm.on=true; storm.next=3; } } else if(ok){ storm.t-=dt; if(storm.t<0){ storm.on=!storm.on; storm.t=storm.on?35+Math.random()*20:(cur===0?50:25)+Math.random()*30; if(storm.on){ storm.next=2.5; note(cur===0?'a storm is coming':'the air is changing'); } } } else storm.on=false;
   if(cfg){ partU.uRainCol.value.set(...cfg.rain); storm.dir=cfg.dir; if(cfg.light) U.uLightCol.value.set(...cfg.light); }
   storm.rain+=((storm.on?1:0)-storm.rain)*Math.min(1,dt*0.4); storm.dust=cfg&&cfg.dust?storm.rain:0;
   if(storm.on){ storm.next-=dt; if(storm.next<0){ storm.next=cfg.dust?3:4+Math.random()*7; if(cfg.light) lightningStrike(cfg); else { const a=Math.random()*6.28; sound.gust(player.x+Math.cos(a)*8,player.z+Math.sin(a)*8); } }
@@ -3072,7 +3080,7 @@ function stormUpdate(dt,gw){
   storm.flick=Math.max(0,storm.flick-dt); const fl=storm.flick>0?((Math.floor(storm.flick*30)%3)?1:0.2)*Math.min(1,storm.flick*4):0;
   U.uLightning.value=fl*(calm?0.4:1); if(boltMesh){ boltMesh.visible=fl>0.5; boltMat.color.setRGB(...(cfg&&cfg.light?cfg.light:[1,1,1])); }
   flashFigs.forEach(h=>{ h.visible=fl>0.5&&h.userData.show&&!(typeof A4!=='undefined'&&A4); if(storm.flick<=0) h.userData.show=false; });
-  const w=gw[0], coverT=Math.max(storm.on&&cur===0?1:0,Math.min(1,Math.max(0,Math.sin(time*0.045+SEED)*1.4-0.4))); coverS+=(coverT-coverS)*Math.min(1,dt*0.3); U.uCover.value=coverS*w;
+  const w=gw[0], coverT=Math.max(storm.on&&cur===0?1:0,(window.__tvWxC!==undefined&&cur===0)?window.__tvWxC:Math.min(1,Math.max(0,Math.sin(time*0.045+SEED)*1.4-0.4))); coverS+=(coverT-coverS)*Math.min(1,dt*0.3); U.uCover.value=coverS*w;
 }
 const basicM=(c,o={})=>new THREE.MeshBasicMaterial(Object.assign({color:new THREE.Color(...c)},o));
 const tg=(geo,col,top)=>piece(geo,col,0,0,0,false,top);
