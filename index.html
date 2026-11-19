@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.767 -->
+<!-- Thin Veil · beta 0.768 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="description" content="A small, strange night walk with a worried fox. Plays in your browser; best on a phone, with headphones.">
@@ -154,7 +154,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.767</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.768</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -2741,7 +2741,7 @@ function buildLighthouse(){
   { const ld=new THREE.BoxGeometry(2.0,0.5,1.0); ld.translate(0,LH_DOOR_Y-0.25,LH_PATH.s0-0.35); add(ld,[0.3,0.31,0.34],[0.46,0.47,0.5]); }
   const hut=new THREE.BoxGeometry(2.2,1.6,1.8,2,1,2); hut.translate(2.2,B+0.4,-1.3); add(hut,[0.75,0.73,0.68],[0.85,0.83,0.78]);
   const hr=new THREE.ConeGeometry(1.7,0.9,4); hr.rotateY(Math.PI/4); hr.translate(2.2,B+1.65,-1.3); add(hr,[0.4,0.1,0.08]);
-  const g=mergeGeometries(P), a=new THREE.Mesh(g,worldMat), b=new THREE.Mesh(g,outlineMat); a.frustumCulled=b.frustumCulled=false; lhG.add(a,b);
+  if(!window.__lhM){ const u=Object.assign({},U,{uSway:{value:0},uLean:{value:0}}); const m0=new THREE.ShaderMaterial({uniforms:u,vertexShader:worldVS,fragmentShader:worldFS}), m1=new THREE.ShaderMaterial({uniforms:u,vertexShader:worldVS,fragmentShader:outlineFS,side:THREE.BackSide,defines:{OUTLINE:''}}); if(worldMat.defines) m0.defines=Object.assign({},worldMat.defines); m1.visible=outlineMat.visible; window.__lhM=[m0,m1]; } const g=mergeGeometries(P), a=new THREE.Mesh(g,window.__lhM[0]), b=new THREE.Mesh(g,window.__lhM[1]); a.frustumCulled=b.frustumCulled=false; lhG.add(a,b);
   lhSpin.position.set(X,top+0.85,Z); Object.assign(lhPoi,{x:X,z:Z,y:11}); if(!POIS.includes(lhPoi)) POIS.push(lhPoi); poiCache=null;
 }
 let poiCache=null, qCache=null, supCache=null;
@@ -7970,7 +7970,7 @@ function planetsUpdate(dt,amt){
     sp.set([c.x,c.y-1.2,c.z,P.p.x,P.p.y,P.p.z],i*6); });
   stringGeo.attributes.position.needsUpdate=true; }
 /* ----- per-layer shaders: one lean program per reality, the full blend only while crossing ----- */
-const LMATS=()=>[worldMat,worldMatB,groundMat,mirrorMat,mirrorMatB,worldMatI,worldMatA,sky.material];
+const LMATS=()=>[worldMat,worldMatB,groundMat,mirrorMat,mirrorMatB,worldMatI,worldMatA,sky.material].concat(window.__lhM?[window.__lhM[0]]:[]);
 let curVar='init'; const warmed=new Set(); const warmScene=new THREE.Scene(), warmGeo=new THREE.BufferGeometry();
 warmGeo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(9),3));
 function setVariant(L){ LMATS().forEach(m=>{ m.defines=m.defines||{}; if(L===null) delete m.defines.LAYER; else m.defines.LAYER=L; m.needsUpdate=true; }); curVar=L; }
@@ -8199,7 +8199,7 @@ function frame(){
   // gaze, blooms, fragments
   gazeUpdate(dt);
   blooms.forEach(b=>b.upd(gw[b.L],time));
-  quantumUpdate(dt); if(!NORMAL&&!STY.on) supUpdate(dt,gw); if(STY.stage==='morn'&&MORN) mornUpdate(dt); else if(wc.on) wcUpdate(dt); else if(TL.on) tlUpdate(dt); else if(STY.on) storyUpdate(dt); else guideFoxUpdate(dt); entApply(gw); livingUpdate(dt,gw); voicesUpdate(dt,gw); wakingUpdate(dt,gw); worldVis(); storyPost(); worldAtmo(); mountOceanVis(dt); worldDoors(); animalsAnim(dt); if(wc.on){ lhG.visible=false; } stormUpdate(dt,gw);
+  quantumUpdate(dt); if(!NORMAL&&!STY.on) supUpdate(dt,gw); if(STY.stage==='morn'&&MORN) mornUpdate(dt); else if(wc.on) wcUpdate(dt); else if(TL.on) tlUpdate(dt); else if(STY.on) storyUpdate(dt); else guideFoxUpdate(dt); entApply(gw); livingUpdate(dt,gw); voicesUpdate(dt,gw); wakingUpdate(dt,gw); worldVis(); storyPost(); worldAtmo(); mountOceanVis(dt); worldDoors(); animalsAnim(dt); if(wc.on){ lhG.visible=false; } { const ly=(STY.on&&WORLD==='lake'&&cur===0)?-terrH(LAKE.x,LAKE.z):0; if(lhG.position.y!==ly) lhG.position.y=ly; } stormUpdate(dt,gw);
   sound.listen(camera.position,[-Math.sin(player.yaw)*Math.cos(player.pitch),Math.sin(player.pitch),-Math.cos(player.yaw)*Math.cos(player.pitch)]);
   sound.setFire((typeof A4!=='undefined'&&A4)?0:gw[0]*(returns>=2||missing.has('fire')?0:(ent.has('fire')?0.25:0.9)));
   if(curFrag){ const g=curFrag.g; g.rotation.y=time*0.4; const ss=shardState();
