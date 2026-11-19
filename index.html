@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.774 -->
+<!-- Thin Veil · beta 0.775 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="description" content="A small, strange night walk with a worried fox. Plays in your browser; best on a phone, with headphones.">
@@ -154,7 +154,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.774</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.775</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -3862,7 +3862,7 @@ function act1Update(dt){ const s=STY.stage, t=STY.t; noteUpdate(dt); torchUpdate
   // a cue on the first lantern while it still has to be lit
   if(lanterns&&STY.flags.cab){ if(!STY.lanCue){ const m=new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.12,40,6),new THREE.MeshBasicMaterial({color:0xffc070,transparent:true,opacity:0.3,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})); m.position.set(lanterns.pos[0],lanterns.pos[1]+20,lanterns.pos[2]); stG.add(m); STY.lanCue=m; } STY.lanCue.visible=lanterns.state==='dark'; STY.lanCue.material.opacity=0.2+0.14*Math.sin(time*3); }
   // keeper at the window, back turned
-  keeperWin.visible=false; if(!STY.flags.k1&&s==='a1'&&t>9&&STY.lines.length===0&&STY.busy<=0){ STY.flags.k1=1; say('fox',"There's a window out past the trees. No wall. No house. ...Don't go and look through it. ...You're going to."); }
+  keeperWin.visible=false; if(!STY.flags.k1&&s==='a1'&&((t>9&&STY.lines.length===0&&STY.busy<=0)||t>16)){ STY.flags.k1=1; say('fox',"There's a window out past the trees. No wall. No house. ...Don't go and look through it. ...You're going to."); }
   if(STY.flags.k1&&!STY.flags.cabOK&&STY.lines.length===0) STY.flags.cabOK=1; if(STY.flags.cabOK&&!STY.flags.cab){ STY.cabWait=(STY.cabWait||0)+dt; if(STY.cabWait>28&&STY.lines.length===0&&STY.busy<=0) sayOnce('k2','fox',"It's only a window. You'd have to go right up to the glass to see anything. So that's all right. Don't."); if(STY.cabWait>60&&STY.lines.length===0&&STY.busy<=0) sayOnce('k3','fox',"Go round the far side of it. Right up close. Look back through, the way we came. Not that I'm telling you."); }
   if(s==='a1b'&&t>4) sayPlace('light','fox',"That light? Don't. Lights are how things find you.");
   // the undecided cabin: two versions flicker until the lamp settles on one
