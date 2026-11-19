@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.762 -->
+<!-- Thin Veil · beta 0.763 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="description" content="A small, strange night walk with a worried fox. Plays in your browser; best on a phone, with headphones.">
@@ -152,7 +152,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.762</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.763</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -7224,7 +7224,7 @@ function mornUpdate(dt){ const M=MORN; if(!M) return; M.t+=dt; const t=M.t, C=so
   if(M.curt){ M.curt.rotation.x=-0.25-0.35*(0.5+0.5*Math.sin(t*0.9))-0.1*Math.sin(t*2.3); M.curt.rotation.y=0.15*Math.sin(t*0.7); }
   if(M.cat){ M.cat.scale.set(1,1+0.04*Math.sin(t*1.6),1); M.catT.rotation.y=0.25*Math.sin(t*0.8)+(Math.sin(t*0.37)>0.93?0.6*Math.sin(t*9):0); }
   { const hp=M.house.position, gs=Math.pow(0.5+0.5*Math.sin(hp.x*0.09+hp.z*0.05-t*1.3),4), su=M.U.uSun.value; M.cloth.forEach((m,i)=>{ m.rotation.x=(0.18+0.5*gs)*Math.sin(t*(1.1+1.4*gs)+i*1.7)+(0.08+0.12*gs)*Math.sin(t*2.7+i)-0.35*gs; m.rotation.y=(0.1+0.15*gs)*Math.sin(t*0.8+i); });
-    { const sh=M.cloth[0], sp=new THREE.Vector3(); sh.getWorldPosition(sp); sp.y-=2000; const se=-0.035+0.4*su, sd=new THREE.Vector3(Math.sin(0.35)*Math.cos(se),Math.sin(se),-Math.cos(0.35)*Math.cos(se)), v=sp.clone().sub(new THREE.Vector3(M.camP.x,M.camP.y-2000,M.camP.z)).normalize(), back=Math.pow(Math.max(0,v.dot(sd)),2)*smooth(0.1,0.4,su); sh.material.color.setRGB(0.88+0.12*back,0.88+0.1*back,0.85+0.02*back).multiplyScalar(1+0.35*back+0.1*gs); } }
+    if(M.cloth[0].material.color){ const sh=M.cloth[0], sp=new THREE.Vector3(); sh.getWorldPosition(sp); sp.y-=2000; const se=-0.035+0.4*su, sd=new THREE.Vector3(Math.sin(0.35)*Math.cos(se),Math.sin(se),-Math.cos(0.35)*Math.cos(se)), v=sp.clone().sub(new THREE.Vector3(M.camP.x,M.camP.y-2000,M.camP.z)).normalize(), back=Math.pow(Math.max(0,v.dot(sd)),2)*smooth(0.1,0.4,su); sh.material.color.setRGB(0.88+0.12*back,0.88+0.1*back,0.85+0.02*back).multiplyScalar(1+0.35*back+0.1*gs); } }
   // the boat breathes on the water
   M.boat.position.y=0.06*Math.sin(t*0.9); M.boat.rotation.z=0.03*Math.sin(t*0.7); M.boat.rotation.x=0.015*Math.sin(t*0.55); if(M.bA&&M.bA.pen) M.bA.pen.rotation.y=0.6*Math.sin(t*1.7)+0.3*Math.sin(t*3.1); if(M.bA&&M.bA.main&&((M.sailT=(M.sailT||0)+dt)>0.1)){ M.sailT=0; try{ A4_sailSet(M.bA.main.geometry,7,[0,3.15,0.1],[0,8.2,0.1],[0,3.15,3.0],0.1+0.04*Math.sin(t*0.6),0.25,t); }catch(e){} }
   if(M.rB){ M.rB.position.set(M.boat.position.x,-M.boat.position.y,M.boat.position.z); M.rB.rotation.set(-M.boat.rotation.x,M.boat.rotation.y,-M.boat.rotation.z); M.rB.rotation.z+=0.03*Math.sin(t*1.9)+0.015*Math.sin(t*3.7); M.rB.position.x+=0.07*Math.sin(t*1.3); M.rB.scale.x=1+0.035*Math.sin(t*2.3); M.rB.scale.z=1+0.03*Math.sin(t*1.7+1); }
@@ -7284,7 +7284,7 @@ function mornExtras(M,G){ const U=M.U, H=M.house, B=c=>new THREE.MeshBasicMateri
     const kg=new THREE.PlaneGeometry(2.6,3.6); kg.rotateX(-Math.PI/2); M.kGlow=new THREE.Mesh(kg,new THREE.MeshBasicMaterial({map:mornTex(255,196,120),transparent:true,opacity:0.55,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})); M.kGlow.position.set(1.6,0.08,-4.6); H.add(M.kGlow);
     M.wGlow=new THREE.Sprite(new THREE.SpriteMaterial({map:mornTex(255,206,140),transparent:true,opacity:0.45,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})); M.wGlow.position.set(1.6,2.4,-3.0); M.wGlow.scale.setScalar(3.2); H.add(M.wGlow); }
   // toon shading on the house, the jetty, rocks and crabs; ink outlines on the big shapes
-  const conv=(root,outl)=>root&&root.traverse(m=>{ if(!m.isMesh||!m.material||!m.material.isMeshBasicMaterial||m.material.transparent||m.material.map||m===M.win) return; const hx=m.material.color.getHex(); const pat=hx===0xd9cdb8?2:hx===0x5b3a32?1:(hx===0x8a6a4c||hx===0x7d5f43)?3:0; const sd=m.material.side; m.material=mornToon(m.material.color,U,pat,m.material.vertexColors,sd);
+  const conv=(root,outl)=>root&&root.traverse(m=>{ if(!m.isMesh||!m.material||!m.material.isMeshBasicMaterial||m.material.transparent||m.material.map||m===M.win||(M.cloth&&M.cloth.includes(m))) return; const hx=m.material.color.getHex(); const pat=hx===0xd9cdb8?2:hx===0x5b3a32?1:(hx===0x8a6a4c||hx===0x7d5f43)?3:0; const sd=m.material.side; m.material=mornToon(m.material.color,U,pat,m.material.vertexColors,sd);
     if(outl){ m.geometry.computeBoundingSphere(); const r=m.geometry.boundingSphere.radius*Math.max(m.scale.x,m.scale.y,m.scale.z); if(r>0.35&&m.geometry.type!=='PlaneGeometry') mornOutline(m,Math.min(0.06,0.012+r*0.012)/Math.max(m.scale.x,0.01)); } });
   conv(H,true); conv(M.jetty,true); conv(M.rJ,false); M.crab&&M.crab.forEach(c=>conv(c.g,false)); if(M.rocks){ M.rocks.material=mornToon(new THREE.Color(1,1,1),U,0,true); mornOutline(M.rocks,0.07,true); }
   // the fox's own shadow, and a warm smear of him on the water when he wades
