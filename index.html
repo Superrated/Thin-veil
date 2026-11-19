@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.779 -->
+<!-- Thin Veil · beta 0.780 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="description" content="A small, strange night walk with a worried fox. Plays in your browser; best on a phone, with headphones.">
@@ -154,7 +154,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.779</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.780</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -8365,7 +8365,7 @@ addEventListener('resize',()=>{ renderer.setSize(innerWidth,innerHeight); makeTa
   b.addEventListener('click',open); box.querySelector('#tvStay').addEventListener('click',close);
   box.querySelector('#tvGo').addEventListener('click',()=>{ close(); b.style.display='none'; let a=''; try{ const sg=STY.stage||''; a=sg.slice(0,2); if(!TVDEV&&/^a[234]$/.test(a)&&!localStorage.getItem('tv_spent')) localStorage.setItem('tv_cont',JSON.stringify({a,ms:(window.__tvPrevMs||0)+performance.now(),t:Date.now()})); }catch(e){}
     try{ if(sound.C&&sound.out){ sound.out.gain.setTargetAtTime(0,sound.C.currentTime,0.4); } }catch(e){}
-    blackEl.style.transition='opacity 1.6s ease'; blackEl.textContent=/^a[234]$/.test(a)?'The fox will keep your place.':'Come back when you like.'; blackEl.style.opacity=1; setTimeout(()=>location.reload(),2600); });
+    blackEl.style.transition='opacity 1.6s ease'; blackEl.textContent=/^a[234]$/.test(a)?'The fox will keep your place.':'Come back when you like.'; blackEl.style.opacity=1; setTimeout(()=>{ try{ sound.C&&sound.C.suspend(); }catch(e){} trapped=false; try{ window.close(); }catch(e){} setTimeout(()=>{ try{ history.go(-2); }catch(e){} setTimeout(()=>{ blackEl.textContent='Goodnight. You can close this now.'; },700); },300); },2600); });
   addEventListener('keydown',e=>{ if(e.key==='Escape'&&started&&STY.on){ box.style.display==='flex'?close():open(); } });
   let trapped=false; const trap=()=>{ try{ history.pushState({tvLeave:1},''); trapped=true; }catch(e){} };
   addEventListener('popstate',()=>{ if(!trapped) return; trapped=false; if(started&&STY.on&&window.__tvLeaveOn){ box.style.display==='flex'?close():open(); trap(); } });
