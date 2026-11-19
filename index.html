@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.756 -->
+<!-- Thin Veil · beta 0.757 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -146,7 +146,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.756</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.757</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -5939,7 +5939,7 @@ function A4_update(dt){ const A=A4; if(!A) return; if(typeof mists!=='undefined'
     const t0=sound.C.currentTime, hv=0.03*A.grv*Math.min(1,A.speed/6)*(STY.mute?0:1), up=1+0.05*Math.min(1,A.grvT/12); A.hum.g.gain.setTargetAtTime(hv,t0,0.25); A.hum.o1.frequency.setTargetAtTime(98*up,t0,0.5); A.hum.o2.frequency.setTargetAtTime(147*up,t0,0.5); }
   if(A.grvT>14&&done) A4_once('gv1',"...",1.5);
   // speed: what the wind gives at this angle; tacks cost way
-  const sp=A.moor?0:11.5*A.ws*pol(ar2)*(1-0.5*(A.burn||0))*(1+0.85*(A.gB||0))*(1+0.06*A.grv);
+  if(!A.moor) A.castT=(A.castT||0)+dt; const castK=A.moor?0:(A.castT>=2.4?1:(x=>x*x*(3-2*x))(A.castT/2.4)); const sp=A.moor?0:castK*11.5*A.ws*pol(ar2)*(1-0.5*(A.burn||0))*(1+0.85*(A.gB||0))*(1+0.06*A.grv);
   A.speed+=(sp-A.speed)*Math.min(1,dt*(sp>A.speed?0.8:0.55));
   A.bx+=-Math.sin(A.h)*A.speed*dt;
   A.bz+=-Math.cos(A.h)*A.speed*dt;
