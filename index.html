@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.768 -->
+<!-- Thin Veil · beta 0.769 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="description" content="A small, strange night walk with a worried fox. Plays in your browser; best on a phone, with headphones.">
@@ -154,7 +154,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.768</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.769</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -3842,7 +3842,7 @@ function noteUpdate(dt){ if(STY.flags.note||!cabinG.visible) return; const P=[18
   if(Math.hypot(player.x-P[0],player.z-P[2])<4&&inBeam(P,5)){ STY.noteHold=(STY.noteHold||0)+dt; if(STY.noteHold>1.5){ STY.flags.note=1;
     scanShow(["Supper's on. Lamp's lit. Come when you can."]); say('fox',"Could be anyone's handwriting.",2.0); } }
   else STY.noteHold=Math.max(0,(STY.noteHold||0)-dt); }
-function act1Update(dt){ const s=STY.stage, t=STY.t; noteUpdate(dt); torchUpdate(true); tearUpdate(dt); desUpdate(dt); if(STY.foldUp&&Math.random()<dt*1.6) glitch=Math.max(glitch,0.25+0.5*finalU.uFold.value);
+function act1Update(dt){ const s=STY.stage, t=STY.t; noteUpdate(dt); torchUpdate(!STY.room); tearUpdate(dt); desUpdate(dt); if(STY.foldUp&&Math.random()<dt*1.6) glitch=Math.max(glitch,0.25+0.5*finalU.uFold.value);
   if(winG.visible&&cur===0&&STY.cT!==undefined&&inBeam([winG.position.x,winG.position.y+1.6,winG.position.z],12)) sayOnce('win5','fox',"Don't look through that. That's the other night. It looks back.");
   if(STY.foldUp) finalU.uFold.value=Math.min(1,finalU.uFold.value+dt/6); else finalU.uFold.value=Math.max(0,finalU.uFold.value-dt*(STY.stage==='a1b'&&STY.t<8?0.06:0.25));
   lamp.material.uniforms.uA.value=Math.min(1,lamp.material.uniforms.uA.value+dt*0.5); finalU.uLampFX.value=Math.min(0.85,finalU.uLampFX.value+dt*0.4);
@@ -6841,7 +6841,7 @@ function desUpdate(dt){ if(!DES) return; const on=STY.stage==='a1des'; DES.g.vis
   // it starts as a burnt wood. The further in, the less it keeps to that
   { const k=D.mk||0; finalU.uSplit.value=0.7*k*k; D.gT=(D.gT===undefined?14:D.gT)-dt*(0.4+2.4*k); if(D.gT<0){ D.gT=9+Math.random()*6; if(k>0.15){ glitch=Math.max(glitch,0.45*k); if(k>0.6&&sound.stutter) sound.stutter(); } }
     for(const t of D.trees){ const dx=player.x-t.x, dz=player.z-t.z, d=Math.hypot(dx,dz)||1; if(d>48) continue; const w=Math.max(0,Math.min(1,k*1.4-0.1))*(0.35+0.65*t.kk), m=t.m, ln=0; if(d<1.2&&w<0.2) A2_push(t.x,t.z,0.5); m.position.y=t.y+w*t.kk*2.6*(0.55+0.45*Math.sin(time*0.5+t.ph)); m.scale.y=1+1.5*w*t.kk; m.rotation.z=t.rz-(dx/d)*ln; m.rotation.x=t.rx+(dz/d)*ln; }
-    const sk=smooth(0.45,0.95,k); D.skyT.visible=sk>0.01; if(D.skyT.visible) D.skyT.children.forEach((c,i)=>{ c.scale.y=Math.max(0.01,sk*(0.7+0.3*Math.sin(time*0.4+i))); c.rotation.z=0.12*Math.sin(time*0.3+i*1.7); }); if(k>0.5&&quiet) sayOnce('d_w1','fox',"The trees aren't standing on anything. Don't look at their feet. ...Don't look up, either."); }
+    const sk=smooth(0.45,0.95,k); D.skyT.visible=sk>0.01; if(D.skyT.visible) D.skyT.children.forEach((c,i)=>{ c.scale.y=Math.max(0.01,sk*(0.7+0.3*Math.sin(time*0.4+i))); c.rotation.z=0.12*Math.sin(time*0.3+i*1.7); }); if(k>0.5&&quiet&&D.el>40) sayOnce('d_w1','fox',"The trees aren't standing on anything. Don't look at their feet. ...Don't look up, either."); }
   { if(!D.winSet){ D.winSet=1; const a=P[0], b=P[1], l=Math.hypot(b[0]-a[0],b[1]-a[1])||1; player.yaw=Math.atan2(-(b[0]-a[0])/l,-(b[1]-a[1])/l); player.pitch=0; D.winS=D.len*0.78; }
     winG.visible=false; if(winG.userData.glow) winG.userData.glow.visible=false; if(winG.userData.beam) winG.userData.beam.visible=false;
     if(!D.mad&&D.s>D.winS){ D.mad=1; D.madS=D.s; D.madEl=D.el; glitch=Math.max(glitch,0.5); haptic(60); if(sound.C) sound.play('glass',sound.C.currentTime,0.4,0.3,true,{sfx:true}); STY.lines=[]; STY.busy=0; say('fox',"...Something's changed. Don't ask me what. Walk. Don't run. Walk."); }
@@ -6864,14 +6864,14 @@ function desUpdate(dt){ if(!DES) return; const on=STY.stage==='a1des'; DES.g.vis
   { let nd=1e9, np=null; for(const sp of D.spoons){ const d=Math.hypot(sp[0]-player.x,sp[2]-player.z); if(d<nd){ nd=d; np=sp; } } D.tk-=dt; if(D.tk<=0&&np&&nd<45&&sound.C){ D.tk=1.5; sound.play('tick',sound.C.currentTime,2.5,0.45,false,{sfx:true,pos:np,ref:9}); }
     if(nd<9&&quiet) sayOnce('d_sp','fox',"Spoons. In a dead tree. Ticking. Don't ask me. I don't know everything."); }
   if(D.el>5&&!D.lt){ D.lt=1; lampTone(); }
-  if(D.el>5&&quiet) sayOnce('d_tr','fox',"A wood. Burnt. Still warm. ...Footprints in the ash, and a stick's mark. And up ahead, a light. Moving. Nobody carrying it.");
+  
   // him, with the lantern, on the next rise, looking for someone. The fox knows exactly what he is
   const H=D.him; if(!D.himGone&&D.el>3){ const sl=Math.min(D.len-3,D.s+Math.min(15,8+D.el*0.5)); let i2=1; while(i2<P.length-1&&D.L[i2]<sl) i2++; const a=P[i2-1], b=P[i2], t=(sl-D.L[i2-1])/Math.max(1e-3,D.L[i2]-D.L[i2-1]), tx=a[0]+(b[0]-a[0])*t, tz=a[1]+(b[1]-a[1])*t; if(!D.himP){ D.himP=[tx,tz]; H.visible=true; }
     const far=Math.hypot(D.himP[0]-player.x,D.himP[1]-player.z)>18&&Math.hypot(tx-player.x,tz-player.z)>Math.hypot(D.himP[0]-player.x,D.himP[1]-player.z), mvx=far?0:tx-D.himP[0], mvz=far?0:tz-D.himP[1], md=Math.hypot(mvx,mvz), st=Math.min(md,3.6*dt), walking=md>0.35; if(md>1e-3){ D.himP[0]+=mvx/md*st; D.himP[1]+=mvz/md*st; } D.himStill=walking?0:(D.himStill||0)+dt;
     H.position.set(D.himP[0],Math.max(0,terrH(D.himP[0],D.himP[1]),terrH(D.himP[0]+1.5,D.himP[1]),terrH(D.himP[0]-1.5,D.himP[1]),terrH(D.himP[0],D.himP[1]+1.5),terrH(D.himP[0],D.himP[1]-1.5))+0.35+(walking?Math.abs(Math.sin(time*5.2))*0.04:0),D.himP[1]); const want=walking?Math.atan2(mvx,mvz):Math.atan2(player.x-D.himP[0],player.z-D.himP[1]); let dy=want-H.rotation.y; dy=Math.atan2(Math.sin(dy),Math.cos(dy)); H.rotation.y+=dy*Math.min(1,dt*(walking?5:1.2));
     const swg=Math.sin(time*2.3)*(walking?0.13:0.03), up=!walking&&D.himStill>2.5?0.45:0; { const sa=Math.sin(time*(walking?2.2:1.4))*(walking?0.2:0.07), lx=Math.sin(sa)*0.45, ly=2.6-Math.cos(sa)*0.45; D.lg.position.set(lx,ly,0); D.lb.position.set(lx,ly,0); D.lb.rotation.z=sa; if(!D.lbS){ D.lbS=1; D.lb.scale.setScalar(1.6); } } const see=inBeam([D.himP[0],H.position.y+1.3,D.himP[1]],90); D.lg.scale.setScalar(9*(0.88+0.1*Math.sin(time*9)+0.05*Math.sin(time*21))); D.lg.material.opacity=1;
-    if(D.off>9||D.himStill>9){ D.callT=(D.callT===undefined?2:D.callT)-dt; if(D.callT<0){ D.callT=9+Math.random()*4; const hp=[D.himP[0],H.position.y+1.6,D.himP[1]]; if(sound.C){ sound.play('glass',sound.C.currentTime,1.1,0.5,true,{sfx:true,pos:hp,ref:14}); sound.play('glass',sound.C.currentTime+0.35,0.9,0.4,true,{sfx:true,pos:hp,ref:14}); } if(quiet){ VOICE.xt.n='FROM THE LANTERN'; say('xt',["Hello?","This way.","Are you out here?","Mind the roots."][D.callN=((D.callN||0)+1)%4]); } } } else D.callT=2;
-    if(lookedAt([D.himP[0],H.position.y+1.3,D.himP[1]],90)&&quiet) sayOnce('d_h1','fox',"A lantern. On its own. Nobody holding it. ...It's the only thing in here that knows the way. Behind it. Well behind.");
+    if(D.off>9||D.himStill>9){ D.callT=(D.callT===undefined?2:D.callT)-dt; if(D.callT<0&&D.el>20){ D.callT=18+Math.random()*7; const hp=[D.himP[0],H.position.y+1.6,D.himP[1]]; if(sound.C){ sound.play('glass',sound.C.currentTime,1.1,0.5,true,{sfx:true,pos:hp,ref:14}); sound.play('glass',sound.C.currentTime+0.35,0.9,0.4,true,{sfx:true,pos:hp,ref:14}); } if(quiet){ VOICE.xt.n='FROM THE LANTERN'; say('xt',["Hello?","This way.","Are you out here?","Mind the roots."][D.callN=((D.callN||0)+1)%4]); } } } else D.callT=2;
+    if(lookedAt([D.himP[0],H.position.y+1.3,D.himP[1]],90)&&quiet) sayOnce('d_h1','fox',"A lantern. Nobody holding it. It knows the way. Follow. Not close.");
     D.himT+=dt; if(D.himT>26&&quiet&&!STY.flags.d_c1){ STY.flags.d_c1=1; VOICE.xt.n='AHEAD, CALLING'; say('xt','Hello?'); say('fox',"Don't answer. It does voices. Mine's better.",0.6); } if(D.himT>60&&quiet&&!STY.flags.d_c2){ STY.flags.d_c2=1; VOICE.xt.n='AHEAD, CALLING'; say('xt','Are you out here?'); }
     if(see) D.seen+=dt; { const dl=Math.hypot(D.himP[0]-player.x,D.himP[1]-player.z); D.lostL=(dl>34&&!see)?(D.lostL||0)+dt:0; if(D.lostL>8&&quiet){ D.lostL=0; say('fox',["The light. Where's the light? ...Behind us. Turn round.","We've lost the lantern. Find the lantern. It's the only thing that knows the way.","Not that way. The light went the other way."][D.lln=((D.lln||0)+1)%3]); } } if(up&&see&&D.seen>3&&quiet) sayOnce('d_h2','fox',"It's waiting. Lanterns don't wait. Rude.");
     if(D.s>D.len-26&&!D.inHouse){ D.inHouse=1; VOICE.xt.n='FROM SOMEWHERE ELSE'; STY.lines=[]; STY.busy=0; say('fox',"It's gone in. Into the house. ...It's waiting on the table."); } if(D.inHouse){ D.himP[0]+=(D.T[0]-D.himP[0])*Math.min(1,dt*0.8); D.himP[1]+=(D.T[2]-D.himP[1])*Math.min(1,dt*0.8); H.position.y=D.T[1]-1.6; } }
