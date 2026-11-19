@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.787 -->
+<!-- Thin Veil · beta 0.788 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="description" content="A small, strange night walk with a worried fox. Plays in your browser; best on a phone, with headphones.">
@@ -154,7 +154,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.787</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.788</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -5336,7 +5336,7 @@ function A3_update(dt){ const A=A3; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
     // the orchard lets go: the blossom comes off and streams past you toward the light, and the trees stop
     { const st=A.f.up?smooth(4,75,past):0; U3.uStrip.value+=(st-U3.uStrip.value)*Math.min(1,dt*0.6); if(st>0.02){ U3.uWind.value.set(0.6*Math.sin(time*0.3),-(1.5+7*st)); U3.uPSize.value=1.5+1.3*st; } if(A.f.up&&past>55&&done) A3_once('fw1',"No trees. Nothing to stand behind. I liked the trees. I didn't know I liked the trees."); if(A.f.up&&past>105&&done) A3_once('fw2',"It's very open. Anything could see us from anywhere. ...Don't turn round. I mean it this time."); }
     // the king
-    { const K=A.king, g=A.kg, open=A.f.up&&past>30, live=s>55&&!A.f.sat&&!A.thawT||open, seen=K.visible&&inView(K.position.x,K.position.z,0.82)&&Math.hypot(K.position.x-player.x,K.position.z-player.z)<95; g.cool-=dt;
+    { const K=A.king, g=A.kg, open=A.f.up&&past>30, live=(s>55&&!A.f.sat&&!A.thawT||open)&&!A.my, seen=!A.my&&K.visible&&inView(K.position.x,K.position.z,0.82)&&Math.hypot(K.position.x-player.x,K.position.z-player.z)<95; g.cool-=dt; if(A.my&&K.visible){ K.visible=false; g.seen=0; }
       if(!live&&K.visible&&!seen) K.visible=false;
       if(live&&!seen&&g.cool<0){ let x,z; if(open){ g.back=Math.max(9,g.back-2.2); x=player.x-fx*g.back+fz*3; z=player.z-fz*g.back-fx*3; g.cool=7+Math.random()*5; } else { const sd=(g.n%2?1:-1), q=A3_pt(A,Math.min(A.sF-40,s+30+Math.random()*14)); x=q[0]-q[3]*17*sd; z=q[1]+q[2]*17*sd; g.cool=24+Math.random()*16; } if(!inView(x,z,0.55)||open){ K.position.set(x,A3_GY,z); K.rotation.y=Math.atan2(player.x-x,player.z-z)+Math.PI+0.5; K.scale.setScalar(0.75+0.7*Math.min(1,s/A.sF)); K.visible=true; g.n++; g.seen=0; A3_snd('tick',0.2,0.3,[x,1,z]); } }
       if(K.visible){ const H=A.kingH; H.rotation.y+=((0.6+0.25*Math.sin(time*0.3))-H.rotation.y)*Math.min(1,dt); H.position.y=2.3+0.08*Math.sin(time*0.7); if(seen){ g.seen+=dt;
