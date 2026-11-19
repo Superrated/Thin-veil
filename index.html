@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.781 -->
+<!-- Thin Veil · beta 0.782 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="description" content="A small, strange night walk with a worried fox. Plays in your browser; best on a phone, with headphones.">
@@ -154,7 +154,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.781</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.782</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -1392,7 +1392,7 @@ const sky = new THREE.Mesh(new THREE.SphereGeometry(500,48,24), new THREE.Shader
    vec3 dir=normalize(vDir); float t=uTime; float y=dir.y;
    vec3 a,b; float tc; weights(vec3(0.0),a,b,tc);
    #ifndef LAYER
-   { vec3 a0,b0,a1,b1; float c0,c1; stageW(uFrom,a0,b0,c0); if(uMix>0.0001){ stageW(uTo,a1,b1,c1); } else { a1=a0; b1=b0; c1=c0; } a=mix(a0,a1,uSkyMix); b=mix(b0,b1,uSkyMix); tc=mix(c0,c1,uSkyMix); }
+   { vec3 a0,b0,a1,b1; float c0,c1; stageW(uFrom,a0,b0,c0); if(uSkyMix>0.0001){ stageW(uTo,a1,b1,c1); } else { a1=a0; b1=b0; c1=c0; } a=mix(a0,a1,uSkyMix); b=mix(b0,b1,uSkyMix); tc=mix(c0,c1,uSkyMix); }
    #endif
    vec3 col=vec3(0.0);
    if(LW(6)&&tc>0.001){
@@ -3783,7 +3783,7 @@ function torchUpdate(on){ torch.visible=false; lamp.visible=false; if(!on){ U.uT
 function inBeam(p,maxD=42){ _a.set(p[0],p[1],p[2]); const d=_a.distanceTo(camera.position); if(d>maxD) return false; _a.project(camera); return _a.z<1&&Math.abs(_a.x)<0.3&&Math.abs(_a.y)<0.38; }
 function lookedAt(p,maxD=42){ _a.set(p[0],p[1],p[2]); const d=_a.distanceTo(camera.position); if(d>maxD) return false; _a.project(camera); return _a.z<1&&Math.abs(_a.x)<0.9&&Math.abs(_a.y)<0.9; }
 function stToDes(){ stBuildAct1(); player.x=RING.x; player.z=RING.z; vel.x=vel.z=0; STY.fog=0.85; STY.stage='a1'; STY.t=20; STY.flags.mem0=1; STY.flags.w=1; STY.flags.k1=1; STY.flags.cabOK=1; STY.flags.cab=1; STY.cabinHide=false; if(cabinGhost) cabinGhost.visible=false; blackEl.style.transition='opacity 1s ease'; blackEl.style.opacity=0; blackEl.textContent=''; STY.lines=[]; STY.busy=0; STY.force='l'; }
-function stStart(){ returns=0; missing=new Set(); /* the old shard-trip progression (lean, sinking camera, missing moon...) must not leak into the story; not saved */ STY.on=true; STY.cabinHide=true; STY.cnt=0; STY.asN={}; STY.asT=undefined; STY.noMem=!!(window.__toA2||window.__toA3||window.__toA4||window.__toDes||TV_MORN); if(TV_MORN) setTimeout(mornEnter,60); if(window.__toDes){ window.__toDes=false; setTimeout(stToDes,80); } if(window.__toA2){ window.__toA2=false; setTimeout(stToA2,60); } if(window.__toA3){ window.__toA3=false; setTimeout(stToA3,60); } if(window.__toA4){ window.__toA4=false; setTimeout(stToA4,60); } STY.foldT0=undefined; STY.foldUp=false; STY.stage='pro0'; STY.t=0; STY.lines=[]; STY.flags={}; STY.fog=0; window.__veil.jump(0);
+function stStart(){ returns=0; missing=new Set(); /* the old shard-trip progression (lean, sinking camera, missing moon...) must not leak into the story; not saved */ STY.on=true; STY.cabinHide=true; STY.cnt=0; STY.asN={}; STY.asT=undefined; STY.noMem=!!(window.__toA2||window.__toA3||window.__toA4||window.__toDes||window.__toJetty||TV_MORN); if(window.__toJetty){ window.__toJetty=false; setTimeout(()=>{ stToDes(); setTimeout(()=>{ try{ STY.force=0; STY.flags.des=1; if(!DES) desBuild(); DES.done=true; setTimeout(()=>{ if(jetty){ player.x=jetty.pos[0]; player.z=jetty.pos[2]+5; player.gy=undefined; vel.x=vel.z=0; player.yaw=0; player.pitch=0; } },700); }catch(e){ console.warn(e); } },300); },80); } if(TV_MORN) setTimeout(mornEnter,60); if(window.__toDes){ window.__toDes=false; setTimeout(stToDes,80); } if(window.__toA2){ window.__toA2=false; setTimeout(stToA2,60); } if(window.__toA3){ window.__toA3=false; setTimeout(stToA3,60); } if(window.__toA4){ window.__toA4=false; setTimeout(stToA4,60); } STY.foldT0=undefined; STY.foldUp=false; STY.stage='pro0'; STY.t=0; STY.lines=[]; STY.flags={}; STY.fog=0; window.__veil.jump(0);
   player.x=1.2; player.z=11; player.yaw=0.1; player.pitch=-0.12; vel.x=vel.z=0; gfox.visible=true; gfox.position.set(0,0,-1.7); gfox.rotation.y=0; gfox.userData.glow.visible=false;
   blackEl.style.transition='none'; blackEl.style.opacity=1; blackEl.textContent=''; }
 function foxGo(x,z,dt,sp=2.6){ const g=gfox, u=g.userData, dx=x-g.position.x, dz=z-g.position.z, d=Math.hypot(dx,dz), pv=Math.hypot(vel.x,vel.z);
@@ -8434,7 +8434,7 @@ addEventListener('resize',()=>{ renderer.setSize(innerWidth,innerHeight); makeTa
       pl.intensity=40*lit*fk*(1-0.4*gust); key.intensity=1.2*lit; halo.material.opacity=0.85*lit*fk; halo2.material.opacity=0.5*lit*fk; glass.material.emissiveIntensity=0.5*lit*fk; glass.material.opacity=0.07+0.13*lit*fk; sheen.material.opacity=0.05+0.05*lit; dust.material.opacity=0.55*lit;
       const P=dust.geometry.attributes.position; for(let q=0;q<N;q++){ const v=dv[q]; v[0]+=dt*v[2]; P.setXYZ(q,Math.cos(v[0])*v[1],((P.getY(q)+dt*(0.05+0.04*Math.sin(t+v[3]))+0.4)%4.6)-0.4,Math.sin(v[0])*v[1]); } P.needsUpdate=true;
       R.render(S,C); }; frame(); }catch(e){ console.warn('lantern',e); cv.style.display='none'; } } }
-{ try{ const G=[['goDes','I · Burnt wood'],null,['goA2','II · Salt Mirror (start)'],['goA2b','II · 2nd walk'],['goA2c','II · 3rd walk'],['goA2d','II · the Figures'],null,['goA3','III · Frozen Orchard (start)'],['goA3b','III · the Mycelium'],['goA3c','III · Time Dilation'],['goA3d','III · the Thaw'],['goA3e','III · last walk'],null,['goA4','IV · His Boat (start)'],['goWave','IV · the wave'],['goBurn','IV · the Burning'],['goDark','IV · after the fire'],null,['goMorn','V · the morning'],null,['goReset','reset night & day locks']];
+{ try{ { const d=document.getElementById('goDes'); if(d&&!document.getElementById('goJetty')){ const j=document.createElement('button'); j.id='goJetty'; j.className='tbx'; d.parentNode.insertBefore(j,d.nextSibling); j.addEventListener('click',()=>{ window.__toJetty=true; }); } } const G=[['goDes','I · Burnt wood'],['goJetty','I · the jetty (end of act)'],null,['goA2','II · Salt Mirror (start)'],['goA2b','II · 2nd walk'],['goA2c','II · 3rd walk'],['goA2d','II · the Figures'],null,['goA3','III · Frozen Orchard (start)'],['goA3b','III · the Mycelium'],['goA3c','III · Time Dilation'],['goA3d','III · the Thaw'],['goA3e','III · last walk'],null,['goA4','IV · His Boat (start)'],['goWave','IV · the wave'],['goBurn','IV · the Burning'],['goDark','IV · after the fire'],null,['goMorn','V · the morning'],null,['goReset','reset night & day locks']];
     { const st=document.createElement('style'); st.textContent='#start .tvGrp{display:none}#start.tests .tvGrp{display:block;margin:2px 0}'; document.head.appendChild(st); } const first=document.getElementById('goDes'); if(first&&first.parentNode){ const par=first.parentNode, anchor=document.createElement('div'); par.insertBefore(anchor,first); let grp=null; const mk=()=>{ grp=document.createElement('div'); grp.className='tvGrp'; par.insertBefore(grp,anchor); };
       mk(); G.forEach(e=>{ if(!e){ mk(); return; } const b=document.getElementById(e[0]); if(!b) return; b.textContent=e[1]; grp.appendChild(b); }); anchor.remove(); } }catch(e){} }
 { let cd=null; try{ cd=JSON.parse(localStorage.getItem('tv_cont')||'null'); }catch(e){}
