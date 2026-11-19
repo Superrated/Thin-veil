@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.754 -->
+<!-- Thin Veil · beta 0.755 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -146,7 +146,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.754</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.755</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -4478,7 +4478,7 @@ function A2_gap(A,dt,l1,l2){ if(!A.gapOn) return; const along=(A.lx-player.x)*A.
   const sd=Math.hypot(A.seamP[0]-player.x,A.seamP[1]-player.z), q=0.5+0.5*Math.sin(time*5); A.seam.children[0].material.opacity=0.5+0.4*q; A.seam.children[0].scale.x=1+0.6*q;
   if(A.f['g1_'+A.ph]&&A2_done()) A2_once('g2_'+A.ph,l2);
   if(A.f.atGap){ A.stall=0; A.gapT+=dt; A.edgeT=(A.edgeT||0)+dt; } else A.edgeT=0;
-  if(A.edgeT>1.0&&A.flip<=0&&(A.crackK===undefined||A.crackK>=1)){ A.f.sky=1; A.gapOn=false; A2_flipStart(A); } }
+  A.crackK=Math.max(A.crackK||0,smooth(lim+24,lim+9,along)); if((A.edgeT>1.0||(along<lim+9&&A2_done()))&&A.flip<=0&&(A.crackK===undefined||A.crackK>=1)){ A.f.sky=1; A.gapOn=false; A2_flipStart(A); } }
 // ---- omens: things the worry invents, one on each side. The fox reads each one, and is wrong ----
 function A2_omenBuild(A){ const mk=()=>{ const g=new THREE.Group(); g.visible=false; scene.add(g); return g; }, M=c=>new THREE.MeshBasicMaterial({color:c,fog:false,side:THREE.DoubleSide}), add=(g,geo,mat,x,y,z)=>{ const m=new THREE.Mesh(geo,mat); m.position.set(x,y,z); g.add(m); return m; };
   const dk=M(0x1a1620), O=[];
