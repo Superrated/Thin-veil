@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.764 -->
+<!-- Thin Veil · beta 0.765 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="description" content="A small, strange night walk with a worried fox. Plays in your browser; best on a phone, with headphones.">
@@ -129,6 +129,8 @@
   #start #tvby{font:italic 12px "Iowan Old Style",Palatino,Georgia,serif;letter-spacing:.16em;color:#c9bfae;opacity:.5;margin:16px 0 0;padding:6px 14px;cursor:default;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;max-width:none}
   #start #tvInst{margin:14px 0 0;background:none;border:none;color:#c9bfae;opacity:.55;font:11px system-ui,sans-serif;letter-spacing:.28em;text-transform:uppercase;padding:6px 12px;cursor:pointer}
   #start #tvInstTip{font:12px system-ui,sans-serif;color:#c9bfae;opacity:.7;margin:6px 0 0;max-width:none}
+  #start.tests{overflow-y:auto!important;-webkit-overflow-scrolling:touch;justify-content:flex-start!important}
+  @media (orientation:landscape){ #start.tests .tbx,#start.tests #goDes,#start.tests #goA2,#start.tests #goA3,#start.tests #goA4{display:inline-block!important;margin:4px 3px 0!important} }
   #start.tests .tbx{display:block;margin:6px auto 0;background:none;border:1px solid rgba(255,255,255,.18);color:#9aa0ac;font:11px system-ui,sans-serif;padding:5px 10px;border-radius:6px}
   #start.tests #goDes{display:block;margin:6px auto 0;background:none;border:1px solid rgba(255,255,255,.18);color:#9aa0ac;font:11px system-ui,sans-serif;padding:5px 10px;border-radius:6px}
   #start #goA2,#start #goA3,#start #goA4{display:none}
@@ -152,7 +154,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.764</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.765</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
