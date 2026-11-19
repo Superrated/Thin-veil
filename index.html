@@ -1,9 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.759 -->
+<!-- Thin Veil · beta 0.760 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
+<meta name="description" content="A small, strange night walk with a worried fox. Plays in your browser; best on a phone, with headphones.">
+<meta property="og:title" content="Thin Veil">
+<meta property="og:description" content="A small, strange night walk with a worried fox. Plays in your browser; best on a phone, with headphones.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://raw.githubusercontent.com/Superrated/Thin-veil/main/icon-512.png">
+<meta name="twitter:card" content="summary">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -146,7 +152,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.759</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.760</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -169,6 +175,7 @@
     <p id="tvInstTip" style="display:none"></p>
     <p class="warn">Headphones recommended &nbsp;·&nbsp; Contains flashing lights</p>
     <p id="tvby">by Wim</p>
+    <p id="tvFlash" style="font:11px system-ui,sans-serif;color:#c9bfae;opacity:.45;margin:4px 0 0;letter-spacing:.04em;max-width:none">Contains flashing lights.</p>
     <button id="goDes">test: Burnt wood</button>
     <button id="goMorn" class="tbx">test: The morning</button>
     <button id="goWave" class="tbx">test: The wave</button>
@@ -3801,7 +3808,7 @@ function storyUpdate(dt){ if(!STY.on||!started) return; STY.t+=dt; stLinesUpdate
     // the prologue waits for the player: walk to the fire (the fox stays ahead of you, past it)
     if(!STY.flags.arr&&t>5&&Math.hypot(player.x,player.z)<3){ STY.flags.arr=1; STY.arrT=0; }
     if(!STY.flags.arr){ if(t>22) sayOnce('nudge','fox','Up. The fire is over here. It will not walk to you.'); return; }
-    STY.arrT+=dt; if(STY.arrT>1&&!STY.flags.p2){ STY.flags.p2=1; say('fox',"That's not the wind."); }
+    STY.arrT+=dt; if(STY.arrT>1&&!STY.flags.p2){ STY.flags.p2=1; }
     U.uLean.value=Math.min(1,STY.arrT*0.4);
     if(STY.arrT>5){ STY.stage='a1'; STY.t=0; stBuildAct1(); STY.fog=0.85; } return; }
   if(s.startsWith('a1')){ act1Update(dt); return; }
@@ -3844,7 +3851,7 @@ function act1Update(dt){ const s=STY.stage, t=STY.t; noteUpdate(dt); torchUpdate
   // a cue on the first lantern while it still has to be lit
   if(lanterns&&STY.flags.cab){ if(!STY.lanCue){ const m=new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.12,40,6),new THREE.MeshBasicMaterial({color:0xffc070,transparent:true,opacity:0.3,depthWrite:false,blending:THREE.AdditiveBlending,fog:false})); m.position.set(lanterns.pos[0],lanterns.pos[1]+20,lanterns.pos[2]); stG.add(m); STY.lanCue=m; } STY.lanCue.visible=lanterns.state==='dark'; STY.lanCue.material.opacity=0.2+0.14*Math.sin(time*3); }
   // keeper at the window, back turned
-  keeperWin.visible=false; if(!STY.flags.k1&&s==='a1'&&t>9&&STY.lines.length===0&&STY.busy<=0){ STY.flags.k1=1; say('fox',"There's a window. Out past the trees, with a light standing over it. On its own. No wall. No house. ...Don't go and look through it. ...You're going to go and look through it."); }
+  keeperWin.visible=false; if(!STY.flags.k1&&s==='a1'&&t>9&&STY.lines.length===0&&STY.busy<=0){ STY.flags.k1=1; say('fox',"There's a window out past the trees. No wall. No house. ...Don't go and look through it. ...You're going to."); }
   if(STY.flags.k1&&!STY.flags.cabOK&&STY.lines.length===0) STY.flags.cabOK=1; if(STY.flags.cabOK&&!STY.flags.cab){ STY.cabWait=(STY.cabWait||0)+dt; if(STY.cabWait>28&&STY.lines.length===0&&STY.busy<=0) sayOnce('k2','fox',"It's only a window. You'd have to go right up to the glass to see anything. So that's all right. Don't."); if(STY.cabWait>60&&STY.lines.length===0&&STY.busy<=0) sayOnce('k3','fox',"Go round the far side of it. Right up close. Look back through, the way we came. Not that I'm telling you."); }
   if(s==='a1b'&&t>4) sayPlace('light','fox',"That light? Don't. Lights are how things find you.");
   // the undecided cabin: two versions flicker until the lamp settles on one
@@ -3909,7 +3916,7 @@ function creepUpdate(dt){ if(leapUpdate(dt)) return; if(STY.flags.hard===1||STY.
   const inb=seen&&inBeam([c.position.x,c.position.y+1.2,c.position.z],60), hand=c.userData.hand;
   // the near miss: keep looking and he lifts a hand and stays a moment; look away and he is gone
   if(inb){ if(!c.userData.st) sayOnce('dl','fox',"Don't look. It only moves when you look away."); c.userData.st=(c.userData.st||0)+dt; if(hand) hand.visible=c.userData.st>0.35; hush(c.userData.st>0.35);
-    if(c.userData.st>0.35&&!STY.flags.wave){ STY.flags.wave=1; say('fox',"...Don't."); }
+    if(c.userData.st>0.35&&!STY.flags.wave){ STY.flags.wave=1; }
     if(c.userData.st>1.2){ c.userData.st=0; if(hand) hand.visible=false; hush(false); figLeap(0,0,true); } }
   else { hush(false); if(c.userData.st>0.25){ if(hand) hand.visible=false; figLeap(0,0,true); if(!STY.flags.fr){ STY.flags.fr=1; if(!STY.flags.wave) say('fox','There. Safe.'); } } c.userData.st=0; } }
 var TEAR=null;
@@ -4192,7 +4199,7 @@ function A2_mood(A,dt,flipping){ const ph=Math.min(3,A.ph), room=A.ph>=4, quiet=
   // the underside: you arrive in it the wrong way up, and it rights itself round you
   if(A.ph===1&&!flipping&&A.pt<16){ const k=1-smooth(2.5,15,A.pt); camera.rotation.z+=Math.PI*k; }
   // the horizon stands on end for a stretch of the third side, and drops back with a bang
-  if(A.ph===2&&A.f.chosen&&!A.f.hz&&!flipping){ A.f.hz=1; A.hzT=0.001; } if(A.hzT>0&&A.ph===2){ A.hzT+=dt; const t=A.hzT, k=t<11?smooth(0,11,t):(t<40?1:Math.max(0,1-(t-40)/0.35)); if(!flipping) camera.rotation.z+=k*Math.PI/2; if(t>13&&A2_done()) A2_once('hzs',"The horizon's fine. It has always gone up and down. Walk.");
+  if(A.ph===2&&A.f.chosen&&!A.f.hz&&!flipping){ A.f.hz=1; A.hzT=0.001; } if(A.hzT>0&&A.ph===2){ A.hzT+=dt; const t=A.hzT, k=t<11?smooth(0,11,t):(t<40?1:Math.max(0,1-(t-40)/0.35)); if(!flipping) camera.rotation.z+=k*Math.PI/2; if(t>13&&A2_done()) A2_once('hzs',"The horizon's fine. It does that. Walk.");
     if(t>40&&!A.f.hzb){ A.f.hzb=1; A2_snd('tom',0.4,0.7); A2_snd('lowbell',st12(-24),0.5); glitch=1; haptic(120); } if(t>41) A.hzT=0; } else if(A.ph!==2) A.hzT=0;
   // upside-down salt heaps hang over the Rehearsal
   if(A.ph===1&&!A.hp){ const N=16, g=new THREE.SphereGeometry(1,10,5,0,Math.PI*2,0,Math.PI/2); A.hp=new THREE.InstancedMesh(g,new THREE.MeshBasicMaterial({color:0xb5accb,fog:false,side:THREE.DoubleSide}),N); A.hp.frustumCulled=false; for(let i=0;i<N;i++){ const r=3+A3_h(i,3,1)*6, a=18+i*17, b=(A3_h(i,5,2)-0.5)*90; A2_m4.compose(A2_p3.set(A.px+A.ux*a-A.uz*b,0,A.pz+A.uz*a+A.ux*b),A2_q0.identity(),A2_s3.set(r,-r*0.55,r)); A.hp.setMatrixAt(i,A2_m4); } scene.add(A.hp); }
@@ -4458,7 +4465,7 @@ function A2_seq(A,dt){ A.seqT+=dt;
   const G=A.skyF, u=G.userData, Q=A.sq||(A.sq={st:0,t:0,dr:0,dn:0}), done=A2_done(); G.visible=Q.st<5; Q.t+=dt; if(Q.st<3){ const pAl=(A.lx-player.x)*A.ux+(A.lz-player.z)*A.uz; A.seqAl=Math.min(A.seqAl,Math.max(A2_NEAR-6,pAl-120)); G.position.set(A.lx-A.ux*A.seqAl,A.gy,A.lz-A.uz*A.seqAl); } else G.position.y=A.gy;
   if(Q.st===0){ if(!A.f.om0){ STY.lines=[]; STY.busy=0; } A2_once('om0',"A clock. No hands. That's it, then. We're out of time."); if(done) A2_once('sq0',"...Look up."); if(A.f.sq0&&Q.t>1&&done){ Q.st=1; Q.t=0; } }
   else if(Q.st===1){ Q.dr=Math.min(1,Q.t/6.5); Q.rr=Math.min(1,Math.max(0,(Q.t-5.5)/3.5)); if(Q.t>11){ Q.st=2; Q.t=0; A2_snd('lowbell',st12(-19),0.22); } }
-  else if(Q.st===2){ Q.dn=Q.t; if(Q.t>5) A2_once('sq2',"They're lining up. Stars don't line up."); if(Q.t>6&&A.f.sq2&&done){ Q.st=3; Q.t=0;
+  else if(Q.st===2){ Q.dn=Q.t; if(Q.t>5) A2_once('sq2',"They're lining up. Stars don't queue. I'd know."); if(Q.t>6&&A.f.sq2&&done){ Q.st=3; Q.t=0;
       const c=A.seqAl-7; A.gapC=c; A.crack.position.set(A.lx-A.ux*(c+7),A2_GY+0.03,A.lz-A.uz*(c+7)); A.crack.rotation.y=Math.atan2(A.ux,A.uz); A.f.seqDone=1; A.f['g1_0']=1; A.f['g2_0']=1; A.crack.visible=true; A.crackK=0; A.seam.visible=false; } }
   else if(Q.st===3){ if((A.crackK||0)>=1){ Q.st=4; Q.t=0; } }
   else if(Q.st===4){ if(Q.t>3.5) Q.st=5; }
@@ -4505,7 +4512,7 @@ function A2_voice(A,pt,done){ if(!done||A.flip>0) return; const ph=A.ph;
   VOICE.xt.n=['FROM VERY FAR OFF','FROM SOMEWHERE ELSE','NEARER NOW','RIGHT BEHIND YOU'][Math.min(3,ph)];
   if(ph===0&&pt>95&&!A.f.v0){ A.f.v0=1; say('xt',"...supper's on..."); say('fox','Wind. That was wind. Salt does that.',0.6); }
   if(ph===1&&(A.f.realDone||pt>130)&&!A.f.v1){ A.f.v1=1; say('xt',"Lamp's lit."); }
-  if(ph===2&&(A.mt||0)>30&&!A.f.v2){ A.f.v2=1; say('xt','Come when you can.'); say('fox','That was closer. Why was that closer?',0.6); }
+  if(ph===2&&(A.mt||0)>30&&!A.f.v2){ A.f.v2=1; say('xt','Come when you can.'); say('fox','That was closer. I\'m writing that down.',0.6); }
   if(ph===3&&(A.cageT||0)>3&&!A.f.v3){ A.f.v3=1; STY.lines=[]; STY.busy=0; say('xt',"Supper's cold."); haptic(40); A2_wave(A,0.6); } }
 // ---- build / stop ----
 function A2_build(){ if(A2) A2_stop(); gfox.scale.setScalar(1.45*0.93); const A={f:{},ph:0,pt:0,flip:0,swapped:0,hol:0,holK:-1,holOn:false,real:0,realOn:false,realT:0,stay:0,sit:0,best:1e9,stall:0,hints:0,hushT:0,hushK:0,shapeA:0,gy:A2_GY,roomT:0,outT:0,lookBack:0};
@@ -4636,7 +4643,7 @@ function A2_figUpdate(A,dt){ const F=A.fig, M=A.M; if(F.state==='off'){ F.g.visi
   if(F.state==='under'){ F.x=player.x+dx*1.25; F.z=player.z+dz*1.25; if(mv) F.ph+=dt*9;
     const look=player.pitch<-0.5&&A2_see(F.x,-0.9,F.z,0.75,0.85); if(look) F.lt+=dt; STY.gz=Math.max(STY.gz||0,F.lt/1.3);
     if(F.lt>1.3){ F.state='lead'; F.hand.visible=true; F.t=0; A.f.followed=1; A2_once('dl',"...Don't follow him."); A2_snd('lowbell',st12(-5),0.25); }
-    else if(F.t>24&&!look){ F.state='off'; F.g.visible=false; A.f.figGone=1; A2_snd('lowbell',st12(-24),0.4); A2_once('dg','There. Nothing under us. Safe.'); return; } }
+    else if(F.t>24&&!look){ F.state='off'; F.g.visible=false; A.f.figGone=1; A2_snd('lowbell',st12(-24),0.4); A2_once('dg','Nothing under us. My favourite amount.'); return; } }
   else if(F.state==='lead'){ // he walks ahead toward the real one, sole to sole with you, and waits when you stop
     if(F.t>4) F.hand.visible=false; const tx=player.x+dx*3.4, tz=player.z+dz*3.4, ex=tx-F.x, ez=tz-F.z, ed=Math.hypot(ex,ez);
     if(ed>0.15){ const s=Math.min(ed,5.2*dt); F.x+=ex/ed*s; F.z+=ez/ed*s; F.ph+=dt*9; } }
@@ -4663,7 +4670,7 @@ function A2_roomUpdate(A,dt){ const t=A.pt, done=A2_done(); if(t>9&&done&&!A.f.r
   if(t>3) A2_once('r1',"The kitchen again. Colder. The lamp in the window's lower than it was."); if(A.f.r1&&done&&t>8) A2_once('rck',"Twelve minutes to seven. It was twenty to an hour ago. I'm not arguing with a clock."); if(A.f.r1&&done&&t>12) A2_once('dbt',"That voice, out there. If it were somebody I knew... No. It does voices. Keep moving.");
   const nearT=Math.hypot(player.x-ROOM.table[0],player.z-ROOM.table[1])<2.6;
   if(!A.f.sup&&(nearT||t>60)){ A.f.sup=1; say('fox',"Laid for one, now. Someone's cleared a plate away. Don't read into it."); }
-  if(!A.f.sup&&t>26) A2_once('r3','The table. Go on. Look, then we leave.');
+  if(!A.f.sup&&t>26) A2_once('r3','The table. Look. Then we leave. I\'m counting.');
   if(A.f.sup&&done&&!A.f.win){ A.roomT+=dt; if(A.roomT>2.5){ A.f.win=1; say('fox','Nothing came. This time. Plenty of time. Keep moving.'); } }
   if(A.f.win){ ROOM.win.material.opacity=Math.min(1,ROOM.win.material.opacity+dt*0.5);
     if(done||A.outT>0){ if(A.outT===0){ blackEl.style.transition='none'; blackEl.style.background='#f5f3ee'; blackEl.style.opacity=0; blackEl.textContent=''; A.outT=0.001; }
@@ -4727,7 +4734,7 @@ function A2_update(dt){ const A=A2; if(!A) return; A.pt+=dt;
     if(pt>4) A2_once('k',"Darker. And the light's gone. What if there's more than one? What if we choose wrong?",0.2);
     if(A.f.k&&!A.f.manyOn&&(done||pt>16)){ A.f.manyOn=1; }
     if(M.shown>=M.n&&!A.f.chosen){ A.mt=(A.mt||0)+dt; const mt=A.mt;
-      if(mt>3&&done&&!A.f.dn){ A.f.dn=1; say('fox',"Don't look down."); F.state='under'; F.t=0; F.lt=0; }
+      if(mt>3&&done&&!A.f.dn){ A.f.dn=1; say('fox',"Don't look down. I tried it once."); F.state='under'; F.t=0; F.lt=0; }
       if(mt>20&&done&&A2_once('m','That one. The tall one. Obviously.')) M.foxAt=M.tall;
       if(mt>36&&done&&A2_once('n','Take your time. Plenty of time.')) A.f.outs=1; if(mt>50) A.f.outs=1;
       if(mt>46&&done) A2_once('idk',"I don't know the way. I've never known the way. Don't tell anyone.");
@@ -4746,11 +4753,11 @@ function A2_update(dt){ const A=A2; if(!A) return; A.pt+=dt;
     if(A.f.lie3&&!A.f.mute&&!A.f.cage&&done){ A.cnT-=dt; if(A.cnT<0){ A.cnT=8; say('fox',['One. Two. Three. Four.','Five. Six. Seven. Seven.','Seven. Eight. No. One. Two.','Four hundred and... one. Two.','One. One. One.'][A.cnI++%5]); } }
     if(pt>9&&!A.f.fu3){ A.f.fu3=1; A.fig.state='under'; A.fig.t=0; A.fig.lt=0; }   // he is on the other side again
     // turn round anyway: nothing is there
-    { let d=Math.atan2(-A.ux,-A.uz)-player.yaw; d=Math.abs(Math.atan2(Math.sin(d),Math.cos(d))); if(A.f.s&&d>2.3) A.lookBack+=dt; else A.lookBack=0; if(A.lookBack>1.6&&done&&!A.f.mute) A2_once('s2','...It was there a second ago.'); }
+    { let d=Math.atan2(-A.ux,-A.uz)-player.yaw; d=Math.abs(Math.atan2(Math.sin(d),Math.cos(d))); if(A.f.s&&d>2.3) A.lookBack+=dt; else A.lookBack=0; if(A.lookBack>1.6&&done&&!A.f.mute) A2_once('s2','...It was there. I counted it.'); }
     // the sky closes: the shapes come down round you like a cage. And stop. Nothing comes.
     if(dist<50&&!A.f.cage){ A.f.cage=1; A.f.sky=1; STY.lines=[]; STY.busy=0; say('fox','This is it. I told you. I told you.'); A2_snd('lowbell',st12(-24),0.7); if(sound.C) sound.jolt([player.x,1.6,player.z]); haptic(120); glitch=1; }
     if(A.f.cage){ A.blinkT=(A.blinkT===undefined?0:A.blinkT)+dt; if(A.blinkT>1.3) A.cage=Math.min(1,(A.cage||0)+dt/5); if(A.cage>=1) A.cageT=(A.cageT||0)+dt; }
-    if(dist<16&&!A.f.mute) A2_once('t','In. In! Shut it behind you.',0.2);
+    if(dist<16&&!A.f.mute) A2_once('t','In. In! Manners later.',0.2);
     if(dist<3.2||pt>240){ if(!A.blk0){ A.blk0=1; A.blkT=0; blackEl.style.background='#000'; blackEl.style.transition='opacity 0.7s ease'; blackEl.style.opacity=1; A2_snd('tom',0.6,0.5); } }
     if(A.blk0){ A.blkT+=dt; if(dist<2.2){ const k=2.2/Math.max(dist,0.01); player.x=A.lx-(A.lx-player.x)*k; player.z=A.lz-(A.lz-player.z)*k; } if(A.blkT>0.9){ A.blk=0.5; A2_roomEnter(A); return; } }
     else if(dist<2.2){ const k=2.2/Math.max(dist,0.01); player.x=A.lx-(A.lx-player.x)*k; player.z=A.lz-(A.lz-player.z)*k; }
@@ -4933,7 +4940,7 @@ function A3_myUpdate(A,dt){ const M=A.my, U=M.U; if(A.thread) A.thread.visible=f
   if(sound.C&&sound.out&&M.t>1&&!M.out){ if(!M.dr){ M.dr=[49,73.42,98].map((f,q)=>{ const x=A2_osc('sine',f,0,null); if(x) M.osc.push(x); return x; }); } if(M.n>=3&&!M.shm){ M.shm=[1568,1573].map(f=>{ const x=A2_osc('sine',f,0.0045,null); if(x) M.osc.push(x); return x; }); } const lv=[0.05,M.n>=2?0.03:0,M.n>=4?0.022:0], t=sound.C.currentTime; M.dr.forEach((x,q)=>{ if(x&&Math.abs((x.lv||0)-lv[q])>0.001){ x.lv=lv[q]; x.g.gain.setTargetAtTime(lv[q]*(M.fin>0?1.3:1),t,2.5); } }); }
   // a slow pulse, and what gets said
   { const T0=2.3, p0=M.bt%T0; M.bt+=dt; U.uBeat.value=M.n>=1&&!M.out?Math.exp(-(M.bt%T0)*2.6):0; if(M.bt%T0<p0&&M.n>=1&&!M.out&&sound.C&&sound.out){ if(!M.pl){ M.pl=A2_osc('sine',49,0,null); if(M.pl) M.osc.push(M.pl); } if(M.pl){ const t=sound.C.currentTime, g=M.pl.g.gain; g.setTargetAtTime(0.07*Math.min(1,0.25+K),t,0.02); g.setTargetAtTime(0,t+0.1,0.25); } } }
-  if(!M.out&&done){ if(M.t>4.5) A3_once('my1',"It's all one orchard under there. Always was. I planted the first one the year you were born. It did the rest itself.",0.6,'xt'); if(A.f.my1&&M.t>12&&M.n===0) A3_once('my0',"Stand still a minute. It's listening.",0.6,'xt');
+  if(!M.out&&done){ if(M.t>4.5) A3_once('my1',"It's all one orchard under there. Always was. I planted the first one the year you were born. It did the rest itself.",0.6,'xt'); if(A.f.my1&&M.t>12&&M.n===0) A3_once('my0',"Stand still. It's listening. So am I.",0.6,'xt');
     if(M.n>=1) A3_once('my2',"Mushrooms. Round your feet. Last time there was a ring of those I ended up in a burnt wood. ...Don't move, then.");
     if(M.n>=2) A3_once('my3',"The roots hold hands under there. Did you know that? A tree in the sun sends sugar to one in the shade.",0.6,'xt');
     if(M.n>=3) A3_once('my4',"The old ones feed the young ones. They don't ask. They just know who's short.",0.6,'xt');
@@ -5177,7 +5184,7 @@ function A3_roomUpdate(A,dt){ const t=A.pt, done=A3_done(); if(!(A.outT>0)&&fina
   if(t>3) A3_once('r1',"His kitchen. The lamp in the window's nearly out. The kettle's cold."); if(A.f.r1&&A3_done()&&t>8) A3_once('rck',"Five to seven. ...All night, and it has never once got to seven.");
   if(A.f.r1&&done) A3_once('r2',"He's gone out. At his age. In this. Looking for someone who's late.");
   const nearT=Math.hypot(player.x-ROOM.table[0],player.z-ROOM.table[1])<2.8; if(!A.f.r3&&A.f.r2&&done&&(nearT||t>40)){ A.f.r3=1; say('fox',"Table's bare. Nobody's eaten. I'm not saying anything. I'm saying it's late."); }
-  if(A.f.r2&&!A.f.r3&&t>22) A3_once('r2b','The table. Look. Then we go.');
+  if(A.f.r2&&!A.f.r3&&t>22) A3_once('r2b','The table. Look. Don\'t sit. Sitting\'s how it gets you.');
   if(A.f.r3&&done&&!A.f.win){ A.roomT+=dt; if(A.roomT>2.5){ A.f.win=1; say('fox','Nothing came. This time. Plenty of time. ...Keep moving.'); } }
   if(A.f.win){ ROOM.win.material.opacity=Math.min(1,ROOM.win.material.opacity+dt*0.5);
     if(done||A.outT>0){ if(A.outT===0){ blackEl.style.transition='none'; blackEl.style.background='#f5f3ee'; blackEl.style.opacity=0; blackEl.textContent=''; A.outT=0.001; }
@@ -5212,7 +5219,7 @@ function A3_update(dt){ const A=A3; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
     // him, young, at the far end of the row: he lifts a hand; however far you walk he is no nearer
     const Y=A.figYoung; if(Y.visible){ let dx=Y.position.x-player.x, dz=Y.position.z-player.z, d=Math.hypot(dx,dz)||1; if(d<A.yd){ Y.position.x=player.x+dx/d*A.yd; Y.position.z=player.z+dz/d*A.yd; } Y.rotation.y=Math.atan2(-dx,-dz); Y.userData.arm.visible=t>9&&t<40; Y.userData.arm.rotation.z=-0.35+0.25*Math.sin(time*3); if(close&&U3.uThawR.value<d) Y.visible=false; }
     if(t>5) A3_once('th1',"No. No, this isn't now. It isn't spring. Don't believe your feet."); if(t>15&&done) A3_once('th2',"Where are you? It's getting dark.",0.5,'xt'); if(t>24&&done) A3_once('th3',"That's him. Years ago. He's not waving at you. He's waving at then.");
-    if(t>40&&done) A3_once('th4','No time. There was never time for this.'); if(t>58) A3_once('th5',"Out. Out. It's a trick of the light. It's already winter. It is always already winter.",0.2);
+    if(t>40&&done) A3_once('th4','No time. Never time for blossom. Look anyway.'); if(t>58) A3_once('th5',"Out. Out. It's a trick of the light. It's already winter. It is always already winter.",0.2);
     if(close&&U3.uThawR.value<=0.01){ A.thawT=0; A.thaw=0; A.confT=4; A3_choirStop(A); A3_snd('swellDn',0.5,0.3); } }
   if(A.confT>0&&done){ A.confT-=dt; if(A.confT<=0) { say('fox',"I was right once. A long time ago. An evening just like that one. Warm. Nobody watching."); say('fox',"Somebody was late. I said: something's happened. They said: you worry too much. Sit down. Eat.",1.2); say('fox',"...Something had happened. A fire, that time. So now I'm early. For everything. So that nobody ever has to be told a thing I didn't see coming.",1.6); } }
   // ----- sky, light, air -----
@@ -5258,12 +5265,12 @@ function A3_update(dt){ const A=A3; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
     spots.forEach(([fs,lat,sd],i)=>{ if(!A.f['fg'+i]&&s>fs-46&&s<fs&&!A.serpT&&!A.thawT){ A.f['fg'+i]=1; const p=A3_pt(A,fs); O.position.set(p[0]-p[3]*lat*sd,A3_GY,p[1]+p[2]*lat*sd); O.visible=true; u.t=0; u.seen=0; u.arm.visible=true; A.figS=fs; } });
     if(O.visible&&!A.f.fun){ u.t+=dt; O.rotation.y=Math.atan2(player.x-O.position.x,player.z-O.position.z)+1.2; u.arm.rotation.z=-0.2+0.5*Math.sin(time*2.4); const d=Math.hypot(player.x-O.position.x,player.z-O.position.z), see=lookedAt([O.position.x,A3_GY+1.3,O.position.z],70);
       if(see){ u.seen+=dt; if(0) A3_once('fo'+A.figS,A.figS<300?"Him. From the house. The one who keeps the lamp lit. Out here, at his age, knocking the frost off the branches. Don't stare.":"Him again. Tying the thread. He's been ahead of us all night, tying it, so whoever is late can find the way."); }
-      if(see&&u.seen>0.2&&done) A3_once('fo'+A.figS,A.figS<300?"Him. From the house. The one who keeps the lamp lit. ...Gone. The moment you looked. He left his lantern.":"Him again. Tying the thread, so whoever is late can find the way. ...Gone again. He doesn't stay to be looked at."); if(d<15||u.seen>0.22||u.t>40){ { const ln=A.lant[A.figS<300?0:1]; ln.position.set(O.position.x,A3_GY,O.position.z); ln.visible=true; } O.visible=false; if(u.seen>1&&d>=15&&done) A3_once('fg_g','Gone. Good. One less thing to lose.'); } } }
+      if(see&&u.seen>0.2&&done) A3_once('fo'+A.figS,A.figS<300?"Him. From the house. The one who keeps the lamp lit. ...Gone. The moment you looked. He left his lantern.":"Him again. Tying the thread, so whoever is late can find the way. ...Gone again. He doesn't stay to be looked at."); if(d<15||u.seen>0.22||u.t>40){ { const ln=A.lant[A.figS<300?0:1]; ln.position.set(O.position.x,A3_GY,O.position.z); ln.visible=true; } O.visible=false; if(u.seen>1&&d>=15&&done) A3_once('fg_g','Gone. Good. One less to worry about. ...I\'ll find another.'); } } }
   // ----- lines along the way -----
   if(pt>4) A3_once('a','An orchard. In flower. In frost. Both at once. That is not how it goes.'); if(s>330&&done&&!A.thawT) A3_once('sml',"I'm smaller than I was. Have you noticed? Don't say. I've noticed.");
   if(s>70&&s<120&&done&&A.f.b) A3_once('cb2',"No flamingos here. I looked. ...I didn't want to stop for them. I want that understood.");
   if(A.f.a&&done) A3_once('b',"A thread. Red. Tied tree to tree. And footprints by it, and a stick's mark. Somebody old went ahead of us, tying it. ...No hurry. It is too late for hurry.");
-  if(s>40&&done&&!A.serpT) A3_once('c',"Don't look behind. The rows don't keep still when you aren't looking."); if(A.f.turned>=1&&done&&A.f.c) A3_once('c2','They moved. While you turned. You saw the last of it. I told you not to turn.'); if(A.f.turned>=3&&done&&s>300) A3_once('c3',"Don't count the rows. The number changes.");
+  if(s>40&&done&&!A.serpT) A3_once('c',"Don't look behind. The rows don't keep still when you aren't looking."); if(A.f.turned>=1&&done&&A.f.c) A3_once('c2','They moved. While you turned. You saw the last of it. I told you not to turn.'); if(A.f.turned>=3&&done&&s>300) A3_once('c3',"Don't count the rows. They cheat. I checked.");
   if(s>150&&done&&!A.serpT) A3_once('x0',"It's late. Where have you got to?",0.5,'xt'); if(s>236&&done&&!A.tdT) A3_once('x1','Are you there?',0.5,'xt'); if(A.f.x1&&done) A3_once('x1f','Wind. In the spoons. Nobody said anything.'); if(s>612&&done&&!A.serpT&&dF>75) A3_once('x2',"I've put the kettle on twice.",0.5,'xt');
   if(s>452&&done&&!A.f.thaw) A3_once('d',"These petals. They've been coming down for years. They never get to the ground.");
   // ----- the funeral -----
@@ -5290,7 +5297,7 @@ function A3_update(dt){ const A=A3; if(!A) return; A.pt+=dt; ringArm=0; coatFig.
     // the trees go; the chairs go on, row after row, to the edge of everything
     A.gone=smooth(2,9,t); A.chairR=15+Math.pow(Math.max(0,t-2),2.1)*3.2;
     const hl=A.hyLen||24; if(t>hl&&!A.f.stopped){ A.f.stopped=1; A.peakT=0.001; A3_hymnStop(A); hush(true); A3_layer(A,6); haptic(120); }
-    if(A.peakT>0){ A.peakT+=dt; if(A.peakT>4) A3_once('pk1','The spoons have stopped.',0.2); if(A.peakT>9&&done) A3_once('pk2','Please. Where are you?',0.4,'xt');
+    if(A.peakT>0){ A.peakT+=dt; if(A.peakT>4) A3_once('pk1','The spoons have stopped. Hm. I don\'t like hm.',0.2); if(A.peakT>9&&done) A3_once('pk2','Please. Where are you?',0.4,'xt');
       if(A.peakT>15&&done){ hush(false); A3_layer(A,0); A.peakT=0; A.f.up=1; A.upT=0; say('fox','...Nothing came. This time. He is alive. He is out here somewhere being alive, and I had him buried by supper.'); } } }
   if(A.f.up){ if(!A.lh3.visible){ A.lh3.visible=true; haptic(80); lampTone(0.07); } if(!A.bm3){ const g=new THREE.PlaneGeometry(150,1.5); g.translate(75,0,0); A.bm3=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:0xffc070,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending,fog:false,side:THREE.DoubleSide})); const g2=new THREE.Mesh(g,A.bm3.material); g2.rotation.x=Math.PI/2; A.bm3.add(g2); A.bm3.position.y=13; A.bm3.frustumCulled=g2.frustumCulled=false; A.lh3.add(A.bm3); } A.bm3.rotation.y+=dt*0.2; A.bm3.material.opacity=0.11*A.lhR; if(dEnd<150){ A.fallM=2; A.fallT=6; } if(dEnd<95&&done) A3_once('fw9',"I can see you now. Take your time. ...No. Don't. Come on.",0.5,'xt'); A.lhR=Math.min(1,A.lhR+dt/10); A.lh3.position.y=A3_GY-17*(1-smooth(0,1,A.lhR)); A.lh3.userData.glow.scale.setScalar(Math.max(4,dEnd*0.05)); if(A.lhR>0.5&&done) A3_once('lhup',"...There. It's come up out of the ground. The light. It was under us the whole time.");
     A.upT+=dt; A.sit=Math.max(0,A.sit-dt*0.6); A.gone=Math.max(0,A.gone-dt*0.12); A.chairR=Math.max(15,A.chairR-dt*Math.max(30,A.chairR*0.5)); if(A.upT>14&&done) A3_once('g1','Up. The thread goes on. To the door at the foot of it. Go.'); }
@@ -6030,7 +6037,7 @@ function A4_update(dt){ const A=A4; if(!A) return; if(typeof mists!=='undefined'
     { A.torU.uT.value=time; if(!A.tors){ A.tors=[0,1,2,3,4,5,6,7,8,9].map(k=>{ const m=k===0?A.tor:A.tor.clone(); if(k) G.add(m); m.visible=false; const sp=[...Array(MOBILE?6:12)].map((_,i,a)=>{ const f=fl(5+Math.random()*5); f.userData.h0=i/a.length; return f; }); return {m,sp,on:0,done:0}; }); A.tor2=[A.tor.clone(),A.tor.clone()]; A.tor2.forEach(t=>{ t.visible=false; G.add(t); }); }
       const cues=[0.25,0.33,0.4,0.49,0.56,0.67,0.74,0.84,0.9,0.93], FAR=7; let pull=0;
       A.tors.forEach((T,k)=>{ if(false&&F>0.5&&B.st==='on'&&!T.done&&pB>=cues[k]&&pB<(k<FAR?0.8:1)){ T.done=1; T.on=1; T.t=0; const sd=k%2?-1:1, far=k>=FAR; T.far=far; const al=far?320+(k%3)*60:230+(k%4)*20, la=(far?(k%2?-1:1)*(220+(k%3)*40):sd*(60+14*(k%4))); T.x=A.bx+fw[0]*al+rt[0]*la; T.z=A.bz+fw[1]*al+rt[1]*la; T.vx=far?0:-rt[0]*sd*(7+(k%4))-fw[0]*5; T.vz=far?0:-rt[1]*sd*(7+(k%4))-fw[1]*5; T.S=far?7:(k===0?5:4);
-          A4_snd('gust',0.25,0.9); A4_snd('tom',0.25,0.9); haptic(100); A4_setpiece(A,T.x,70*T.S/2.6,T.z,2.6); { const sdw=((T.x-A.bx)*rt[0]+(T.z-A.bz)*rt[1])>0?'right':'left'; if(k>=2&&k!==FAR&&done){ STY.lines=[]; STY.busy=0; say('fox',["There. THERE. On the "+sdw+". Another one.","Look— "+sdw+". It's walking at us.",""+sdw[0].toUpperCase()+sdw.slice(1)+"! Don't look at it. LOOK at it. Steer!","It's bigger. Why is every one bigger."][k%4],0.1); } } if(k===0){ STY.lines=[]; STY.busy=0; say('fox',"What is that. WHAT is that. ...It's standing up. The fire's standing up.",0.2); } if(k===1&&done) A4_once('tor3',"Another one. ...There's another one. They're walking. Fires don't walk.",0.3); if(k===FAR&&done) A4_once('tor4',"All round us. ...They're all round us now.",0.3); }
+          A4_snd('gust',0.25,0.9); A4_snd('tom',0.25,0.9); haptic(100); A4_setpiece(A,T.x,70*T.S/2.6,T.z,2.6); { const sdw=((T.x-A.bx)*rt[0]+(T.z-A.bz)*rt[1])>0?'right':'left'; if(k>=2&&k!==FAR&&done){ STY.lines=[]; STY.busy=0; say('fox',["There. THERE. On the "+sdw+". Another one.","Look— "+sdw+". It's walking at us.",""+sdw[0].toUpperCase()+sdw.slice(1)+"! Don't look at it. LOOK at it. Steer!","It's bigger. Why is every one bigger."][k%4],0.1); } } if(k===0){ STY.lines=[]; STY.busy=0; say('fox',"What is that. WHAT is that. ...It's standing up. The fire's standing up.",0.2); } if(k===1&&done) A4_once('tor3',"Another one. ...There's another one. They're walking. Fires don't walk.",0.3); if(k===FAR&&done) A4_once('tor4',"All round us. ...Note: I said fire.",0.3); }
         if(!T.on) return; T.t+=dt; T.x+=T.vx*dt; T.z+=T.vz*dt; const gy=A4_wave(T.x,T.z,A.st,A.amp)-1, grow=Math.min(1,T.t/2.5);
         T.m.visible=true; T.m.position.set(T.x,gy,T.z); T.m.scale.set(T.S*grow,T.S*0.96*grow,T.S*grow);
         if(k===0){ const merge=Math.max(0,1-T.t/9); A.tor2.forEach((t,j)=>{ const a=time*0.9+j*Math.PI, r=70*merge; t.visible=merge>0.02; t.position.set(T.x+Math.sin(a)*r,gy,T.z+Math.cos(a)*r); t.scale.set(1.6*grow,1.9*grow,1.6*grow); }); }
@@ -6363,7 +6370,7 @@ function A4_update(dt){ const A=A4; if(!A) return; if(typeof mists!=='undefined'
   // the look back: once, in the worst of it, the camera turns and shows you the wave
   { const B=A.brn||{st:'off'}, burning=B.st==='on'&&A.fire>0.5, pB=A.pB||0, S2=A.surge, rdt=dt/(A.tsc||1);
     if(A.wvcReq&&!A.wvc&&!A.nmc&&A.phase==='sail'){ A.wvcW=(A.wvcW||0)+rdt; STY.lines=STY.lines.filter(l=>l[0]!=='fox'); A.wvcS=done?(A.wvcS||0)+rdt:0; } if(A.wvcReq&&!A.wvc&&!A.nmc&&A.phase==='sail'&&(A.wvcS>1.2||A.wvcW>9)){ A.wvcReq=0; A.f.wvc=1; A.wvc={t:0}; S2.st='hang'; S2.t=0; A4_bars(1); A4_braam(A,0.6,0.3); A.ltT=0.001; A.dutchT=-0.08; haptic([60,80,60]); }
-    if(A.wvc){ const W=A.wvc; W.t+=rdt; const into=Math.min(1,W.t/1.1), out=Math.max(0,1-Math.max(0,W.t-5.4)/1.0); S2.st='hang'; A.camX=into*out*(1-0.4*smooth(1.2,6,W.t)); if(W.t>1.3&&!W.s1){ W.s1=1; STY.lines=[]; STY.busy=0; say('fox',"Don't look behind us.",0.1); } if(W.t>3.4&&!W.s2){ W.s2=1; say('fox',"...There's a wave behind us. There wasn't a wave.",0.2); } S2.H+=(130-S2.H)*Math.min(1,rdt*1.6); S2.d+=(400-S2.d)*Math.min(1,rdt*3); if(A.wsk) A.wsk.visible=false; if(A.spl) A.spl.visible=false; A.fovK=0.7*into*out; A.camLow=0; 
+    if(A.wvc){ const W=A.wvc; W.t+=rdt; const into=Math.min(1,W.t/1.1), out=Math.max(0,1-Math.max(0,W.t-5.4)/1.0); S2.st='hang'; A.camX=into*out*(1-0.4*smooth(1.2,6,W.t)); if(W.t>1.3&&!W.s1){ W.s1=1; STY.lines=[]; STY.busy=0; say('fox',"Don't look back. I'm doing it for both of us.",0.1); } if(W.t>3.4&&!W.s2){ W.s2=1; say('fox',"...There's a wave behind us. There wasn't a wave.",0.2); } S2.H+=(130-S2.H)*Math.min(1,rdt*1.6); S2.d+=(400-S2.d)*Math.min(1,rdt*3); if(A.wsk) A.wsk.visible=false; if(A.spl) A.spl.visible=false; A.fovK=0.7*into*out; A.camLow=0; 
       A.tsc=Math.min(A.tsc||1,1-0.62*into*out); const gx=A.bx, gz=A.bz+S2.d, gy=S2.H*0.2; { const vx=A.bx-gx, vz=A.bz-gz, vl=Math.hypot(vx,vz)||1; A.camXv=[vx/vl,vz/vl]; } A.lookY=wrapA(Math.atan2(-(gx-camera.position.x),-(gz-camera.position.z))-player.yaw); A.lookP=0.27-(player.pitch||0); A.lookK=into*out; A.dutchT=-0.12*out;
       for(const [tt,key] of [[2.0,'l2'],[3.5,'l3'],[4.7,'l4']]){ if(W.t>tt&&!W[key]){ W[key]=1; A.ltT=0.001; flash=Math.max(flash,0.42); W.sil=0.28; A4_snd('tom',0.22,0.9); A4_snd('hiss',0.3,0.4); haptic(60); } } if(W.t>6.6){ A4_bars(0); A.wvc=null; A.wvEnd=time; A.fovK=0; A.camLow=0; A.camX=0; } } }
   // the fire answers your speed: the clear water around you opens when you fly, and shrinks when you dawdle
@@ -6728,7 +6735,7 @@ function A4_update(dt){ const A=A4; if(!A) return; if(typeof mists!=='undefined'
       if(t>9.4){ A.tube=1; A.tubeT=0; mp.y=0; STY.lines=[]; STY.busy=0; A.sea.visible=false; A.gw.visible=false; A.wake.visible=false; A.spray.visible=false; A.house.visible=false; A.road.forEach(r=>{ r.visible=false; }); A.whale.visible=false; A.obs.forEach(o=>{ o.on=0; o.g.visible=false; }); A.walls.forEach(w=>{ w.on=0; w.g.visible=false; }); A.dem.forEach(d=>{ d.visible=false; }); A.fz1.visible=A.fz2.visible=false; A.sailF.forEach(f=>{ f.visible=false; }); A.burnOn=0; U4.uGu.value.w=0; A.gu.on=0; A.tun.visible=true; if(A.bus) A.bus.gain.setTargetAtTime(0.03,sound.C.currentTime,0.3); A.thIn=A4_theme(A,2,0.1); glitch=0; } }
     else { A.tubeT+=dt; const T=A.tun, tt=A.tubeT; T.position.set(A.bx,A.by+1.2,A.bz); T.rotation.y=A.h; T.rotation.z=tt*0.05; A.tunU.uT.value=tt*(1-0.5*smooth(8,14,tt)); if(A.tun.children[1]){ const wz=-56+40*smooth(10,17.5,tt); A.tun.children[1].position.z=wz; A.tun.children[2].position.z=wz+0.1; A.tun.children[3].position.z=wz+0.1; A.tun.children[1].scale.setScalar(1+9*smooth(10,17.8,tt)); A.tun.children[2].material.opacity=1; A.tun.children[2].visible=A.tun.children[3].visible=tt<16.5; } A.tunU.uA.value=smooth(0,2.5,tt); A.tunU.uEnd.value=smooth(8,17.8,tt); if(!A.tunG){ A.tunG=1; const w=A.tun.children[1]; w.geometry=new THREE.PlaneGeometry(6,6); w.material=new THREE.MeshBasicMaterial({map:softTex(255,255,255),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,fog:false}); A.tunP.material.color.setHex(0xcfefff); A.tunP.material.size=MOBILE?5:4; } { const P=A.tunP.geometry.attributes.position; for(let i=0;i<P.count;i++){ let y=P.getY(i)+dt*(0.35+(i%3)*0.2); if(y>4.5) y=-4.5; P.setY(i,y); } } A.road.forEach(r=>{ r.visible=false; }); A.house.visible=false; A.eyeM.forEach(e=>{ e.visible=false; }); A.mouth.visible=false; A.rainL.visible=false;
       { const P=A.tunP.geometry.attributes.position; for(let i=0;i<P.count;i++){ let z=P.getZ(i)+dt*(1.2+(i%5)*0.5)*(1-0.75*smooth(8,14,tt)); if(z>12) z-=50; P.setZ(i,z); } P.needsUpdate=true; }
-      if(tt>3.5) A4_once('tb1',"...Oh."); if(tt>7&&A4_done()) A4_once('tb2',"It's quiet in here. Nobody said it would be quiet."); if(tt>10.5&&A4_done()) A4_once('tb3',"That's his window. Through the water. Look.");
+      if(tt>3.5) A4_once('tb1',"...Oh."); if(tt>7&&A4_done()) A4_once('tb2',"It's quiet. I never warned you about quiet."); if(tt>10.5&&A4_done()) A4_once('tb3',"That's his window. Through the water. Look.");
       if(tt>13.5&&A4_done()) A4_once('tb4',"...He's humming. Can you hear? In the water. He's humming it.",0.6); if(tt>18){ A.f.land=1; if(sound.C){ if(A.bus) A.bus.gain.setTargetAtTime(0,sound.C.currentTime,0.05); } A.landT=0; blackEl.style.background='#ffffff'; blackEl.style.transition='opacity 1.4s ease'; blackEl.style.opacity=1; A4_snd('hiss',0.4,0.9); A4_snd('tom',0.5,0.7); haptic(250); } } }
   if(A.f.land){ A.landT+=dt; if(A.landT>1.6&&A.phase==='sail'){ A.phase='door'; A.doorT=0; A.tun.visible=false; A.tube=0; A.sea.visible=true; A.gw.visible=true; A.gw.material.uniforms.uFall.value=0; A.gw.material.uniforms.uBrk.value=0; A.house.visible=true; A.hPil.visible=false; if(A.bus) A.bus.gain.setTargetAtTime(1,sound.C.currentTime+1.4,2.2); A.hornWake=1; const H=A.house; H.position.set(A.bx,0.4,A.bz-30); A.hFar.visible=false; A.hNear.visible=true; A.hNear.scale.setScalar(1); A.hGlow.scale.setScalar(4); A.hGlow.position.set(1.9,2.6,3.4); A.hGlow.material.opacity=0.5;
       B.position.set(H.position.x+6,-0.3,H.position.z+16); B.rotation.set(0.12,-0.9,1.05); A.rig.rotation.y=0.2; A.arm.visible=false; A.bowW.visible=false; player.x=H.position.x+0.5; player.z=H.position.z+15; player.yaw=0.12; player.pitch=0.03; STY.fallY=H.position.y+0.1; A.gw.position.set(H.position.x,-2,H.position.z+150); A.fleet.forEach(b=>{ b.visible=false; }); A.eyeM.forEach(e=>{ e.visible=false; }); A.eU.uA.value=0; finalU.uDist.value=0; finalU.uSplit.value=0; finalU.uWc2.value.set(0,0,0,0); mp.z=0; STY.lines=[]; STY.busy=0;
@@ -6854,8 +6861,8 @@ function desUpdate(dt){ if(!DES) return; const on=STY.stage==='a1des'; DES.g.vis
     const swg=Math.sin(time*2.3)*(walking?0.13:0.03), up=!walking&&D.himStill>2.5?0.45:0; { const sa=Math.sin(time*(walking?2.2:1.4))*(walking?0.2:0.07), lx=Math.sin(sa)*0.45, ly=2.6-Math.cos(sa)*0.45; D.lg.position.set(lx,ly,0); D.lb.position.set(lx,ly,0); D.lb.rotation.z=sa; if(!D.lbS){ D.lbS=1; D.lb.scale.setScalar(1.6); } } const see=inBeam([D.himP[0],H.position.y+1.3,D.himP[1]],90); D.lg.scale.setScalar(9*(0.88+0.1*Math.sin(time*9)+0.05*Math.sin(time*21))); D.lg.material.opacity=1;
     if(D.off>9||D.himStill>9){ D.callT=(D.callT===undefined?2:D.callT)-dt; if(D.callT<0){ D.callT=9+Math.random()*4; const hp=[D.himP[0],H.position.y+1.6,D.himP[1]]; if(sound.C){ sound.play('glass',sound.C.currentTime,1.1,0.5,true,{sfx:true,pos:hp,ref:14}); sound.play('glass',sound.C.currentTime+0.35,0.9,0.4,true,{sfx:true,pos:hp,ref:14}); } if(quiet){ VOICE.xt.n='FROM THE LANTERN'; say('xt',["Hello?","This way.","Are you out here?","Mind the roots."][D.callN=((D.callN||0)+1)%4]); } } } else D.callT=2;
     if(lookedAt([D.himP[0],H.position.y+1.3,D.himP[1]],90)&&quiet) sayOnce('d_h1','fox',"A lantern. On its own. Nobody holding it. ...It's the only thing in here that knows the way. Behind it. Well behind.");
-    D.himT+=dt; if(D.himT>26&&quiet&&!STY.flags.d_c1){ STY.flags.d_c1=1; VOICE.xt.n='AHEAD, CALLING'; say('xt','Hello?'); say('fox',"Don't answer. It does voices.",0.6); } if(D.himT>60&&quiet&&!STY.flags.d_c2){ STY.flags.d_c2=1; VOICE.xt.n='AHEAD, CALLING'; say('xt','Are you out here?'); }
-    if(see) D.seen+=dt; { const dl=Math.hypot(D.himP[0]-player.x,D.himP[1]-player.z); D.lostL=(dl>34&&!see)?(D.lostL||0)+dt:0; if(D.lostL>8&&quiet){ D.lostL=0; say('fox',["The light. Where's the light? ...Behind us. Turn round.","We've lost the lantern. Find the lantern. It's the only thing that knows the way.","Not that way. The light went the other way."][D.lln=((D.lln||0)+1)%3]); } } if(up&&see&&D.seen>3&&quiet) sayOnce('d_h2','fox',"It's stopped. It's waiting for us. Lanterns don't wait. ...Don't think about that.");
+    D.himT+=dt; if(D.himT>26&&quiet&&!STY.flags.d_c1){ STY.flags.d_c1=1; VOICE.xt.n='AHEAD, CALLING'; say('xt','Hello?'); say('fox',"Don't answer. It does voices. Mine's better.",0.6); } if(D.himT>60&&quiet&&!STY.flags.d_c2){ STY.flags.d_c2=1; VOICE.xt.n='AHEAD, CALLING'; say('xt','Are you out here?'); }
+    if(see) D.seen+=dt; { const dl=Math.hypot(D.himP[0]-player.x,D.himP[1]-player.z); D.lostL=(dl>34&&!see)?(D.lostL||0)+dt:0; if(D.lostL>8&&quiet){ D.lostL=0; say('fox',["The light. Where's the light? ...Behind us. Turn round.","We've lost the lantern. Find the lantern. It's the only thing that knows the way.","Not that way. The light went the other way."][D.lln=((D.lln||0)+1)%3]); } } if(up&&see&&D.seen>3&&quiet) sayOnce('d_h2','fox',"It's waiting. Lanterns don't wait. Rude.");
     if(D.s>D.len-26&&!D.inHouse){ D.inHouse=1; VOICE.xt.n='FROM SOMEWHERE ELSE'; STY.lines=[]; STY.busy=0; say('fox',"It's gone in. Into the house. ...It's waiting on the table."); } if(D.inHouse){ D.himP[0]+=(D.T[0]-D.himP[0])*Math.min(1,dt*0.8); D.himP[1]+=(D.T[2]-D.himP[1])*Math.min(1,dt*0.8); H.position.y=D.T[1]-1.6; } }
   // off the trail: the fox gloats, and something glints where the trail is
   D.back.visible=D.off>15; if(D.back.visible){ D.back.position.set(D.near[0],terrH(D.near[0],D.near[1])+13,D.near[1]); D.back.material.opacity=0.22+0.12*Math.sin(time*3); if(!D.lostOn){ D.lostOn=1; const GL=["Told you. Lost. I'm never wrong about lost.","Wrong way. I'd say sorry. I'd be lying.","Lost again. The trail's behind you. It usually is."]; say('fox',GL[D.gl++%3]); } } else if(D.off<6) D.lostOn=0;
@@ -7219,7 +7226,7 @@ function mornUpdate(dt){ const M=MORN; if(!M) return; M.t+=dt; const t=M.t, C=so
     { const sh=M.cloth[0], sp=new THREE.Vector3(); sh.getWorldPosition(sp); sp.y-=2000; const se=-0.035+0.4*su, sd=new THREE.Vector3(Math.sin(0.35)*Math.cos(se),Math.sin(se),-Math.cos(0.35)*Math.cos(se)), v=sp.clone().sub(new THREE.Vector3(M.camP.x,M.camP.y-2000,M.camP.z)).normalize(), back=Math.pow(Math.max(0,v.dot(sd)),2)*smooth(0.1,0.4,su); sh.material.color.setRGB(0.88+0.12*back,0.88+0.1*back,0.85+0.02*back).multiplyScalar(1+0.35*back+0.1*gs); } }
   // the boat breathes on the water
   M.boat.position.y=0.06*Math.sin(t*0.9); M.boat.rotation.z=0.03*Math.sin(t*0.7); M.boat.rotation.x=0.015*Math.sin(t*0.55); if(M.bA&&M.bA.pen) M.bA.pen.rotation.y=0.6*Math.sin(t*1.7)+0.3*Math.sin(t*3.1); if(M.bA&&M.bA.main&&((M.sailT=(M.sailT||0)+dt)>0.1)){ M.sailT=0; try{ A4_sailSet(M.bA.main.geometry,7,[0,3.15,0.1],[0,8.2,0.1],[0,3.15,3.0],0.1+0.04*Math.sin(t*0.6),0.25,t); }catch(e){} }
-  if(M.rB){ M.rB.position.set(M.boat.position.x,-M.boat.position.y,M.boat.position.z); M.rB.rotation.set(-M.boat.rotation.x,M.boat.rotation.y,-M.boat.rotation.z); }
+  if(M.rB){ M.rB.position.set(M.boat.position.x,-M.boat.position.y,M.boat.position.z); M.rB.rotation.set(-M.boat.rotation.x,M.boat.rotation.y,-M.boat.rotation.z); M.rB.rotation.z+=0.03*Math.sin(t*1.9)+0.015*Math.sin(t*3.7); M.rB.position.x+=0.07*Math.sin(t*1.3); M.rB.scale.x=1+0.035*Math.sin(t*2.3); M.rB.scale.z=1+0.03*Math.sin(t*1.7+1); }
   { const su=M.U.uSun.value; if(su>0.5&&!M.f.lampOut){ M.lampT=(M.lampT||0)+dt; const fl=M.lampT<1.2?(Math.sin(M.lampT*40)>0.2?1:0.4):0; M.win.material.color.setHex(fl>0.5?0xf3d79a:0x8fa6b4); if(M.lampT>1.2) M.f.lampOut=1; } }
   if(M.U.uSun.value>0.52&&!M.storm){ M.stormPts=mornPts(G,MOBILE?140:240,M.petTex,0.2,false); M.storm=[...Array(MOBILE?140:240)].map((_,i)=>{ const T=M.TP[i%M.TP.length]; const s=M.stormPts.make([0xf6b7c6,0xfbd3dc,0xffffff,0xf8c0d0][i%4]); return {s,x:T[0]+(Math.random()-0.5)*4,y:mornH(T[0],T[1])+2+Math.random()*4,z:T[1]+(Math.random()-0.5)*4,vx:(Math.random()-0.5)*2,vz:-(5+Math.random()*4),t:-Math.random()*2.5,ph:Math.random()*6}; }); haptic([30,40,30]); }
   if(M.storm){ let alive=0; M.storm.forEach(q=>{ q.t+=dt; if(q.t<0){ q.s.visible=false; return; } if(q.t>13){ q.s.visible=false; return; } alive++; q.s.visible=true; const sw=Math.sin(q.t*1.7+q.ph); q.x+=(q.vx+sw*2.2)*dt; q.z+=q.vz*dt*(1-q.t/18); q.y+=(Math.cos(q.t*2.3+q.ph)*1.4+0.5)*dt; q.s.position.set(q.x,q.y,q.z); q.s.material.rotation=q.t*4+q.ph; q.s.material.opacity=Math.min(1,(13-q.t)/2); }); if(!alive&&M.storm.every(q=>q.t>13)) M.storm.done=1; M.stormPts.sync(); }
@@ -8321,7 +8328,7 @@ addEventListener('resize',()=>{ renderer.setSize(innerWidth,innerHeight); makeTa
 { let wl=null; const req=async()=>{ try{ if('wakeLock' in navigator&&document.visibilityState==='visible'&&started&&(!wl||wl.released)) wl=await navigator.wakeLock.request('screen'); }catch(e){} };
   let wasOn=false; document.addEventListener('visibilitychange',()=>{ try{ const C=sound&&sound.C; if(document.visibilityState==='hidden'){ if(C&&C.state==='running'){ wasOn=true; C.suspend(); } } else { if(C&&wasOn){ wasOn=false; C.resume(); } req(); } }catch(e){} });
   setInterval(req,5000); }
-{ const NAMES={a2:['II','The Salt Mirror'],a3:['III','The Frozen Orchard'],a4:['IV','His Boat']}; let act='', pend=null, card=null;
+{ const NAMES={a1:['I','The Thin Veil'],a2:['II','The Salt Mirror'],a3:['III','The Frozen Orchard'],a4:['IV','His Boat']}; let act='', pend=null, card=null;
   const mk=()=>{ const e=document.createElement('div'); e.style.cssText='position:fixed;left:50%;top:30%;transform:translate(-50%,-50%);text-align:center;color:#f6efe2;opacity:0;transition:opacity 2.5s ease;pointer-events:none;z-index:30;text-shadow:0 0 14px rgba(0,0,0,.55),0 1px 2px rgba(0,0,0,.6);white-space:nowrap'; document.body.appendChild(e); return e; };
   setInterval(()=>{ try{
     if(!TVDEV){ const st=document.getElementById('start'); if(st&&st.classList.contains('tests')) st.classList.remove('tests'); const b=document.getElementById('tvDevBtn'); if(b) b.style.visibility='hidden'; if(!window.__toA4){ const d=document.getElementById('a4dbg'); if(d) d.remove(); } if(dev&&dev.on){ dev.on=false; dev.el.style.display='none'; dev.bar.style.display='none'; } }
