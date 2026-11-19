@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.752 -->
+<!-- Thin Veil · beta 0.753 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
@@ -146,7 +146,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.752</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.753</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -7132,6 +7132,7 @@ function mornEnter(){ STY.stage='morn'; STY.t=0; STY.lines=[]; STY.busy=99; cons
     e.innerHTML='<div style="text-shadow:0 0 .6px rgba(60,60,60,.7)">'+wob("Kettle's on.")+'<br>'+wob("The day's yours, and they")+'<br>'+wob("don't make more.")+'<br>'+wob("Go and be unreasonable")+'<br>'+wob("with it.")+'<div style="margin-top:10px;font-size:19px;transform:rotate(-1.5deg)">'+wob("P.S. Window's open. Mind the step.")+'</div></div>';
     document.body.appendChild(e); M.noteEl=e; }
   // the sound: water on the sand, birds, gulls, and a small tune for a new day
+  try{ mornExtras3(M,G); }catch(e){ console.warn('mornExtras3',e); }
   try{ mornExtras2(M,G); }catch(e){ console.warn('mornExtras2',e); }
   try{ mornExtras(M,G); }catch(e){ console.warn('mornExtras',e); }
   if(sound.C){ const C=sound.C, out=C.createGain(); out.gain.value=0; out.connect(C.destination); out.gain.setTargetAtTime(1,C.currentTime,4); M.out=out;
@@ -7232,6 +7233,7 @@ function mornUpdate(dt){ const M=MORN; if(!M) return; M.t+=dt; const t=M.t, C=so
   { const su=M.U.uSun.value, gc=new THREE.Color(0.14,0.12,0.18).lerp(new THREE.Color(0.95,0.94,0.9),smooth(0.5,0.85,su)); M.gulls.forEach(g=>g.m.material.color.copy(gc)); M.flockM.color.setRGB(0.1,0.08,0.13).lerp(new THREE.Color(0.32,0.32,0.38),smooth(0.6,1,su));
     const tt=t-30, P=tt>0?(tt%80)/50:9, on=P<1, se=-0.035+0.4*su, az=0.35-0.7+1.4*Math.min(P,1), el=se+0.05+0.03*Math.sin(P*3), cx=M.camP.x, cy=M.camP.y-2000, cz=M.camP.z, R=280, tx=Math.cos(az), tz=Math.sin(az);
     M.flock.forEach(b=>{ b.m.visible=on; if(!on) return; const a=Math.abs(b.k); b.m.position.set(cx+Math.sin(az)*Math.cos(el)*R-tx*a*7,cy+Math.sin(el)*R+a*2.2+Math.sin(t*0.7+b.ph)*0.8,cz-Math.cos(az)*Math.cos(el)*R-tz*a*7); b.m.rotation.y=-az; b.m.scale.y=4.2*(0.6+0.6*Math.sin(t*5+b.ph)); }); }
+  try{ mornExtras3Update(dt,t); }catch(e){ if(!M.exErr3){ M.exErr3=1; console.warn('mornX3',e); } }
   try{ mornExtras2Update(dt,t); }catch(e){ if(!M.exErr2){ M.exErr2=1; console.warn('mornX2',e); } }
   try{ mornExtrasUpdate(dt,t); }catch(e){ if(!M.exErr){ M.exErr=1; console.warn('mornX',e); } }
   if(C){ mornMusic(); // the rest of the game is silent out here: only the morning's own tune
@@ -7376,6 +7378,36 @@ function mornExtras2Update(dt,t){ const M=MORN; if(!M||!M.thx) return; const su=
     M.purr.gain.setTargetAtTime(0.09*(1-sm(0.8,2.6,d))*(0.8+0.2*Math.sin(t*1.6)),C.currentTime,0.25); }
   // the thank-you, once, five minutes in
   if(!M.f.thx&&M.t>300){ M.f.thx=1; M.thx.style.opacity=1; if(C&&M.mus){ const g=M.mus.gain; g.cancelScheduledValues(C.currentTime); g.setTargetAtTime(1.6,C.currentTime,2); g.setTargetAtTime(1,C.currentTime+12,4); } setTimeout(()=>{ if(M.thx) M.thx.style.opacity=0; },11000); }
+}
+
+// ---- more to find: a rock pool by the stones, a picnic in the orchard ----
+function mornExtras3(M,G){ const B=c=>new THREE.MeshBasicMaterial({color:c,fog:false}), add=(par,geo,c,x,y,z)=>{ const m=new THREE.Mesh(geo,B(c)); m.position.set(x,y,z); par.add(m); return m; };
+  // rock pool: still water in a ring of stones, a starfish, anemones, and little fish that dart off when you lean over
+  { const px=33, pz=mornShore(33)+2.6, P=M.pool=new THREE.Group(); P.position.set(px,mornH(px,pz),pz); G.add(P);
+    const wm=new THREE.Mesh(new THREE.CircleGeometry(1.25,24),new THREE.MeshBasicMaterial({color:0x7fc4c8,transparent:true,opacity:0.75,depthWrite:false,fog:false})); wm.rotation.x=-Math.PI/2; wm.position.y=0.04; P.add(wm); M.poolW=wm;
+    const bed=new THREE.Mesh(new THREE.CircleGeometry(1.3,24),B(0x5d8a86)); bed.rotation.x=-Math.PI/2; bed.position.y=-0.06; P.add(bed);
+    for(let i=0;i<11;i++){ const a=i/11*6.283+Math.random()*0.2, s=0.25+Math.random()*0.22, r=mornRock(s,i+50); r.position.set(Math.cos(a)*1.45,s*0.2,Math.sin(a)*1.45); r.rotation.y=Math.random()*6; P.add(r); }
+    const sh=new THREE.Shape(); for(let i=0;i<10;i++){ const a=i/10*6.283+Math.PI/2, r=i%2?0.07:0.19; i?sh.lineTo(Math.cos(a)*r,Math.sin(a)*r):sh.moveTo(Math.cos(a)*r,Math.sin(a)*r); } const sg=new THREE.ExtrudeGeometry(sh,{depth:0.03,bevelEnabled:false}); sg.rotateX(-Math.PI/2);
+    const st=new THREE.Mesh(sg,B(0xe8784a)); st.position.set(0.4,-0.02,0.3); st.rotation.y=0.7; P.add(st);
+    M.anem=[[-0.5,-0.3,0xe86a8a],[-0.2,0.55,0xf0a040],[0.65,-0.45,0xb07ae0]].map(([x,z,c])=>{ const g=new THREE.Group(); g.position.set(x,-0.05,z); for(let k=0;k<7;k++){ const a=k/7*6.283; const m=add(g,new THREE.CylinderGeometry(0.008,0.015,0.13,4),c,Math.cos(a)*0.035,0.06,Math.sin(a)*0.035); m.rotation.set(Math.sin(a)*0.5,0,Math.cos(a)*0.5); } add(g,new THREE.SphereGeometry(0.04,6,4),c,0,0,0); P.add(g); return g; });
+    M.pfish=[0,1,2].map(i=>{ const f=new THREE.Group(); const b=add(f,new THREE.ConeGeometry(0.035,0.14,5),[0xf2d070,0xe0e4ea,0xf09060][i],0,0,0); b.rotation.x=Math.PI/2; const tl=add(f,new THREE.ConeGeometry(0.03,0.05,3),[0xf2d070,0xe0e4ea,0xf09060][i],0,0,-0.09); tl.rotation.x=-Math.PI/2; f.position.y=-0.01; P.add(f); return {f,a:i*2.1,r:0.45+i*0.22,v:0.5+i*0.15,boost:0}; }); M.poolP=new THREE.Vector3(px,0,pz); }
+  // a picnic in the orchard: a blanket, a basket, a jar, and an open book whose pages turn in the gusts
+  { const qx=-2, qz=49, Q=M.picnic=new THREE.Group(); Q.position.set(qx,mornH(qx,qz)+0.02,qz); Q.rotation.y=0.35; G.add(Q);
+    const cv=document.createElement('canvas'); cv.width=cv.height=64; const x=cv.getContext('2d'); x.fillStyle='#f4ede0'; x.fillRect(0,0,64,64); x.fillStyle='rgba(214,96,96,.75)'; for(let i=0;i<64;i+=16){ x.fillRect(i,0,8,64); x.fillRect(0,i,64,8); }
+    const tx=new THREE.CanvasTexture(cv); tx.wrapS=tx.wrapT=THREE.RepeatWrapping; tx.repeat.set(2,2); const bl=new THREE.Mesh(new THREE.PlaneGeometry(2.2,1.7),new THREE.MeshBasicMaterial({map:tx,fog:false})); bl.rotation.x=-Math.PI/2; Q.add(bl);
+    const bk=new THREE.Group(); add(bk,new THREE.BoxGeometry(0.5,0.28,0.34),0xb0844e,0,0.14,0); add(bk,new THREE.BoxGeometry(0.52,0.04,0.36),0x9a7040,0,0.29,0); const hd=add(bk,new THREE.TorusGeometry(0.2,0.018,4,12,Math.PI),0x9a7040,0,0.3,0); bk.position.set(0.7,0,-0.4); bk.rotation.y=0.3; Q.add(bk);
+    add(Q,new THREE.CylinderGeometry(0.07,0.07,0.15,10),0xd04848,-0.75,0.075,-0.45); add(Q,new THREE.CylinderGeometry(0.075,0.075,0.04,10),0xe8dcc0,-0.75,0.17,-0.45);
+    for(const [ax,az] of [[-0.45,0.5],[-0.3,0.56]]) add(Q,new THREE.SphereGeometry(0.07,8,6),0xd8403a,ax,0.06,az);
+    const book=new THREE.Group(); book.position.set(0.1,0.02,0.25); book.rotation.y=-0.2; Q.add(book); for(const sx of [-1,1]){ const c=add(book,new THREE.BoxGeometry(0.26,0.02,0.36),0x3e5a78,sx*0.13,0,0); const pg=add(book,new THREE.BoxGeometry(0.24,0.025,0.34),0xf4efe2,sx*0.12,0.02,0); }
+    M.pages=[0,1,2].map(i=>{ const g=new THREE.PlaneGeometry(0.24,0.34); g.translate(0.12,0,0); g.rotateX(-Math.PI/2); const m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:0xfaf6ec,side:THREE.DoubleSide,fog:false})); m.position.set(0,0.035+i*0.002,0); book.add(m); return {m,a:0,go:0}; }); M.pgN=4; M.picP=new THREE.Vector3(qx,0,qz); }
+}
+function mornExtras3Update(dt,t){ const M=MORN; if(!M||!M.pool) return;
+  // pool shimmer, swaying anemones, fish that scatter
+  { M.poolW.material.color.setRGB(0.5+0.04*Math.sin(t*1.3),0.77+0.03*Math.sin(t*0.9),0.78); M.anem.forEach((g,i)=>{ g.rotation.z=0.12*Math.sin(t*1.1+i); g.rotation.x=0.1*Math.sin(t*0.8+i*2); });
+    const d=Math.hypot(M.px-M.poolP.x,M.pz-M.poolP.z); M.pfish.forEach((f,i)=>{ if(d<2.6&&f.boost<=0) f.boost=1.2; f.boost-=dt; const sp=f.v*(f.boost>0?4:1); f.a+=sp*dt; f.f.position.x=Math.cos(f.a)*f.r; f.f.position.z=Math.sin(f.a)*f.r; f.f.rotation.y=-f.a; }); }
+  // the book's pages lift and turn in the gusts
+  { const gs=Math.pow(0.5+0.5*Math.sin(M.picP.x*0.09+M.picP.z*0.05-t*1.3),4); M.pgN-=dt; if(gs>0.6&&M.pgN<0){ const p=M.pages.find(p=>!p.go); if(p){ p.go=1; p.a=0; } M.pgN=0.5+Math.random(); }
+    M.pages.forEach(p=>{ if(p.go){ p.a+=dt*2.2; if(p.a>=Math.PI){ p.a=0; p.go=0; } } p.m.rotation.z=p.go?p.a:0.06*gs*Math.sin(t*9); }); }
 }
 
 function roomLeave(){ gfox.visible=true; if(ROOM) ROOM.g.visible=false; STY.room=false; STY.fallY=undefined; }
