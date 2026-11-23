@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.790 -->
+<!-- Thin Veil · beta 0.791 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="description" content="A small, strange night walk with a worried fox. Plays in your browser; best on a phone, with headphones.">
@@ -154,7 +154,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.790</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.791</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -7193,6 +7193,17 @@ function mornMusic(){ const C=sound.C, M=MORN; if(!C||!M||!M.mus) return; const 
     if(Math.floor(st/32)%2===1){ const MEL=[[0,659.25,2],[3,739.99,1],[4,880,3],[8,739.99,2],[11,659.25,1],[12,554.37,4],[16,587.33,2],[19,659.25,1],[20,739.99,3],[24,659.25,2],[27,554.37,1],[28,493.88,4]], s32=st%32; MEL.forEach(([at,f,len])=>{ if(at===s32){ const o=mornTone(f,t,len*E+0.4,0.022,'sine',M.mus); const lf=C.createOscillator(), lg=C.createGain(); lf.frequency.value=5.2; lg.gain.value=f*0.006; lf.connect(lg); lg.connect(o.frequency); lf.start(t); lf.stop(t+len*E+0.5); } }); }
     M.mstep++; M.beat+=E; } }
 
+// the morning's solid things, kept simple: the house and its bench as boxes, the washing poles, his trees and the rocks as circles
+const MORN_R=0.32;
+function mornCollide(M,x,z){ const H=M.house, out=[x,z]; if(!H) return out;
+  if(!M.cols){ M.cols=[]; const v=new THREE.Vector3(); H.updateMatrixWorld(true); for(const px of [4.6,8.8]){ H.localToWorld(v.set(px,0,-0.5)); M.cols.push([v.x,v.z,0.08]); }
+    (M.trees||[]).forEach(m=>M.cols.push([m.position.x,m.position.z,0.55*m.scale.x])); (M.rk||[]).forEach(r=>M.cols.push([r[0],r[1],r[2]*0.8])); }
+  for(const [cx,cz,r] of M.cols){ const dx=out[0]-cx, dz=out[1]-cz, rr=r+MORN_R, d2=dx*dx+dz*dz; if(d2<rr*rr&&d2>1e-8){ const d=Math.sqrt(d2); out[0]=cx+dx/d*rr; out[1]=cz+dz/d*rr; } }
+  // boxes in the house's own frame: [centre x, centre z, half width, half depth]
+  const c=Math.cos(H.rotation.y), s=Math.sin(H.rotation.y), hx=H.position.x, hz=H.position.z;
+  for(const [bx,bz,w,d] of [[0,0,3.5,2.7],[-3.1,-3.0,0.75,0.21]]){ const dx=out[0]-hx, dz=out[1]-hz; let lx=dx*c-dz*s-bx, lz=dx*s+dz*c-bz; const ox=w+MORN_R-Math.abs(lx), oz=d+MORN_R-Math.abs(lz);
+    if(ox>0&&oz>0){ if(ox<oz) lx+=lx<0?-ox:ox; else lz+=lz<0?-oz:oz; lx+=bx; lz+=bz; out[0]=hx+lx*c+lz*s; out[1]=hz-lx*s+lz*c; } }
+  return out; }
 function mornUpdate(dt){ const M=MORN; if(!M) return; M.t+=dt; const t=M.t, C=sound.C, G=M.g; STY.lines=[]; STY.busy=99; coatFig.visible=false;
   // only the morning exists (and the fox, once he's up)
   scene.children.forEach(c=>{ if(c!==G&&c!==gfox&&c.visible&&!c.isCamera) c.visible=false; });
@@ -7202,7 +7213,7 @@ function mornUpdate(dt){ const M=MORN; if(!M) return; M.t+=dt; const t=M.t, C=so
     const g0=mornGround(M.px,M.pz), wet=!mornOnJetty(M.px,M.pz)&&g0<0.02, sp=wet?1.7:3.0, sy=Math.sin(player.yaw), cy=Math.cos(player.yaw), vx=(mx*cy+mz*sy)*sp, vz=(-mx*sy+mz*cy)*sp;
     const ok=(x,z)=>Math.abs(x)<44&&z>-14&&z<66&&(mornOnJetty(x,z)||mornH(x,z)>-0.36);
     let nx=M.px+vx*dt, nz=M.pz+vz*dt; if(!ok(nx,nz)){ if(ok(nx,M.pz)) nz=M.pz; else if(ok(M.px,nz)) nx=M.px; else { nx=M.px; nz=M.pz; } }
-    const dmv=Math.hypot(nx-M.px,nz-M.pz); M.moved=dmv>dt*0.3; M.px=nx; M.pz=nz; M.step+=dmv; M.bob+=dmv*3.6;
+    { const q=mornCollide(M,nx,nz); nx=q[0]; nz=q[1]; } const dmv=Math.hypot(nx-M.px,nz-M.pz); M.moved=dmv>dt*0.3; M.px=nx; M.pz=nz; M.step+=dmv; M.bob+=dmv*3.6;
     const gr=mornGround(M.px,M.pz), onJ=mornOnJetty(M.px,M.pz); M.eye=(M.eye===undefined?gr:M.eye)+(gr-(M.eye===undefined?gr:M.eye))*Math.min(1,dt*8);
     if(M.step>0.78){ M.step=0; M.lr=-(M.lr||1); const w2=!onJ&&gr<0.02; mornStep(w2); if(!onJ&&gr>-0.05&&gr<1.2){ const q=M.fp[M.fpI=(M.fpI+1)%M.fp.length]; const ox=Math.cos(player.yaw)*0.13*M.lr, oz=-Math.sin(player.yaw)*0.13*M.lr; q.m.position.set(M.px+ox,mornH(M.px+ox,M.pz+oz)+0.02,M.pz+oz); q.m.rotation.y=player.yaw; q.m.scale.set(0.09,1,0.15); q.m.visible=true; q.t=0; } }
     player.x=0; player.z=0; vel.x=vel.z=0; player.pitch=Math.max(-1.2,Math.min(1.2,player.pitch));
