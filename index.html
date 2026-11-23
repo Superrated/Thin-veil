@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Thin Veil · beta 0.789 -->
+<!-- Thin Veil · beta 0.790 -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#000000">
 <meta name="description" content="A small, strange night walk with a worried fox. Plays in your browser; best on a phone, with headphones.">
@@ -154,7 +154,7 @@
 </head>
 <body>
 <div id="start" class="min">
-  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.789</div>
+  <div id="tvver" style="position:absolute;right:12px;bottom:10px;font:11px Georgia,serif;letter-spacing:.22em;color:rgba(225,214,192,.55);z-index:5;pointer-events:none">BETA 0.790</div>
   <div class="ts-sky"></div>
   <svg class="ts-thread" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path d="M50 58 C 45 72, 22 75, -2 91" fill="none" stroke="#9a2f2f" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>
   <div class="ts-win"><i></i><i></i><i></i><i></i></div>
@@ -8209,7 +8209,7 @@ function frame(){
   // gaze, blooms, fragments
   gazeUpdate(dt);
   blooms.forEach(b=>b.upd(gw[b.L],time));
-  quantumUpdate(dt); if(!NORMAL&&!STY.on) supUpdate(dt,gw); if(STY.stage==='morn'&&MORN) mornUpdate(dt); else if(wc.on) wcUpdate(dt); else if(TL.on) tlUpdate(dt); else if(STY.on) storyUpdate(dt); else guideFoxUpdate(dt); entApply(gw); livingUpdate(dt,gw); voicesUpdate(dt,gw); wakingUpdate(dt,gw); worldVis(); storyPost(); worldAtmo(); mountOceanVis(dt); worldDoors(); animalsAnim(dt); if(wc.on){ lhG.visible=false; } { const ly=(STY.on&&WORLD==='lake'&&cur===0)?-terrH(LAKE.x,LAKE.z):0; if(lhG.position.y!==ly) lhG.position.y=ly; } stormUpdate(dt,gw);
+  quantumUpdate(dt); if(!NORMAL&&!STY.on) supUpdate(dt,gw); if(STY.stage==='morn'&&MORN) mornUpdate(dt); else if(wc.on) wcUpdate(dt); else if(TL.on) tlUpdate(dt); else if(STY.on){ /* the acts push you out of things after the camera is placed: carry the camera along, or every frame is drawn a step inside what you walk into */ const _sx=player.x,_sz=player.z,_cx=camera.position.x,_cz=camera.position.z; storyUpdate(dt); const _dx=player.x-_sx,_dz=player.z-_sz; if((_dx||_dz)&&_dx*_dx+_dz*_dz<2.25&&camera.position.x===_cx&&camera.position.z===_cz){ camera.position.x+=_dx; camera.position.z+=_dz; } } else guideFoxUpdate(dt); entApply(gw); livingUpdate(dt,gw); voicesUpdate(dt,gw); wakingUpdate(dt,gw); worldVis(); storyPost(); worldAtmo(); mountOceanVis(dt); worldDoors(); animalsAnim(dt); if(wc.on){ lhG.visible=false; } { const ly=(STY.on&&WORLD==='lake'&&cur===0)?-terrH(LAKE.x,LAKE.z):0; if(lhG.position.y!==ly) lhG.position.y=ly; } stormUpdate(dt,gw);
   sound.listen(camera.position,[-Math.sin(player.yaw)*Math.cos(player.pitch),Math.sin(player.pitch),-Math.cos(player.yaw)*Math.cos(player.pitch)]);
   sound.setFire((typeof A4!=='undefined'&&A4)?0:gw[0]*(returns>=2||missing.has('fire')?0:(ent.has('fire')?0.25:0.9)));
   if(curFrag){ const g=curFrag.g; g.rotation.y=time*0.4; const ss=shardState();
